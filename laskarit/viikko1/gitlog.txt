@@ -1,0 +1,78 @@
+commit e3fce1d825d6e6cb1f74ab82df380aaec7b9b707
+Author: Otso Helos <17408120+otsohelos@users.noreply.github.com>
+Date:   Mon Mar 16 14:04:40 2020 +0200
+
+    final
+
+ tiedostoja/file2.txt                 | 0
+ tiedostoja/{file1.txt => file22.txt} | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit beb0898d0e52efe7ea750500979e6f46023e8fa7
+Author: Otso Helos <17408120+otsohelos@users.noreply.github.com>
+Date:   Mon Mar 16 14:01:06 2020 +0200
+
+    muutostesti
+
+ tiedostoja/file3.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 6e565c6fa68a14d0a06dff4efbe2727bcb423cf2
+Author: Otso Helos <17408120+otsohelos@users.noreply.github.com>
+Date:   Mon Mar 16 13:59:09 2020 +0200
+
+    kolme filettä
+
+ tiedostoja/file1.txt | 0
+ tiedostoja/file2.txt | 0
+ tiedostoja/file3.txt | 0
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+
+commit cd35f71a95db5a4e0f5ae636b4a9abc7fd03ab15
+Author: Otso Helos <17408120+otsohelos@users.noreply.github.com>
+Date:   Mon Mar 16 13:39:41 2020 +0200
+
+    testi onnistui
+
+ eka.txt         | 4 ++--
+ stuff/testi.txt | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+commit 6847ef70e804682510a080f14e7478c16532bb76
+Author: Otso Helos <17408120+otsohelos@users.noreply.github.com>
+Date:   Mon Mar 16 13:34:06 2020 +0200
+
+    testing
+
+ tiedosto.txt => eka.txt | 2 +-
+ stuff/testi.txt         | 2 ++
+ toinen.txt              | 0
+ 3 files changed, 3 insertions(+), 1 deletion(-)
+
+commit 21fc08a0231055054b67cfc81326f5a9024e75f8
+Author: Otso Helos <17408120+otsohelos@users.noreply.github.com>
+Date:   Mon Mar 16 13:28:37 2020 +0200
+
+    tiedostoa muokattu
+
+ tiedosto.txt | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+commit b097dab19ab06ea456c97d1c03a4966ca6adf147
+Author: Otso Helos <17408120+otsohelos@users.noreply.github.com>
+Date:   Mon Mar 16 13:02:33 2020 +0200
+
+    muutos ja lisäys
+
+ tiedosto.txt | 1 +
+ toinen.txt   | 0
+ 2 files changed, 1 insertion(+)
+
+commit 509d67e7848d920c8353e1f63d6d1b5b6ea23847
+Author: Otso Helos <17408120+otsohelos@users.noreply.github.com>
+Date:   Mon Mar 16 13:01:13 2020 +0200
+
+    tiedosto luotu
+
+ tiedosto.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
