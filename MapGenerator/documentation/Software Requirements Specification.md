@@ -32,7 +32,7 @@ The user can choose to save the map to a picture document. If the user is not sa
 
 ### UI Sketch
 
-
+![UI sketch of two views](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/uisketch.jpg)
 
 
 ## Functionality In Basic Version
