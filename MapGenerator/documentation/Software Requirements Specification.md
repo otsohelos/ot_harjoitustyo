@@ -33,7 +33,7 @@ The user can choose to save the map to a picture document. If the user is not sa
 ### UI Sketch
 
 ![UI sketch of two views](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/uisketch.jpg)
-
+Map view has elevation indicated by color darkness.
 
 ## Functionality In Basic Version
 
@@ -44,7 +44,7 @@ The user can choose to save the map to a picture document. If the user is not sa
 
 ### Map Views
 
-- Initially, only a topographical view will be generated.
+- Initially, only the Elevation view will be generated.
 - Save button: User can choose to save the map.
 - Redo button: User can generate a new map with the same settings.
 - Back button: User can go back to the Settings view to change settings.

@@ -1,9 +1,11 @@
 
 package mapgenerator;
 
+import mapgenerator.ui.MapUi;
+
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World");
+        MapUi.main(args);
     }
 }
