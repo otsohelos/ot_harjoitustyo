@@ -7,12 +7,17 @@ package mapgenerator.ui;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import domain.MapCreator;
+import mapgenerator.domain.MapCreator;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
+import javafx.geometry.Insets;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
+import mapgenerator.domain.Tile;
 
 /**
  *
@@ -28,22 +33,27 @@ public class MapUi extends Application {
         settings.getChildren().add(generateButton);
         generateButton.setOnAction((event) -> {
             MapCreator mapCreator = new MapCreator();
-            int[][] map = mapCreator.showMap();
-            FlowPane mapFlow = new FlowPane();
+            Tile[][] map = mapCreator.showMap();
+            GridPane mapGrid = new GridPane();
+            mapGrid.setHgap(1);
+            mapGrid.setVgap(1);
+            mapGrid.setMinHeight(200);
+            mapGrid.setMinWidth(200);
+
             for (int i = 0; i < map.length; i++) {
-                VBox newBox = new VBox();
                 for (int j = 0; j < map[i].length; j++) {
-                    String string = String.valueOf(map[j][i]);
-                    Label newLabel = new Label(string);
-                    newLabel.
-                    newBox.getChildren().add(newLabel);
-                    
+                     String color = map[j][i].getColor();
+
+                      Rectangle green = new Rectangle(25, 25, Paint.valueOf(color));
+                      mapGrid.add(green, j, i);
                 }
-                mapFlow.getChildren().add(newBox);
             }
 
-            Scene mapView = new Scene(mapFlow);
+            Scene mapView = new Scene(mapGrid);
+            mapView.getStylesheets().add("mapstyle.css");
+
             stage.setScene(mapView);
+
         });
         Scene settingsView = new Scene(settings);
         stage.setScene(settingsView);

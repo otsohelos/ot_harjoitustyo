@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package domain;
+package mapgenerator.domain;
 
 /**
  *
@@ -18,7 +18,7 @@ public class MapCreator {
 
     }
     
-    public int[][] showMap() {
+    public Tile[][] showMap() {
     return map.show();
     }
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package domain;
+package mapgenerator.domain;
 
 import java.util.Random;
 
@@ -16,20 +16,24 @@ public class Map {
     private int height;
     private int width;
     private int[][] mapArray;
+    private Tile[][] tileArray;
 
     public Map(int height, int width) {
         this.height = height;
         this.width = width;
 
         this.mapArray = new int[width][height];
+        this.tileArray = new Tile[width][height];
     }
 
-    public int[][] show() {
+    public Tile[][] show() {
         Random rnd = new Random();
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                mapArray[i][j] = (rnd.nextInt(10));
+                int rndInt = (rnd.nextInt(10));
+                mapArray[i][j] = rndInt;
+                tileArray[i][j] = new Tile(rndInt);
             }
         }
 
@@ -40,6 +44,6 @@ public class Map {
                 System.out.print(mapArray[i][j] + " ");
             }
         }
-        return mapArray;
+        return tileArray;
     }
 }

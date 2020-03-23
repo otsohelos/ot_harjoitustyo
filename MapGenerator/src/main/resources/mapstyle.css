@@ -1,0 +1,21 @@
+
+
+.label {
+  -fx-background-color: aquamarine;
+
+  background-color: aquamarine;
+  color: red;
+}
+
+#green.rectangle {
+  -fx-background-color: aquamarine;
+
+  background-color: aquamarine;
+  color: red;
+}
+
+.grid-pane {
+  -fx-background-color: aquamarine;
+  background-color: aquamarine;
+  color: red;
+}
