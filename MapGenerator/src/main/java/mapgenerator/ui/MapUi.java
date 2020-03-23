@@ -34,7 +34,10 @@ public class MapUi extends Application {
                 VBox newBox = new VBox();
                 for (int j = 0; j < map[i].length; j++) {
                     String string = String.valueOf(map[j][i]);
-                    newBox.getChildren().add(new Label(string));
+                    Label newLabel = new Label(string);
+                    newLabel.
+                    newBox.getChildren().add(newLabel);
+                    
                 }
                 mapFlow.getChildren().add(newBox);
             }
