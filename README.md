@@ -7,7 +7,7 @@ By [Otso Helos](https://github.com/otsohelos)
 
 [hours spent on demo](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/WorkHoursLog.md)
 
-[Software Requirements Specification](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/Software Requirements Specification.md)
+[Software Requirements Specification](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/Software%20Requirements%20Specification.md)
 
 
 ## Exercise links
