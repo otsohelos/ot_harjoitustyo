@@ -14,6 +14,9 @@ By [Otso Helos](https://github.com/otsohelos)
 
 ## Exercise links
 
+### Exercises by week
+[1](https://github.com/otsohelos/ot_harjoitustyo/tree/master/laskarit/viikko1) [2](https://github.com/otsohelos/ot_harjoitustyo/tree/master/laskarit/viikko2) [3](https://github.com/otsohelos/ot_harjoitustyo/tree/master/laskarit/viikko3)
+
 [gitlog.txt](https://github.com/otsohelos/ot_harjoitustyo/blob/master/laskarit/viikko1/gitlog.txt)
 
 [komentorivi.txt](https://github.com/otsohelos/ot_harjoitustyo/blob/master/laskarit/viikko1/)
