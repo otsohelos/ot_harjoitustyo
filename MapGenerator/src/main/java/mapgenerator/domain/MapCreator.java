@@ -14,7 +14,7 @@ public class MapCreator {
     private Map map;
     
     public MapCreator() {
-        map = new Map(10, 10);
+        map = new Map(20, 20);
 
     }
     

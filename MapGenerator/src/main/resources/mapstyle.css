@@ -1,21 +1,22 @@
 
 
-.label {
-  -fx-background-color: aquamarine;
+.root {
+  -fx-background-color: black;
 
-  background-color: aquamarine;
+  background-color: black;
   color: red;
 }
 
-#green.rectangle {
-  -fx-background-color: aquamarine;
-
-  background-color: aquamarine;
-  color: red;
+#pane {
+  -fx-background-color: black;
+  background-color: black;
+  padding: 2;
+  -fx-padding: 2;
+  -fx-vgap: 1;
+  -fx-hgap: 1;
+  -fx-border-color: black;
+  border-color: black;
+  border-top: 2px;
+  -fx-border-top: 2px;
 }
 
-.grid-pane {
-  -fx-background-color: aquamarine;
-  background-color: aquamarine;
-  color: red;
-}

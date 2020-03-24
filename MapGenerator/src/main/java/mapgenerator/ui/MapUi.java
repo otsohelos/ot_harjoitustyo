@@ -18,6 +18,7 @@ import javafx.geometry.Insets;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Paint;
 import mapgenerator.domain.Tile;
+import javafx.scene.layout.Pane;
 
 /**
  *
@@ -35,17 +36,24 @@ public class MapUi extends Application {
             MapCreator mapCreator = new MapCreator();
             Tile[][] map = mapCreator.showMap();
             GridPane mapGrid = new GridPane();
-            mapGrid.setHgap(1);
-            mapGrid.setVgap(1);
+            //mapGrid.setHgap(1);
+            //mapGrid.setVgap(1);
             mapGrid.setMinHeight(200);
             mapGrid.setMinWidth(200);
-
             for (int i = 0; i < map.length; i++) {
-                for (int j = 0; j < map[i].length; j++) {
-                     String color = map[j][i].getColor();
+                            System.out.println("");
 
-                      Rectangle green = new Rectangle(25, 25, Paint.valueOf(color));
-                      mapGrid.add(green, j, i);
+                for (int j = 0; j < map[i].length; j++) {
+                    String color = map[i][j].getColor();
+                    System.out.print(color + " ");
+                    Pane pane = new Pane();
+                    pane.setPrefSize(20, 20);
+                        Rectangle rectangle = new Rectangle(20, 20, Paint.valueOf(color));
+                        rectangle.setX(map[i][j].getTopBorder());
+                        rectangle.setY(map[i][j].getLeftBorder());
+                        pane.getChildren().add(rectangle);
+                  
+                    mapGrid.add(pane, i, j);
                 }
             }
 
