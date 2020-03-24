@@ -41,19 +41,23 @@ public class MapUi extends Application {
             mapGrid.setMinHeight(200);
             mapGrid.setMinWidth(200);
             for (int i = 0; i < map.length; i++) {
-                            System.out.println("");
-
+                //System.out.println("");
                 for (int j = 0; j < map[i].length; j++) {
                     String color = map[i][j].getColor();
-                    System.out.print(color + " ");
+                    //System.out.print(color + " ");
                     Pane pane = new Pane();
                     pane.setPrefSize(20, 20);
-                        Rectangle rectangle = new Rectangle(20, 20, Paint.valueOf(color));
-                        rectangle.setX(map[i][j].getTopBorder());
-                        rectangle.setY(map[i][j].getLeftBorder());
-                        pane.getChildren().add(rectangle);
-                  
-                    mapGrid.add(pane, i, j);
+                    pane.setMaxSize(20, 20);
+                    int top = map[i][j].getTopBorder();
+                    int left = map[i][j].getLeftBorder();
+                    int rectHeight = 20 - top;
+                    int rectWidth = 20 - left;
+                    Rectangle rectangle = new Rectangle(rectWidth, rectHeight, Paint.valueOf(color));
+                    rectangle.setY(top);
+                    rectangle.setX(left);
+                    pane.getChildren().add(rectangle);
+
+                    mapGrid.add(pane, j, i);
                 }
             }
 

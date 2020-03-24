@@ -7,25 +7,25 @@ import java.util.Random;
  * @author otsohelos
  */
 public class Map {
-    
+
     private int height;
     private int width;
     private Tile[][] tileArray;
-    private int[][] mapArray;
-    
+    private int[][] intArray;
+
     public Map(int height, int width) {
         this.height = height;
         this.width = width;
-        this.mapArray = new int[height][width];
+        this.intArray = new int[height][width];
         this.tileArray = new Tile[height][width];
     }
-    
-    public Tile[][] show() {
+
+    public void randomize() {
         Random rnd = new Random();
         int initialInt = (rnd.nextInt(9));
         tileArray[0][0] = new Tile(initialInt);
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 //System.out.println("");
                 if (i != 0 || j != 0) {
                     boolean aboveIsWater = false;
@@ -51,29 +51,49 @@ public class Map {
                         newInt = 0;
                     }
                     Tile tile = new Tile(newInt);
-                    
+
                     if (leftIsWater != tile.isWater()) {
                         tile.setLeftBorder(1);
                     }
                     if (aboveIsWater != tile.isWater()) {
                         tile.setTopBorder(1);
                     }
-                    
+
                     tileArray[i][j] = tile;
-                    mapArray[i][j] = newInt;
+                    intArray[i][j] = newInt;
                 }
             }
         }
-        
-        for (int i = 0;
-                i < width;
-                i++) {
+        printIntArray();
+    }
+
+    public Tile[][] show() {
+
+        return tileArray;
+    }
+
+    public void printIntArray() {
+        for (int i = 0; i < height; i++) {
             System.out.println("");
-            for (int j = 0; j < height; j++) {
-                
-                System.out.print(mapArray[i][j] + " ");
+            for (int j = 0; j < width; j++) {
+                System.out.print(intArray[i][j] + " ");
             }
         }
-        return tileArray;
+    }
+    
+//        public void printIntArrayWithBorders() {
+//        for (int i = 0; i < height; i++) {
+//            System.out.println("");
+//            for (int j = 0; j < width; j++) {
+//                System.out.print(intArray[i][j]);
+//                System.out.print(tileArray[i][j].getTopBorder());
+//                System.out.print(tileArray[i][j].getLeftBorder());
+//                System.out.print("(" + i + j + ") ");
+//            }
+//        }
+//    }
+
+    public int[][] getIntArray() {
+        return intArray;
     }
 }

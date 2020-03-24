@@ -12,14 +12,14 @@ package mapgenerator.domain;
 public class MapCreator {
 
     private Map map;
-    
-    public MapCreator() {
-        map = new Map(20, 20);
 
+    public MapCreator() {
+        map = new Map(12, 18);
     }
-    
+
     public Tile[][] showMap() {
-    return map.show();
+        map.randomize();
+        return map.show();
     }
 
 }
