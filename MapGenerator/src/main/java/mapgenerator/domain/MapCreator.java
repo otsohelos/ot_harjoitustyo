@@ -17,6 +17,10 @@ public class MapCreator {
         map = new Map(12, 18);
     }
 
+    public MapCreator(int height, int width) {
+        map = new Map(height, width);
+    }
+
     public Tile[][] showMap() {
         map.randomize();
         return map.show();
