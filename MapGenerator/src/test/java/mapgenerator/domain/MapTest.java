@@ -27,6 +27,23 @@ public class MapTest {
     }
 
     @Test
+    public void randomizeSmarterWorks() {
+        Map bigMap = new Map(25, 25);
+        assertTrue(map.randomizeSmarter() == 3);
+        int bigMapDropPoints = bigMap.randomizeSmarter();
+        assertTrue(bigMapDropPoints < 19);
+        assertTrue(bigMapDropPoints > 11);
+        int bigMapDropPoints2 = bigMap.randomizeSmarter();
+        assertTrue(bigMapDropPoints2 < 19);
+        assertTrue(bigMapDropPoints2 > 11);
+        int bigMapDropPoints3 = bigMap.randomizeSmarter();
+        assertTrue(bigMapDropPoints3 < 19);
+        assertTrue(bigMapDropPoints3 > 11);
+        Map tinyMap = new Map(3,3);
+        assertTrue(tinyMap.randomizeSmarter() == 1);
+    }
+
+    @Test
     public void mapReturnsTileArrayOfCorrectSize() {
         Tile[][] tileArray = map.show();
 
