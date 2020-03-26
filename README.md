@@ -1,21 +1,19 @@
-# ABOUT
+# MapGenerator
 
-Demo for Software Development Methods class, University of Helsinki, spring 2020
+Demo for [Software Development Methods class](https://github.com/mluukkai/ohjelmistotekniikka-kevat-2020), University of Helsinki, spring 2020
 
 By [Otso Helos](https://github.com/otsohelos)
 
 
-## Project links
+## About the app
 
-[Hours spent on demo](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/WorkHoursLog.md)
+MapGenerator is a desktop app that generates random maps. It's intended for RPG players, creative writers, and anyone who enjoys nice maps of imaginary places.
+
+MapGenerator is done with Java 11. A working version will be finished during April 2020.
+
+
+## Documentation
 
 [Software Requirements Specification](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/Software%20Requirements%20Specification.md)
 
-
-## Exercise links
-
-Exercises by week: [1](https://github.com/otsohelos/ot_harjoitustyo/tree/master/laskarit/viikko1) [2](https://github.com/otsohelos/ot_harjoitustyo/tree/master/laskarit/viikko2) [3](https://github.com/otsohelos/ot_harjoitustyo/tree/master/laskarit/viikko3)
-
-[gitlog.txt](https://github.com/otsohelos/ot_harjoitustyo/blob/master/laskarit/viikko1/gitlog.txt)
-
-[komentorivi.txt](https://github.com/otsohelos/ot_harjoitustyo/blob/master/laskarit/viikko1/komentorivi.txt)
+[Log of working hours](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/WorkHoursLog.md)

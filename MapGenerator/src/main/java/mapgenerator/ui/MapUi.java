@@ -53,6 +53,8 @@ public class MapUi extends Application {
         settings.getChildren().add(generateButton);
 
         generateButton.setOnAction((event) -> {
+            
+            
             int height = Integer.valueOf(heightField.getText());
             int width = Integer.valueOf(widthField.getText());
 
