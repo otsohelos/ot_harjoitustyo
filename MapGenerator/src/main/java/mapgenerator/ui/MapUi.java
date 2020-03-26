@@ -53,8 +53,6 @@ public class MapUi extends Application {
         settings.getChildren().add(generateButton);
 
         generateButton.setOnAction((event) -> {
-            
-            
             int height = Integer.valueOf(heightField.getText());
             int width = Integer.valueOf(widthField.getText());
 
@@ -85,12 +83,12 @@ public class MapUi extends Application {
                 String color = map[i][j].getColor();
                 //System.out.print(color + " ");
                 Pane pane = new Pane();
-                pane.setPrefSize(20, 20);
-                pane.setMaxSize(20, 20);
+                pane.setPrefSize(10, 10);
+                pane.setMaxSize(10, 10);
                 int top = map[i][j].getTopBorder();
                 int left = map[i][j].getLeftBorder();
-                int rectHeight = 20 - top;
-                int rectWidth = 20 - left;
+                int rectHeight = 10 - top;
+                int rectWidth = 10 - left;
                 Rectangle rectangle = new Rectangle(rectWidth, rectHeight, Paint.valueOf(color));
                 rectangle.setY(top);
                 rectangle.setX(left);
@@ -120,13 +118,7 @@ public class MapUi extends Application {
         stage.setScene(mapView);
     }
 
-//    @Override
-//    public void init() {
-//        MapCreator mapCreator = new MapCreator();
-//
-//    }
     public static void main(String[] args) {
         launch(MapUi.class);
-
     }
 }

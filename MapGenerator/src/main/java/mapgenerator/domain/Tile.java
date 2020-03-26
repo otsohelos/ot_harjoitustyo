@@ -17,7 +17,7 @@ public class Tile {
     }
 
     boolean isWater() {
-        if (elevation < 3) {
+        if (elevation < 6) {
             return true;
         }
         return false;
@@ -25,13 +25,19 @@ public class Tile {
 
     public String getColor() {
         if (elevation < 2) {
+            return "rgb(35, 50, 120)";
+        } else if (elevation < 4) {
             return "rgb(67, 127, 255)";
-        } else if (elevation < 3) {
+        } else if (elevation < 6) {
             return "rgb(133, 200, 255)";
-        } else if (elevation < 5) {
+        } else if (elevation < 10) {
             return "rgb(73, 151, 1)";
+        } else if (elevation < 15) {
+            return "rgb(75, 99, 4)";
+        } else if (elevation < 18) {
+            return "rgb(43, 43, 7)";
         } else {
-            return "rgb(66, 88, 4)";
+            return "rgb(15, 15, 9)";
         }
     }
 

@@ -22,7 +22,7 @@ public class MapCreator {
     }
 
     public Tile[][] showMap() {
-        map.randomize();
+        map.assignTiles();
         return map.show();
     }
 
