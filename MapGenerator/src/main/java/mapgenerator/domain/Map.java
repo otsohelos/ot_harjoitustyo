@@ -25,12 +25,15 @@ public class Map {
     }
 
     public void assignTiles() {
-        this.assignTiles(3);
+        this.assignTiles(3, true);
     }
 
-    public void assignTiles(int range) {
-        //this.randomizeSmarter(range);
-        this.startRecursively(range);
+    public void assignTiles(int range, boolean coastal) {
+        int islandTendency = 3;
+        if (!coastal) {
+            islandTendency = 1;
+        }
+        this.startRecursively(range, islandTendency);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 makeTile(i, j, intArray[i][j]);
@@ -62,37 +65,41 @@ public class Map {
         tileArray[i][j] = tile;
     }
 
-    public void startRecursively(int range) {
+    /*    public void startRecursively(int range) {
         // random spot, central-ish
         int i = rnd.nextInt(height / 3) + height / 3;
         int j = rnd.nextInt(width / 3) + width / 3;
         System.out.println("seed is " + i + ", " + j);
         intArray[i][j] = rnd.nextInt(10) + 9;
-        randomizeRecursively(i + 1, j, range, 9);
+        randomizeRecursively(i + 1, j, range, 9, 4);
+        fillTheRest(range);
         //this.printIntArray();
-    }
-
+    }*/
     public void startRecursively(int range, int islandTendency) {
         int i = rnd.nextInt(height / 3) + height / 3;
         int j = rnd.nextInt(width / 3) + width / 3;
         System.out.println("seed is " + i + ", " + j);
         intArray[i][j] = rnd.nextInt(10) + 9;
-        randomizeRecursively(i + 1, j, 3, 9);
-        fillTheRest(3);
+        randomizeRecursively(i + 1, j, range, 9, islandTendency);
+        //System.out.println("before fillTheRest:");
+        //this.printIntArray();
+        fillTheRest(range, islandTendency);
+        //System.out.println("after:");
+        this.printIntArray();
     }
-    
-        public void fillTheRest(int range) {
+
+    public void fillTheRest(int range, int islandTendency) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (!isAssigned(i, j)) {
-                    double avg = neighborsAverage(i, j);
-                    
-                    if (avg > range) {
-                    randomizeOne(i, j, range, avg);}
+                    int sum = neighborsSum(i, j);
+
+                    if (sum > range * 7) {
+                        randomizeOne(i, j, range, islandTendency);
+                    }
                 }
             }
         }
-
     }
 
     /*public void randomizeRecursively(int i, int j, int range) {
@@ -107,11 +114,11 @@ public class Map {
         randomizeRecursively(i + 1, j, range);
     } */
     // this one has a kill switch:
-    public void randomizeRecursively(int i, int j, int range, int stopWhen) {
+    public void randomizeRecursively(int i, int j, int range, int stopWhen, int islandTendency) {
         if (i < 0 || j < 0 || i >= height || j >= width || isAssigned(i, j) || stopWhen < 1) {
             return;
         }
-        randomizeOne(i, j, range);
+        randomizeOne(i, j, range, islandTendency);
         // only stop at the sea
         if (intArray[i][j] < 5) {
             int coinToss = rnd.nextInt(3);
@@ -123,21 +130,34 @@ public class Map {
         int three = rnd.nextInt(3);
         int four = rnd.nextInt(3);
 
-        if (one > 0) {
-            randomizeRecursively(i - 1, j, range, stopWhen);
-        }
-        if (two > 0) {
-            randomizeRecursively(i + 1, j, range, stopWhen);
-        }
-        if (three > 0) {
-            randomizeRecursively(i, j - 1, range, stopWhen);
-        }
-        if (four > 0) {
-            randomizeRecursively(i, j + 1, range, stopWhen);
+        // make sure that every square tries to grow in at least one direction
+        int grown = 0;
+
+        while (grown < 1) {
+            if (one > 0) {
+                randomizeRecursively(i - 1, j, range, stopWhen, islandTendency);
+                grown++;
+            }
+            if (two > 0) {
+                randomizeRecursively(i + 1, j, range, stopWhen, islandTendency);
+                grown++;
+            }
+            if (three > 0) {
+                randomizeRecursively(i, j - 1, range, stopWhen, islandTendency);
+                grown++;
+            }
+            if (four > 0) {
+                randomizeRecursively(i, j + 1, range, stopWhen, islandTendency);
+                grown++;
+            }
+            one = rnd.nextInt(3);
+            two = rnd.nextInt(3);
+            three = rnd.nextInt(3);
+            four = rnd.nextInt(3);
         }
     }
 
-    public void randomizeOne(int i, int j, int range) {
+    public void randomizeOne(int i, int j, int range, int islandTendency) {
         if (i < 0 || j < 0 || i >= this.height || j >= this.width) {
             return;
         }
@@ -148,7 +168,7 @@ public class Map {
         if (range % 2 == 0) {
             System.out.println("Warning: range should optimally be an odd number. Range is " + range);
         }
-        
+
         double avg = neighborsAverage(i, j);
 
         if (avg == 0) {
@@ -159,10 +179,10 @@ public class Map {
 
         // convert average to int
         int intAvg = (int) Math.round(avg);
-        
-        // tend toward downhill slopes
-        int coinToss = rnd.nextInt(5);
-        if (coinToss < 1) {
+
+        // tend toward downhill slopes repending on island tendency
+        int coinToss = rnd.nextInt(6);
+        if (coinToss < islandTendency) {
             intAvg--;
         }
 
@@ -175,18 +195,18 @@ public class Map {
         if (newInt < 1) {
             newInt = 1;
         }
-        if (newInt > 20) {
-            newInt = 20;
+        if (newInt > 19) {
+            newInt = 19;
         }
 
         intArray[i][j] = newInt;
         //tileArray[i][j] = new Tile(newInt);
     }
-    
+
     // randomize one when neighbors' average is already known
-    public void randomizeOne(int i, int j, int range, double avg) {
-           int intAvg = (int) Math.round(avg);
-        
+/*    public void randomizeOne(int i, int j, int range, double avg) {
+        int intAvg = (int) Math.round(avg);
+
         // tend toward downhill slopes
         int coinToss = rnd.nextInt(5);
         if (coinToss < 1) {
@@ -207,8 +227,7 @@ public class Map {
         }
         intArray[i][j] = newInt;
 
-    }
-
+    }*/
     public double neighborsAverage(int i, int j) {
         int highestNeighbor = 0;
         int lowestNeighbor = 100;
@@ -336,6 +355,37 @@ public class Map {
             avg = 1.0 * sumOfNeighbors / assignedNeighbors;
         }
         return avg;
+    }
+
+    public int neighborsSum(int i, int j) {
+        int sumOfNeighbors = 0;
+
+        if (isAssigned(i - 1, j - 1)) {
+            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j - 1];
+        }
+        if (isAssigned(i - 1, j)) {
+            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j];
+        }
+        if (isAssigned(i - 1, j + 1)) {
+            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j + 1];
+        }
+        if (isAssigned(i, j - 1)) {
+            sumOfNeighbors = sumOfNeighbors + intArray[i][j - 1];
+        }
+        if (isAssigned(i, j + 1)) {
+            sumOfNeighbors = sumOfNeighbors + intArray[i][j + 1];
+        }
+        if (isAssigned(i + 1, j - 1)) {
+            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j - 1];
+        }
+        if (isAssigned(i + 1, j)) {
+            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j];
+        }
+        if (isAssigned(i + 1, j + 1)) {
+            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j + 1];
+        }
+
+        return sumOfNeighbors;
     }
 
     public boolean isAssigned(int i, int j) {

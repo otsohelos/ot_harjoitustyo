@@ -44,10 +44,10 @@ public class Tile {
             return "rgb(215,255,152)";
         } else if (elevation < 15) {
             // low-mid land
-            return "rgb(164,239,123)";
+            return "rgb(254,255,129)";
         } else if (elevation < 18) {
             // high-mid land
-            return "rgb(255,173,56)";
+            return "rgb(242,183,43)";
         } else {
             // highland
             return "rgb(156,98,14)";

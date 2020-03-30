@@ -170,7 +170,7 @@ public class MapTest {
         
         assertTrue(elev1 > 0);
         assertTrue(elev2 > 0);
-        assertTrue(elev2 > 0);
+        assertTrue(elev3 > 0);
     }
     
 }

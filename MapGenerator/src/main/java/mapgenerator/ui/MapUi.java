@@ -15,12 +15,17 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Paint;
 import mapgenerator.domain.Tile;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 
 /**
  *
@@ -35,29 +40,29 @@ public class MapUi extends Application {
 
     public void viewSettings(Stage stage) {
         stage.setTitle("MapGenerator");
-        FlowPane settings = new FlowPane();
+        VBox settings = new VBox();
+        settings.setMinWidth(200);
+        settings.setMinHeight(200);
         TextField heightField = new TextField();
         Label heightLabel = new Label("Height");
         TextField widthField = new TextField();
         Label widthLabel = new Label("Width");
 
-        Button generateButton = new Button("Generate");
         HBox fieldBox = new HBox();
         fieldBox.getChildren().add(heightLabel);
         fieldBox.getChildren().add(heightField);
         fieldBox.getChildren().add(widthLabel);
         fieldBox.getChildren().add(widthField);
-
         settings.getChildren().add(fieldBox);
 
         // make variability selection
         HBox variabilityBox = new HBox();
         RadioButton lowVar = new RadioButton("Low");
         RadioButton highVar = new RadioButton("High");
-        
+
         // select low variability by default
         lowVar.setSelected(true);
-        
+
         ToggleGroup variabilityGroup = new ToggleGroup();
 
         highVar.setToggleGroup(variabilityGroup);
@@ -71,7 +76,36 @@ public class MapUi extends Application {
 
         settings.getChildren().add(variabilityBox);
 
-        settings.getChildren().add(generateButton);
+        // set tendency towards coast or inland
+        HBox islandBox = new HBox();
+        RadioButton coastalButton = new RadioButton("Coastal");
+        RadioButton inlandButton = new RadioButton("Inland");
+        Label islandLabel = new Label("Land type");
+        Label varInfo = new Label("?");
+        varInfo.setFont(new Font("Arial", 24));
+
+        Tooltip varTip = new Tooltip("Coastal is more likely to have large areas of water on the map than Inland.");
+        Tooltip.install(varInfo, varTip);
+
+        islandBox.getChildren().add(islandLabel);
+        islandBox.getChildren().add(coastalButton);
+        islandBox.getChildren().add(inlandButton);
+        islandBox.getChildren().add(varInfo);
+
+        ToggleGroup islandGroup = new ToggleGroup();
+        coastalButton.setToggleGroup(islandGroup);
+        inlandButton.setToggleGroup(islandGroup);
+
+        coastalButton.setSelected(true);
+
+        settings.getChildren().add(islandBox);
+
+        // Generate button
+        Button generateButton = new Button("Generate");
+
+        HBox generateBox = new HBox();
+        generateBox.getChildren().add(generateButton);
+        settings.getChildren().add(generateBox);
 
         generateButton.setOnAction((event) -> {
             int height = Integer.valueOf(heightField.getText());
@@ -85,23 +119,30 @@ public class MapUi extends Application {
             if (height < 5) {
                 height = 5;
             }
-            
+
             int variability = 3;
-            
+
             if (selectedVariability == highVar) {
                 variability = 5;
             }
-            
-            viewMap(stage, height, width, variability);
+
+            boolean coastal = true;
+            RadioButton selectedIsland = (RadioButton) islandGroup.getSelectedToggle();
+
+            if (selectedIsland == inlandButton) {
+                coastal = false;
+            }
+
+            viewMap(stage, height, width, variability, coastal);
         });
         Scene settingsView = new Scene(settings);
         stage.setScene(settingsView);
         stage.show();
     }
 
-    public void viewMap(Stage stage, int height, int width, int variability) {
+    public void viewMap(Stage stage, int height, int width, int variability, boolean coastal) {
         MapCreator mapCreator = new MapCreator(height, width);
-        Tile[][] map = mapCreator.showMap(variability);
+        Tile[][] map = mapCreator.showMap(variability, coastal);
         GridPane mapGrid = new GridPane();
         //mapGrid.setHgap(1);
         //mapGrid.setVgap(1);
@@ -132,7 +173,7 @@ public class MapUi extends Application {
         Button redoButton = new Button("Redo");
         mapPane.getChildren().add(redoButton);
         redoButton.setOnAction((event) -> {
-            viewMap(stage, height, width, variability);
+            viewMap(stage, height, width, variability, coastal);
         });
 
         Button backButton = new Button("Back");

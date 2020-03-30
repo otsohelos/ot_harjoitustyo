@@ -14,7 +14,7 @@ public class MapCreator {
     private Map map;
 
     public MapCreator() {
-        // if no parameters, do 30x40 square map
+        // if no parameters, do 30x40 map
         map = new Map(30, 40);
     }
 
@@ -27,8 +27,8 @@ public class MapCreator {
         return map.getTileArray();
     }
     
-        public Tile[][] showMap(int variability) {
-        map.assignTiles(variability);
+        public Tile[][] showMap(int variability, boolean coastal) {
+        map.assignTiles(variability, coastal);
         return map.getTileArray();
     }
 
