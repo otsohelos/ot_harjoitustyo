@@ -5,27 +5,38 @@
  */
 package mapgenerator.ui;
 
+import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import javax.swing.SwingUtilities;
+import java.io.File;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import mapgenerator.domain.MapCreator;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Paint;
 import mapgenerator.domain.Tile;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -82,9 +93,10 @@ public class MapUi extends Application {
         RadioButton inlandButton = new RadioButton("Inland");
         Label islandLabel = new Label("Land type");
         Label varInfo = new Label("?");
-        varInfo.setFont(new Font("Arial", 24));
+        varInfo.setFont(new Font("Arial", 20));
 
-        Tooltip varTip = new Tooltip("Coastal is more likely to have large areas of water on the map than Inland.");
+        Tooltip varTip = new Tooltip("\"Coastal\" is more likely to have large areas of water on the map than \"Inland\".");
+        varTip.setFont(new Font("Arial", 14));
         Tooltip.install(varInfo, varTip);
 
         islandBox.getChildren().add(islandLabel);
@@ -133,7 +145,7 @@ public class MapUi extends Application {
                 coastal = false;
             }
 
-            viewMap(stage, height, width, variability, coastal);
+            viewMapCanvas(stage, height, width, variability, coastal);
         });
         Scene settingsView = new Scene(settings);
         stage.setScene(settingsView);
@@ -173,7 +185,7 @@ public class MapUi extends Application {
         Button redoButton = new Button("Redo");
         mapPane.getChildren().add(redoButton);
         redoButton.setOnAction((event) -> {
-            viewMap(stage, height, width, variability, coastal);
+            viewMapCanvas(stage, height, width, variability, coastal);
         });
 
         Button backButton = new Button("Back");
@@ -187,6 +199,89 @@ public class MapUi extends Application {
         mapView.getStylesheets().add("mapstyle.css");
 
         stage.setScene(mapView);
+    }
+
+    public void viewMapCanvas(Stage stage, int height, int width, int variability, boolean coastal) {
+        MapCreator mapCreator = new MapCreator(height, width);
+        Tile[][] map = mapCreator.showMap(variability, coastal);
+        int squareSize = 10;
+        int canvasWidth = width * squareSize;
+        int canvasHeight = height * squareSize;
+        Canvas mapCanvas = new Canvas(canvasWidth, canvasHeight);
+
+        for (int i = 0; i < map.length; i++) {
+            //System.out.println("");
+
+            for (int j = 0; j < map[i].length; j++) {
+                String color = map[i][j].getColor();
+                //System.out.print(color + " ");
+                //Rectangle rectangle = new Rectangle(rectSize, rectSize, Paint.valueOf(color));
+
+                int top = map[i][j].getTopBorder();
+                int left = map[i][j].getLeftBorder();
+                int rectHeight = 10 - top;
+                int rectWidth = 10 - left;
+
+                GraphicsContext gc = mapCanvas.getGraphicsContext2D();
+
+                gc.setFill(Paint.valueOf(color));
+                gc.setLineWidth(0);
+
+                gc.fillRect(j * squareSize + left, i * squareSize + top, rectWidth, rectHeight);
+
+                // System.out.println("rectangle, height " + rectHeight + ", width " + rectWidth + ", color " + color);
+            }
+        }
+        //FlowPane mapPane = new FlowPane();
+        VBox mapBox = new VBox();
+        mapBox.getChildren().add(mapCanvas);
+        HBox mapButtonBox = new HBox();
+        Button redoButton = new Button("Redo");
+        mapButtonBox.getChildren().add(redoButton);
+        redoButton.setOnAction((event) -> {
+            viewMap(stage, height, width, variability, coastal);
+        });
+
+        Button backButton = new Button("Back");
+        mapButtonBox.getChildren().add(backButton);
+
+        /*Button saveButton = new Button("Save");
+        saveButton.setOnAction((event2) -> {
+            FileChooser fileChooser = new FileChooser();
+
+            FileChooser.ExtensionFilter extFilter
+                    = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+            fileChooser.getExtensionFilters().add(extFilter);
+
+            //Show save file dialog
+            File file = fileChooser.showSaveDialog(stage);
+            
+            if (file != null) {
+                try {
+                    WritableImage writableImage = new WritableImage(canvasWidth, canvasHeight);
+                    BufferedImage image = new BufferedImage(mapCanvas.getWidth(), mapCanvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+                    Graphics2D graphics = (Graphics2D) image.getGraphics();
+                    
+
+                    ImageIO.write(SwingFXUtils.fromFXImage(snapshot, "png", file));
+                } catch (IOException ex) {
+                    Logger.getLogger(JavaFX_DrawOnCanvas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        })*/
+
+            mapBox.getChildren().add(mapButtonBox);
+
+            backButton.setOnAction((event) -> {
+                viewSettings(stage);
+            });
+
+            Scene mapView = new Scene(mapBox);
+            mapView.getStylesheets().add("mapstyle.css");
+
+            stage.setScene(mapView);
+        
     }
 
     public static void main(String[] args) {

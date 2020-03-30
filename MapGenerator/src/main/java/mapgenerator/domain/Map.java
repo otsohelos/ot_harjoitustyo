@@ -95,7 +95,7 @@ public class Map {
                     int sum = neighborsSum(i, j);
 
                     if (sum > range * 7) {
-                        randomizeOne(i, j, range, islandTendency);
+                        randomizeRecursively(i, j, range, 2, islandTendency);
                     }
                 }
             }
