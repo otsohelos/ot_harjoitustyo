@@ -30,7 +30,7 @@ public class Map {
 
     public void assignTiles(int range) {
         //this.randomizeSmarter(range);
-        this.startRecursively();
+        this.startRecursively(range);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 makeTile(i, j, intArray[i][j]);
@@ -62,17 +62,17 @@ public class Map {
         tileArray[i][j] = tile;
     }
 
-    public void startRecursively() {
+    public void startRecursively(int range) {
         // random spot, central-ish
         int i = rnd.nextInt(height / 3) + height / 3;
         int j = rnd.nextInt(width / 3) + width / 3;
         System.out.println("seed is " + i + ", " + j);
         intArray[i][j] = rnd.nextInt(10) + 9;
-        randomizeRecursively(i + 1, j, 3, 9);
+        randomizeRecursively(i + 1, j, range, 9);
         //this.printIntArray();
     }
 
-    public void startRecursively(int islandTendency) {
+    public void startRecursively(int range, int islandTendency) {
         int i = rnd.nextInt(height / 3) + height / 3;
         int j = rnd.nextInt(width / 3) + width / 3;
         System.out.println("seed is " + i + ", " + j);

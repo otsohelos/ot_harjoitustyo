@@ -12,10 +12,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
-import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Paint;
@@ -34,7 +34,6 @@ public class MapUi extends Application {
     }
 
     public void viewSettings(Stage stage) {
-
         stage.setTitle("MapGenerator");
         FlowPane settings = new FlowPane();
         TextField heightField = new TextField();
@@ -50,11 +49,35 @@ public class MapUi extends Application {
         fieldBox.getChildren().add(widthField);
 
         settings.getChildren().add(fieldBox);
+
+        // make variability selection
+        HBox variabilityBox = new HBox();
+        RadioButton lowVar = new RadioButton("Low");
+        RadioButton highVar = new RadioButton("High");
+        
+        // select low variability by default
+        lowVar.setSelected(true);
+        
+        ToggleGroup variabilityGroup = new ToggleGroup();
+
+        highVar.setToggleGroup(variabilityGroup);
+        lowVar.setToggleGroup(variabilityGroup);
+
+        Label varLabel = new Label("Variability of elevation");
+
+        variabilityBox.getChildren().add(varLabel);
+        variabilityBox.getChildren().add(lowVar);
+        variabilityBox.getChildren().add(highVar);
+
+        settings.getChildren().add(variabilityBox);
+
         settings.getChildren().add(generateButton);
 
         generateButton.setOnAction((event) -> {
             int height = Integer.valueOf(heightField.getText());
             int width = Integer.valueOf(widthField.getText());
+            RadioButton selectedVariability
+                    = (RadioButton) variabilityGroup.getSelectedToggle();
 
             if (width < 5) {
                 width = 5;
@@ -62,16 +85,23 @@ public class MapUi extends Application {
             if (height < 5) {
                 height = 5;
             }
-            viewMap(stage, height, width);
+            
+            int variability = 3;
+            
+            if (selectedVariability == highVar) {
+                variability = 5;
+            }
+            
+            viewMap(stage, height, width, variability);
         });
         Scene settingsView = new Scene(settings);
         stage.setScene(settingsView);
         stage.show();
     }
 
-    public void viewMap(Stage stage, int height, int width) {
+    public void viewMap(Stage stage, int height, int width, int variability) {
         MapCreator mapCreator = new MapCreator(height, width);
-        Tile[][] map = mapCreator.showMap();
+        Tile[][] map = mapCreator.showMap(variability);
         GridPane mapGrid = new GridPane();
         //mapGrid.setHgap(1);
         //mapGrid.setVgap(1);
@@ -102,7 +132,7 @@ public class MapUi extends Application {
         Button redoButton = new Button("Redo");
         mapPane.getChildren().add(redoButton);
         redoButton.setOnAction((event) -> {
-            viewMap(stage, height, width);
+            viewMap(stage, height, width, variability);
         });
 
         Button backButton = new Button("Back");
