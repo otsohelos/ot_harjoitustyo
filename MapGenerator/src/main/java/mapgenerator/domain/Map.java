@@ -24,54 +24,8 @@ public class Map {
 
     }
 
-    /*public void randomize() {
-        int initialInt = (rnd.nextInt(9) + 1);
-        tileArray[0][0] = new Tile(initialInt);
-        intArray[0][0] = initialInt;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                //System.out.println("");
-                if (i != 0 || j != 0) {
-                    boolean aboveIsWater = false;
-                    boolean leftIsWater = false;
-                    int rndInt = (rnd.nextInt(6) - 2);
-                    int above = 4;
-                    int left = 4;
-                    if (i != 0) {
-                        above = tileArray[i - 1][j].getElevation();
-                        aboveIsWater = tileArray[i - 1][j].isWater();
-                    }
-                    //System.out.print(above);
-                    if (j != 0) {
-                        left = tileArray[i][j - 1].getElevation();
-                        leftIsWater = tileArray[i][j - 1].isWater();
-                    }
-                    //System.out.print(left);
-                    int newInt = (above + left + rndInt) / 2;
-                    if (newInt > 10) {
-                        newInt = 10;
-                    }
-                    if (newInt < 1) {
-                        newInt = 1;
-                    }
-                    Tile tile = new Tile(newInt);
-
-                    if (leftIsWater != tile.isWater()) {
-                        tile.setLeftBorder(1);
-                    }
-                    if (aboveIsWater != tile.isWater()) {
-                        tile.setTopBorder(1);
-                    }
-
-                    tileArray[i][j] = tile;
-                    intArray[i][j] = newInt;
-                }
-            }
-        }
-        System.out.println(Arrays.deepToString(intArray).replaceAll("],", "]," + System.getProperty("line.separator")));
-    }*/
     public void assignTiles() {
-        this.assignTiles(5);
+        this.assignTiles(3);
     }
 
     public void assignTiles(int range) {
@@ -108,16 +62,40 @@ public class Map {
         tileArray[i][j] = tile;
     }
 
-    // testing:
     public void startRecursively() {
-        // random spot
-        int i = rnd.nextInt(height - (height / 5)) + height / 10;
-        int j = rnd.nextInt(width - (width / 5)) + width / 10;
+        // random spot, central-ish
+        int i = rnd.nextInt(height / 3) + height / 3;
+        int j = rnd.nextInt(width / 3) + width / 3;
         System.out.println("seed is " + i + ", " + j);
-        randomizeRecursively(i, j, 3, 9);
+        intArray[i][j] = rnd.nextInt(10) + 9;
+        randomizeRecursively(i + 1, j, 3, 9);
+        //this.printIntArray();
     }
 
-    public void randomizeRecursively(int i, int j, int range) {
+    public void startRecursively(int islandTendency) {
+        int i = rnd.nextInt(height / 3) + height / 3;
+        int j = rnd.nextInt(width / 3) + width / 3;
+        System.out.println("seed is " + i + ", " + j);
+        intArray[i][j] = rnd.nextInt(10) + 9;
+        randomizeRecursively(i + 1, j, 3, 9);
+        fillTheRest(3);
+    }
+    
+        public void fillTheRest(int range) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (!isAssigned(i, j)) {
+                    double avg = neighborsAverage(i, j);
+                    
+                    if (avg > range) {
+                    randomizeOne(i, j, range, avg);}
+                }
+            }
+        }
+
+    }
+
+    /*public void randomizeRecursively(int i, int j, int range) {
         if (i < 0 || j < 0 || i >= height || j >= width || isAssigned(i, j)) {
             return;
         } else {
@@ -127,9 +105,7 @@ public class Map {
         randomizeRecursively(i, j - i, range);
         randomizeRecursively(i, j + i, range);
         randomizeRecursively(i + 1, j, range);
-
-    }
-
+    } */
     // this one has a kill switch:
     public void randomizeRecursively(int i, int j, int range, int stopWhen) {
         if (i < 0 || j < 0 || i >= height || j >= width || isAssigned(i, j) || stopWhen < 1) {
@@ -159,212 +135,6 @@ public class Map {
         if (four > 0) {
             randomizeRecursively(i, j + 1, range, stopWhen);
         }
-
-    }
-
-    public void randomizeSmarter() {
-        // if no variability number, use 3
-        randomizeSmarter(3);
-    }
-
-    public void randomizeSmarter(int range) {
-
-        // determine amount of initial free points
-        int dropPoints = howManyDropPoints();
-
-        // create array of i + j coordinates of drop points
-        int[][] dropPointsArray = randomizeLocationOfDropPoints(dropPoints);
-
-        // assign random heights to dropPointsArray points
-        // and put them on the map
-        // no zeroes
-        for (int k = 0; k < dropPoints; k++) {
-            int freeRandomNumber = rnd.nextInt(20) + 1;
-            int i = dropPointsArray[k][0];
-            int j = dropPointsArray[k][1];
-            intArray[i][j] = freeRandomNumber;
-        }
-
-        // randomize directions to grow
-        int[] directionArray = new int[dropPoints];
-        for (int k = 0; k < dropPoints; k++) {
-            int direction = rnd.nextInt(8);
-            directionArray[k] = direction;
-        }
-        System.out.println("initial drop points");
-        printIntArray();
-        // start growing map from drop points
-        int[][] dropPointsArray2 = directionalGrow(dropPointsArray, directionArray, range);
-        System.out.println("growing directionally round 1");
-        printIntArray();
-
-        int[][] dropPointsArray3 = directionalGrow(dropPointsArray2, directionArray, range);
-
-        int[][] dropPointsArray4 = directionalGrow(dropPointsArray3, directionArray, range);
-        //System.out.println("");
-        //printIntArray();
-        int[][] dropPointsArray5 = directionalGrow(dropPointsArray4, directionArray, range);
-        int[][] dropPointsArray6 = directionalGrow(dropPointsArray5, directionArray, range);
-        int[][] dropPointsArray7 = directionalGrow(dropPointsArray6, directionArray, range);
-        System.out.println("grown.");
-        printIntArray();
-        //System.out.println("growing in 4 directions");
-        grow(dropPointsArray, range);
-
-        printIntArray();
-        System.out.println("growing in 4 directions");
-        grow(dropPointsArray2, range);
-        //printIntArray();
-        System.out.println("growing in 4 directions");
-        grow(dropPointsArray3, range);
-        //printIntArray();
-        //System.out.println("growing in 4 directions");
-        grow(dropPointsArray4, range);
-        //printIntArray();
-        System.out.println("growing in 4 directions");
-        grow(dropPointsArray5, range);
-        grow(dropPointsArray6, range);
-        grow(dropPointsArray7, range);
-        printIntArray();
-
-        System.out.println("growing from center");
-        growFromCenter(range);
-        printIntArray();
-        System.out.println("filling the rest yay");
-        fillTheRest(range);
-        printIntArray();
-    }
-
-    public void fillTheRest(int range) {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (!isAssigned(i, j)) {
-                    randomizeOne(i, j, range);
-                }
-            }
-        }
-
-    }
-
-    public void growFromCenter(int range) {
-
-        // start from center
-        int i = this.height / 2;
-        int origI = i;
-        int j = this.width / 2;
-        int origJ = j;
-
-        randomizeOne(i, j, range);
-
-        // south, east and southeast:
-        while (i < this.height && j < this.width) {
-            i++;
-            randomizeOne(i, j, range);
-            growOne(i, j, range);
-            randomizeOne(i, origJ, range);
-            growOne(i, origJ, range);
-            j++;
-
-            randomizeOne(i, j, range);
-            growOne(i, j, range);
-            randomizeOne(origI, j, range);
-            growOne(origI, j, range);
-        }
-        i = this.height / 2;
-        j = this.width / 2;
-
-        // north, west and northwest:
-        while (i >= 0 && j >= 0) {
-            i--;
-            randomizeOne(i, j, range);
-            growOne(i, j, range);
-
-            randomizeOne(origI, j, range);
-            growOne(origI, j, range);
-            j--;
-            randomizeOne(i, j, range);
-            growOne(i, j, range);
-            randomizeOne(origI, j, range);
-            growOne(origI, j, range);
-
-        }
-        i = this.height / 2;
-        j = this.width / 2;
-
-        // northeast:
-        while (i >= 0 && j < this.width) {
-            randomizeOne(i, j, range);
-            growOne(i, j, range);
-            i--;
-
-            randomizeOne(i, j, range);
-            growOne(i, j, range);
-
-            j++;
-
-        }
-
-        i = this.height / 2;
-        j = this.width / 2;
-
-        // southwest:
-        while (i < this.width && j >= 0) {
-            randomizeOne(i, j, range);
-            growOne(i, j, range);
-            i++;
-            randomizeOne(i, j, range);
-            growOne(i, j, range);
-            j--;
-        }
-    }
-
-    public void growOne(int i, int j, int range) {
-        randomizeOne(i, j - 1, range);
-        randomizeOne(i - 1, j, range);
-        randomizeOne(i + 1, j, range);
-        randomizeOne(i, j + 1, range);
-    }
-
-    public void grow(int[][] array, int range) {
-        // expand map in four directions 
-        for (int k = 0; k < array[0].length; k++) {
-            randomizeOne(array[k][0], array[k][1] - 1, range);
-            randomizeOne(array[k][0] - 1, array[k][1], range);
-            randomizeOne(array[k][0] + 1, array[k][1], range);
-            randomizeOne(array[k][0], array[k][1] + 1, range);
-        }
-    }
-
-    public int[][] directionalGrow(int[][] dropPointsArray, int[] directionArray, int range) {
-        // determine direction of grow
-        //System.out.println("growing in random directions");
-        for (int k = 0; k < dropPointsArray.length; k++) {
-            int direction = directionArray[k];
-            int newI = dropPointsArray[k][0];
-            int newJ = dropPointsArray[k][1];
-            //System.out.println("old I " + newI + ", old J " + newJ);
-
-            // determine the coordinates of where to move
-            if (direction < 3 && newI > 0) {
-                newI--;
-            } else if (direction > 4 && newI < height - 1) {
-                newI++;
-            }
-            if ((direction == 0 || direction == 3 || direction == 5) && newJ > 0) {
-                newJ--;
-            } else if ((direction == 2 || direction == 4 || direction == 7)
-                    && newJ < width - 1) {
-                newJ++;
-            }
-            dropPointsArray[k][0] = newI;
-            dropPointsArray[k][1] = newJ;
-            //System.out.println("new I " + newI + ", new J " + newJ);
-
-            if (intArray[newI][newJ] == 0) {
-                randomizeOne(newI, newJ, range);
-            }
-        }
-        return dropPointsArray;
     }
 
     public void randomizeOne(int i, int j, int range) {
@@ -374,16 +144,79 @@ public class Map {
         if (isAssigned(i, j)) {
             return;
         }
+        // warn for even ranges
         if (range % 2 == 0) {
-            System.out.println("Warning: range should be an odd number. Range is " + range);
+            System.out.println("Warning: range should optimally be an odd number. Range is " + range);
+        }
+        
+        double avg = neighborsAverage(i, j);
+
+        if (avg == 0) {
+            intArray[i][j] = rnd.nextInt(20) + 1;
+            System.out.println("free randomization done!");
+            return;
         }
 
+        // convert average to int
+        int intAvg = (int) Math.round(avg);
+        
+        // tend toward downhill slopes
+        int coinToss = rnd.nextInt(5);
+        if (coinToss < 1) {
+            intAvg--;
+        }
+
+        int rndInt = (rnd.nextInt(range) - range / 2);
+
+        //System.out.println("sum of neighbors: " + sumOfNeighbors);
+        int newInt = intAvg + rndInt;
+        // ensure that newInt is within bounds
+
+        if (newInt < 1) {
+            newInt = 1;
+        }
+        if (newInt > 20) {
+            newInt = 20;
+        }
+
+        intArray[i][j] = newInt;
+        //tileArray[i][j] = new Tile(newInt);
+    }
+    
+    // randomize one when neighbors' average is already known
+    public void randomizeOne(int i, int j, int range, double avg) {
+           int intAvg = (int) Math.round(avg);
+        
+        // tend toward downhill slopes
+        int coinToss = rnd.nextInt(5);
+        if (coinToss < 1) {
+            intAvg--;
+        }
+
+        int rndInt = (rnd.nextInt(range) - range / 2);
+
+        //System.out.println("sum of neighbors: " + sumOfNeighbors);
+        int newInt = intAvg + rndInt;
+        // ensure that newInt is within bounds
+
+        if (newInt < 1) {
+            newInt = 1;
+        }
+        if (newInt > 20) {
+            newInt = 20;
+        }
+        intArray[i][j] = newInt;
+
+    }
+
+    public double neighborsAverage(int i, int j) {
         int highestNeighbor = 0;
         int lowestNeighbor = 100;
 
         int assignedNeighbors = 0;
         int sumOfNeighbors = 0;
 
+        // check already assigned neighbors' values and calculate their sum
         if (isAssigned(i - 1, j - 1)) {
             assignedNeighbors++;
             sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j - 1];
@@ -467,56 +300,42 @@ public class Map {
 
         // if no neighbors:
         if (assignedNeighbors == 0) {
-            intArray[i][j] = rnd.nextInt(20) + 1;
-            System.out.println("free randomization done!");
-            return;
+            return 0;
         }
 
         // assign new tile a value within range
-        int rndInt = (rnd.nextInt(range) - range / 2);
+        if (assignedNeighbors == 1) {
+            return 1.0 * sumOfNeighbors;
+        }
+
         //System.out.println(rndInt);
         //System.out.println(assignedNeighbors);
         //System.out.println(sumOfNeighbors);
+        double avg = 1.0 * sumOfNeighbors / assignedNeighbors;
 
-        int avg = sumOfNeighbors / assignedNeighbors;
-
-        // if two very disparate neighbors
+        // check if two very disparate neighbors and pick one of them or both
         if (assignedNeighbors == 2 && highestNeighbor - avg > 5) {
-            assignedNeighbors = 1;
-            int coinToss = rnd.nextInt(2);
+            int coinToss = rnd.nextInt(3);
             if (coinToss == 0) {
+                assignedNeighbors--;
                 sumOfNeighbors = highestNeighbor;
-            } else {
+            } else if (coinToss == 1) {
+                assignedNeighbors--;
                 sumOfNeighbors = lowestNeighbor;
             }
             //System.out.println("reassigned, sum of neighbors is " + sumOfNeighbors);
-        }
-
-        // take out biggest outliers
-        if (assignedNeighbors > 2) {
+        } // take biggest outliers closer to average
+        else if (assignedNeighbors > 2) {
             if (highestNeighbor - avg > 4) {
-                sumOfNeighbors = sumOfNeighbors - highestNeighbor;
-                assignedNeighbors--;
+                sumOfNeighbors = sumOfNeighbors - highestNeighbor + (int) avg;
             }
             if (avg - lowestNeighbor > 4) {
-                sumOfNeighbors = sumOfNeighbors - lowestNeighbor;
-                assignedNeighbors--;
+                sumOfNeighbors = sumOfNeighbors - lowestNeighbor + (int) avg;
             }
-        }
 
-        //System.out.println("sum of neighbors: " + sumOfNeighbors);
-        int newInt = sumOfNeighbors / assignedNeighbors + rndInt;
-        // ensure that newInt is positive
-
-        if (newInt < 1) {
-            newInt = 1;
+            avg = 1.0 * sumOfNeighbors / assignedNeighbors;
         }
-        if (newInt > 20) {
-            newInt = 20;
-        }
-
-        intArray[i][j] = newInt;
-        //tileArray[i][j] = new Tile(newInt);
+        return avg;
     }
 
     public boolean isAssigned(int i, int j) {
@@ -570,7 +389,7 @@ public class Map {
         return dropPoints;
     }
 
-    public Tile[][] show() {
+    public Tile[][] getTileArray() {
 
         return tileArray;
     }

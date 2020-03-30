@@ -23,7 +23,7 @@ public class MapCreator {
 
     public Tile[][] showMap() {
         map.assignTiles();
-        return map.show();
+        return map.getTileArray();
     }
 
 }

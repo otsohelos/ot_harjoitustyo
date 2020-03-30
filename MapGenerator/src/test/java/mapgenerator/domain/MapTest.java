@@ -48,7 +48,7 @@ public class MapTest {
 
     @Test
     public void mapReturnsTileArrayOfCorrectSize() {
-        Tile[][] tileArray = map.show();
+        Tile[][] tileArray = map.getTileArray();
 
         assertEquals(10, tileArray.length);
         assertEquals(15, tileArray[0].length);
@@ -56,8 +56,8 @@ public class MapTest {
 
     @Test
     public void intArrayHasCorrectAmountOfNumbers() {
-        map.randomize();
-        map.show();
+        map.assignTiles();
+        map.getTileArray();
         int[][] intArray = map.getIntArray();
 
         assertEquals(10, intArray.length);
@@ -83,9 +83,9 @@ public class MapTest {
 
         assertFalse(nonZero);
 
-        map.randomize();
+        map.assignTiles();
 
-        map.show();
+        map.getTileArray();
         int[][] intArray2 = map.getIntArray();
 
         for (int i = 0; i < 10; i++) {
@@ -107,9 +107,9 @@ public class MapTest {
         boolean underZero = false;
         boolean overNine = false;
 
-        map.randomize();
+        map.assignTiles();
 
-        map.show();
+        map.getTileArray();
         int[][] intArray = map.getIntArray();
 
         for (int i = 0; i < 10; i++) {
@@ -141,7 +141,7 @@ public class MapTest {
     @Test
     public void isAssignedWorks() {
         assertFalse(tinyMap.isAssigned(0, 0));
-        tinyMap.randomize();
+        tinyMap.assignTiles();
         assertTrue(tinyMap.isAssigned(1, 1));
     }
 

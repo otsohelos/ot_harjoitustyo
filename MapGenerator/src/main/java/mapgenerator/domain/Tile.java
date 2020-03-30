@@ -5,11 +5,17 @@ public class Tile {
     private int elevation;
     private int topBorder;
     private int leftBorder;
+    private int terrain;
 
     public Tile(int elevation) {
         this.elevation = elevation;
         this.topBorder = 0;
         this.leftBorder = 0;
+        this.terrain = 0;
+    }
+    
+    public int getTerrain() {
+        return terrain;
     }
 
     public int getElevation() {
@@ -25,19 +31,26 @@ public class Tile {
 
     public String getColor() {
         if (elevation < 2) {
-            return "rgb(35, 50, 120)";
+            // deep water
+            return "rgb(0,115,196)";
         } else if (elevation < 4) {
-            return "rgb(67, 127, 255)";
+            // mid-depth water
+            return "rgb(42,149,244)";
         } else if (elevation < 6) {
-            return "rgb(133, 200, 255)";
+            // shallow water
+            return "rgb(149,205,255)";
         } else if (elevation < 10) {
-            return "rgb(73, 151, 1)";
+            // lowland
+            return "rgb(215,255,152)";
         } else if (elevation < 15) {
-            return "rgb(75, 99, 4)";
+            // low-mid land
+            return "rgb(164,239,123)";
         } else if (elevation < 18) {
-            return "rgb(43, 43, 7)";
+            // high-mid land
+            return "rgb(255,173,56)";
         } else {
-            return "rgb(15, 15, 9)";
+            // highland
+            return "rgb(156,98,14)";
         }
     }
 

@@ -7,5 +7,6 @@
 | 23 Mar | 4 | Program logic rethought, program makes colored random 10x10 grid |
 | 24 Mar | 3 | Functionalities added: Redo and size options; tests started |
 | 26 Mar | 8 | Algorithm re-done to be less constrained, lots of testing |
+| 30 Mar |  | Color work; started building terrain functionality |
 
-TOTAL HOURS 12
+*Total hours* 20
