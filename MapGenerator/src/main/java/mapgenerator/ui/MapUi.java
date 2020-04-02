@@ -88,7 +88,7 @@ public class MapUi extends Application {
             if (selectedIsland == 2) {
                 coastal = false;
             }
-            
+
             viewMapCanvas(stage, height, width, variability, coastal);
         });
         Scene settingsView = new Scene(settings);

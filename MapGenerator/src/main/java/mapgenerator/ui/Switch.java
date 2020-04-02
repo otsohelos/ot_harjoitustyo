@@ -2,6 +2,7 @@ package mapgenerator.ui;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 
@@ -12,15 +13,15 @@ import javafx.scene.layout.HBox;
 class Switch {
 
     private HBox box;
-    private RadioButton button1;
-    private RadioButton button2;
+    private ToggleButton button1;
+    private ToggleButton button2;
     private ToggleGroup group;
     private Label label;
     private Tip tip;
 
     public Switch(String labelString, String string1, String string2, String tipString) {
-        this.button1 = new RadioButton(string1);
-        this.button2 = new RadioButton(string2);
+        this.button1 = new ToggleButton(string1);
+        this.button2 = new ToggleButton(string2);
         this.group = new ToggleGroup();
         button1.setSelected(true);
         button1.setToggleGroup(group);
@@ -39,7 +40,7 @@ class Switch {
     }
 
     public int getSelected() {
-        RadioButton selectedButton = (RadioButton) group.getSelectedToggle();
+        ToggleButton selectedButton = (ToggleButton) group.getSelectedToggle();
         if (selectedButton == button1) {
             return 1;
         }
