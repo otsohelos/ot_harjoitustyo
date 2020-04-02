@@ -13,15 +13,16 @@ public class Map {
     private int width;
     private Tile[][] tileArray;
     private int[][] intArray;
-    private Random rnd;
+    //private Random rnd;
+    private Randomizer rzr;
 
     public Map(int height, int width) {
         this.height = height;
         this.width = width;
         this.intArray = new int[height][width];
         this.tileArray = new Tile[height][width];
-        this.rnd = new Random();
-
+        this.rzr = new Randomizer();
+        //this.rnd = new Random();
     }
 
     public void assignTiles() {
@@ -67,10 +68,10 @@ public class Map {
     }
 
     public void startRecursively(int range, int islandTendency) {
-        int i = rnd.nextInt(height / 3) + height / 3;
-        int j = rnd.nextInt(width / 3) + width / 3;
+        int i = rzr.randomizePlus((height / 3), (height / 3));
+        int j = rzr.randomizePlus((width / 3), (width / 3));
         System.out.println("seed is " + i + ", " + j);
-        intArray[i][j] = rnd.nextInt(10) + 9;
+        intArray[i][j] = rzr.randomizePlus(10, 9);
         randomizeRecursively(i + 1, j, range, 9, islandTendency);
         //System.out.println("before fillTheRest:");
         //this.printIntArray();
@@ -94,122 +95,86 @@ public class Map {
         }
     }
 
-
     // randomize recursively with a kill switch:
     public void randomizeRecursively(int i, int j, int range, int stopWhen, int islandTendency) {
         if (i < 0 || j < 0 || i >= height || j >= width || isAssigned(i, j) || stopWhen < 1) {
             return;
         }
         randomizeOne(i, j, range, islandTendency);
+
         // only stop at the sea
         if (intArray[i][j] < 5) {
-            int coinToss = rnd.nextInt(3);
-            stopWhen = stopWhen - coinToss / 2;
+            stopWhen = stopWhen - (rzr.randomize(3) / 2);
             //System.out.println("coinToss " + coinToss + ", stopWhen " + stopWhen);
         }
-        int one = rnd.nextInt(3);
-        int two = rnd.nextInt(3);
-        int three = rnd.nextInt(3);
-        int four = rnd.nextInt(3);
 
+        growRecursively(i, j, range, stopWhen, islandTendency);
+    }
+
+    public void growRecursively(int i, int j, int range, int stopWhen, int islandTendency) {
+
+        int[][] neighborsWithRandomness = {{rzr.randomize(3), i - 1, j},
+        {rzr.randomize(3), i + 1, j}, {rzr.randomize(3), i, j - 1},
+        {rzr.randomize(3), i, j + 1}};
         // make sure that every square tries to grow in at least one direction
         int grown = 0;
-
         while (grown < 1) {
-            if (one > 0) {
-                randomizeRecursively(i - 1, j, range, stopWhen, islandTendency);
-                grown++;
+            for (int k = 0; k < neighborsWithRandomness.length; k++) {
+                if (neighborsWithRandomness[k][0] > 0) {
+                    randomizeRecursively(neighborsWithRandomness[k][1],
+                            neighborsWithRandomness[k][2], range,
+                            stopWhen, islandTendency);
+                    grown++;
+                    System.out.println("i is " + i + ", j is " + j);
+                    System.out.println("randomized; grown is " + grown);
+                }
             }
-            if (two > 0) {
-                randomizeRecursively(i + 1, j, range, stopWhen, islandTendency);
-                grown++;
+            // randomize them again
+            for (int k = 0; k < neighborsWithRandomness.length; k++) {
+                neighborsWithRandomness[k][0] = rzr.randomize(3);
             }
-            if (three > 0) {
-                randomizeRecursively(i, j - 1, range, stopWhen, islandTendency);
-                grown++;
-            }
-            if (four > 0) {
-                randomizeRecursively(i, j + 1, range, stopWhen, islandTendency);
-                grown++;
-            }
-            one = rnd.nextInt(3);
-            two = rnd.nextInt(3);
-            three = rnd.nextInt(3);
-            four = rnd.nextInt(3);
         }
     }
 
     public void randomizeOne(int i, int j, int range, int islandTendency) {
         if (i < 0 || j < 0 || i >= this.height || j >= this.width) {
             return;
-        }
-        if (isAssigned(i, j)) {
+        } else if (isAssigned(i, j)) {
             return;
-        }
-        // warn for even ranges
-        if (range % 2 == 0) {
+        } else if (range % 2 == 0) {
+            // warn for even ranges
             System.out.println("Warning: range should optimally be an odd number. Range is " + range);
         }
 
         double avg = neighborsAverage(i, j);
 
         if (avg == 0) {
-            intArray[i][j] = rnd.nextInt(20) + 1;
-            System.out.println("free randomization done!");
+            intArray[i][j] = rzr.randomizePlus(20, 1);
+            //System.out.println("free randomization done!");
             return;
         }
 
-        // convert average to int
+        // convert average to int witn rounding either up or down
         int intAvg = (int) Math.round(avg);
 
         // tend toward downhill slopes repending on island tendency
-        int coinToss = rnd.nextInt(6);
-        if (coinToss < islandTendency) {
+        if (rzr.isSmaller(7, islandTendency)) {
             intAvg--;
         }
 
-        int rndInt = (rnd.nextInt(range) - range / 2);
-
         //System.out.println("sum of neighbors: " + sumOfNeighbors);
-        int newInt = intAvg + rndInt;
-        // ensure that newInt is within bounds
+        int newInt = intAvg + rzr.randomizePlus(range, (range / (-2)));
+        //System.out.println("newInt is " + newInt);
 
+        // ensure that newInt is within bounds
         if (newInt < 1) {
             newInt = 1;
-        }
-        if (newInt > 19) {
+        } else if (newInt > 19) {
             newInt = 19;
         }
-
         intArray[i][j] = newInt;
-        //tileArray[i][j] = new Tile(newInt);
     }
 
-    // randomize one when neighbors' average is already known
-/*    public void randomizeOne(int i, int j, int range, double avg) {
-        int intAvg = (int) Math.round(avg);
-
-        // tend toward downhill slopes
-        int coinToss = rnd.nextInt(5);
-        if (coinToss < 1) {
-            intAvg--;
-        }
-
-        int rndInt = (rnd.nextInt(range) - range / 2);
-
-        //System.out.println("sum of neighbors: " + sumOfNeighbors);
-        int newInt = intAvg + rndInt;
-        // ensure that newInt is within bounds
-
-        if (newInt < 1) {
-            newInt = 1;
-        }
-        if (newInt > 20) {
-            newInt = 20;
-        }
-        intArray[i][j] = newInt;
-
-    }*/
     public double neighborsAverage(int i, int j) {
         int highestNeighbor = 0;
         int lowestNeighbor = 100;
@@ -217,85 +182,22 @@ public class Map {
         int assignedNeighbors = 0;
         int sumOfNeighbors = 0;
 
+        int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j},
+        {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1},
+        {i + 1, j}, {i + 1, j - 1}};
+
         // check already assigned neighbors' values and calculate their sum
-        if (isAssigned(i - 1, j - 1)) {
-            assignedNeighbors++;
-            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j - 1];
-            if (intArray[i - 1][j - 1] < lowestNeighbor) {
-                lowestNeighbor = intArray[i - 1][j - 1];
-            }
-            if (intArray[i - 1][j - 1] > highestNeighbor) {
-                highestNeighbor = intArray[i - 1][j - 1];
-            }
-        }
-        if (isAssigned(i - 1, j)) {
-            assignedNeighbors++;
-            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j];
-            if (intArray[i - 1][j] < lowestNeighbor) {
-                lowestNeighbor = intArray[i - 1][j];
-            }
-            if (intArray[i - 1][j] > highestNeighbor) {
-                highestNeighbor = intArray[i - 1][j];
-            }
-        }
-        if (isAssigned(i - 1, j + 1)) {
-            assignedNeighbors++;
-            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j + 1];
-            if (intArray[i - 1][j + 1] < lowestNeighbor) {
-                lowestNeighbor = intArray[i - 1][j + 1];
-            }
-            if (intArray[i - 1][j + 1] > highestNeighbor) {
-                highestNeighbor = intArray[i - 1][j + 1];
-            }
-        }
-        if (isAssigned(i, j - 1)) {
-            assignedNeighbors++;
-            sumOfNeighbors = sumOfNeighbors + intArray[i][j - 1];
-            if (intArray[i][j - 1] < lowestNeighbor) {
-                lowestNeighbor = intArray[i][j - 1];
-            }
-            if (intArray[i][j - 1] > highestNeighbor) {
-                highestNeighbor = intArray[i][j - 1];
-            }
-        }
-        if (isAssigned(i, j + 1)) {
-            assignedNeighbors++;
-            sumOfNeighbors = sumOfNeighbors + intArray[i][j + 1];
-            if (intArray[i][j + 1] < lowestNeighbor) {
-                lowestNeighbor = intArray[i][j + 1];
-            }
-            if (intArray[i][j + 1] > highestNeighbor) {
-                highestNeighbor = intArray[i][j + 1];
-            }
-        }
-        if (isAssigned(i + 1, j - 1)) {
-            assignedNeighbors++;
-            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j - 1];
-            if (intArray[i + 1][j - 1] < lowestNeighbor) {
-                lowestNeighbor = intArray[i + 1][j - 1];
-            }
-            if (intArray[i + 1][j - 1] > highestNeighbor) {
-                highestNeighbor = intArray[i + 1][j - 1];
-            }
-        }
-        if (isAssigned(i + 1, j)) {
-            assignedNeighbors++;
-            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j];
-            if (intArray[i + 1][j] < lowestNeighbor) {
-                lowestNeighbor = intArray[i + 1][j];
-            }
-            if (intArray[i + 1][j] > highestNeighbor) {
-                highestNeighbor = intArray[i + 1][j];
-            }
-        }
-        if (isAssigned(i + 1, j + 1)) {
-            assignedNeighbors++;
-            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j + 1];
-            if (intArray[i + 1][j + 1] < lowestNeighbor) {
-                lowestNeighbor = intArray[i + 1][j + 1];
-            }
-            if (intArray[i + 1][j + 1] > highestNeighbor) {
-                highestNeighbor = intArray[i + 1][j + 1];
+        for (int k = 0; k < neighborCoordinates.length; k++) {
+            if (isAssigned(neighborCoordinates[k][0], neighborCoordinates[k][1])) {
+                assignedNeighbors++;
+                int value = intArray[neighborCoordinates[k][0]][neighborCoordinates[k][1]];
+                sumOfNeighbors = sumOfNeighbors + value;
+                if (value < lowestNeighbor) {
+                    lowestNeighbor = value;
+                }
+                if (value > highestNeighbor) {
+                    highestNeighbor = value;
+                }
             }
         }
 
@@ -316,7 +218,7 @@ public class Map {
 
         // check if two very disparate neighbors and pick one of them or both
         if (assignedNeighbors == 2 && highestNeighbor - avg > 5) {
-            int coinToss = rnd.nextInt(3);
+            int coinToss = rzr.randomize(3);
             if (coinToss == 0) {
                 assignedNeighbors--;
                 sumOfNeighbors = highestNeighbor;
@@ -342,31 +244,16 @@ public class Map {
     public int neighborsSum(int i, int j) {
         int sumOfNeighbors = 0;
 
-        if (isAssigned(i - 1, j - 1)) {
-            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j - 1];
-        }
-        if (isAssigned(i - 1, j)) {
-            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j];
-        }
-        if (isAssigned(i - 1, j + 1)) {
-            sumOfNeighbors = sumOfNeighbors + intArray[i - 1][j + 1];
-        }
-        if (isAssigned(i, j - 1)) {
-            sumOfNeighbors = sumOfNeighbors + intArray[i][j - 1];
-        }
-        if (isAssigned(i, j + 1)) {
-            sumOfNeighbors = sumOfNeighbors + intArray[i][j + 1];
-        }
-        if (isAssigned(i + 1, j - 1)) {
-            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j - 1];
-        }
-        if (isAssigned(i + 1, j)) {
-            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j];
-        }
-        if (isAssigned(i + 1, j + 1)) {
-            sumOfNeighbors = sumOfNeighbors + intArray[i + 1][j + 1];
-        }
+        int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j},
+        {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1},
+        {i + 1, j}, {i + 1, j - 1}};
 
+        for (int k = 0; k < neighborCoordinates.length; k++) {
+            if (isAssigned(neighborCoordinates[k][0], neighborCoordinates[k][1])) {
+                sumOfNeighbors = sumOfNeighbors
+                        + intArray[neighborCoordinates[k][0]][neighborCoordinates[k][1]];
+            }
+        }
         return sumOfNeighbors;
     }
 
@@ -411,17 +298,6 @@ public class Map {
         System.out.println("");
     }
 
-//        public void printIntArrayWithBorders() {
-//        for (int i = 0; i < height; i++) {
-//            System.out.println("");
-//            for (int j = 0; j < width; j++) {
-//                System.out.print(intArray[i][j]);
-//                System.out.print(tileArray[i][j].getTopBorder());
-//                System.out.print(tileArray[i][j].getLeftBorder());
-//                System.out.print("(" + i + j + ") ");
-//            }
-//        }
-//    }
     public int[][] getIntArray() {
         return intArray;
     }

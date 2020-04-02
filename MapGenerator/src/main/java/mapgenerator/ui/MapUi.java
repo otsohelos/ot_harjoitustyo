@@ -5,14 +5,6 @@
  */
 package mapgenerator.ui;
 
-import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.*;
-import javax.swing.SwingUtilities;
-import java.io.File;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
@@ -21,24 +13,13 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Paint;
 import mapgenerator.domain.Tile;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.FileChooser;
-import javax.imageio.ImageIO;
 
 /**
  *
@@ -55,75 +36,26 @@ public class MapUi extends Application {
         stage.setTitle("MapGenerator");
         VBox settings = new VBox();
         settings.setSpacing(10);
-        settings.setPadding(new Insets(10,10,10,10));
-        //settings.setMinWidth(200);
-        //settings.setMinHeight(200);
+        settings.setPadding(new Insets(10, 10, 10, 10));
         Label headerLabel = new Label("MapGenerator settings");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 15));
-        settings.setPadding(new Insets(10,0,10,10));
-        
-        TextField heightField = new TextField();
-        Label heightLabel = new Label("Height");
-        TextField widthField = new TextField();
-        Label widthLabel = new Label("Width");
-        
-        Tip sizeTip = new Tip("Values between 20 and 100 get best results.");
+        settings.setPadding(new Insets(10, 0, 10, 10));
 
-        HBox fieldBox = new HBox();
         settings.getChildren().add(headerLabel);
-        fieldBox.getChildren().add(heightLabel);
-        fieldBox.getChildren().add(heightField);
-        fieldBox.getChildren().add(widthLabel);
-        fieldBox.getChildren().add(widthField);
-        fieldBox.getChildren().add(sizeTip.getTip());
-        settings.getChildren().add(fieldBox);
 
-        // make variability selection
-        HBox variabilityBox = new HBox();
-        RadioButton lowVar = new RadioButton("Low");
-        RadioButton highVar = new RadioButton("High");
+        FieldBox fieldBox = new FieldBox();
 
-        // select low variability by default
-        lowVar.setSelected(true);
+        settings.getChildren().add(fieldBox.getBox());
 
-        ToggleGroup variabilityGroup = new ToggleGroup();
-
-        highVar.setToggleGroup(variabilityGroup);
-        lowVar.setToggleGroup(variabilityGroup);
-
-        Label varLabel = new Label("Variability of elevation");
-
-        variabilityBox.getChildren().add(varLabel);
-        variabilityBox.getChildren().add(lowVar);
-        variabilityBox.getChildren().add(highVar);
-        
-        Tip varTip = new Tip("How quickly the elevation changes");
-        
-        variabilityBox.getChildren().add(varTip.getTip());
-
-        settings.getChildren().add(variabilityBox);
+        // set variability of elevation
+        Switch varSwitch = new Switch("Variability of elevation", "Low", "High", "How quickly the elevation changes");
+        settings.getChildren().add(varSwitch.getBox());
 
         // set tendency towards coast or inland
-        HBox islandBox = new HBox();
-        RadioButton coastalButton = new RadioButton("Coastal");
-        RadioButton inlandButton = new RadioButton("Inland");
-        Label islandLabel = new Label("Land type");
+        Switch coastalSwitch = new Switch("Land type", "Coastal", "Inland",
+                "\"Coastal\" is more likely to have large areas of water on the map than \"Inland\".");
 
-        Tip coastTip = new Tip("\"Coastal\" is more likely to have large areas of water on the map than \"Inland\".");
-        
-        
-        islandBox.getChildren().add(islandLabel);
-        islandBox.getChildren().add(coastalButton);
-        islandBox.getChildren().add(inlandButton);
-        islandBox.getChildren().add(coastTip.getTip());
-
-        ToggleGroup islandGroup = new ToggleGroup();
-        coastalButton.setToggleGroup(islandGroup);
-        inlandButton.setToggleGroup(islandGroup);
-
-        coastalButton.setSelected(true);
-
-        settings.getChildren().add(islandBox);
+        settings.getChildren().add(coastalSwitch.getBox());
 
         // Generate button
         Button generateButton = new Button("Generate");
@@ -133,10 +65,9 @@ public class MapUi extends Application {
         settings.getChildren().add(generateBox);
 
         generateButton.setOnAction((event) -> {
-            int height = Integer.valueOf(heightField.getText());
-            int width = Integer.valueOf(widthField.getText());
-            RadioButton selectedVariability
-                    = (RadioButton) variabilityGroup.getSelectedToggle();
+            int height = Integer.valueOf(fieldBox.getHeight());
+            int width = Integer.valueOf(fieldBox.getWidth());
+            int selectedVariability = varSwitch.getSelected();
 
             if (width < 5) {
                 width = 5;
@@ -147,17 +78,17 @@ public class MapUi extends Application {
 
             int variability = 3;
 
-            if (selectedVariability == highVar) {
+            if (selectedVariability == 2) {
                 variability = 5;
             }
 
             boolean coastal = true;
-            RadioButton selectedIsland = (RadioButton) islandGroup.getSelectedToggle();
+            int selectedIsland = coastalSwitch.getSelected();
 
-            if (selectedIsland == inlandButton) {
+            if (selectedIsland == 2) {
                 coastal = false;
             }
-
+            
             viewMapCanvas(stage, height, width, variability, coastal);
         });
         Scene settingsView = new Scene(settings);
@@ -234,18 +165,17 @@ public class MapUi extends Application {
                 }
             }
         })*/
+        mapBox.getChildren().add(mapButtonBox);
 
-            mapBox.getChildren().add(mapButtonBox);
+        backButton.setOnAction((event) -> {
+            viewSettings(stage);
+        });
 
-            backButton.setOnAction((event) -> {
-                viewSettings(stage);
-            });
+        Scene mapView = new Scene(mapBox);
+        mapView.getStylesheets().add("mapstyle.css");
 
-            Scene mapView = new Scene(mapBox);
-            mapView.getStylesheets().add("mapstyle.css");
+        stage.setScene(mapView);
 
-            stage.setScene(mapView);
-        
     }
 
     public static void main(String[] args) {
