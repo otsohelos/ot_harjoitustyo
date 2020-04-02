@@ -5,10 +5,7 @@
  */
 package mapgenerator.domain;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
@@ -28,22 +25,6 @@ public class MapTest {
         this.map = new Map(10, 15);
         this.bigMap = new Map(25, 25);
         this.tinyMap = new Map(3, 3);
-    }
-
-    @Test
-    public void howManyDropPointsWorks() {
-
-        assertTrue(map.howManyDropPoints() == 3);
-        int bigMapDropPoints = bigMap.howManyDropPoints();
-        assertTrue(bigMapDropPoints < 19);
-        assertTrue(bigMapDropPoints > 11);
-        int bigMapDropPoints2 = bigMap.howManyDropPoints();
-        assertTrue(bigMapDropPoints2 < 19);
-        assertTrue(bigMapDropPoints2 > 11);
-        int bigMapDropPoints3 = bigMap.howManyDropPoints();
-        assertTrue(bigMapDropPoints3 < 19);
-        assertTrue(bigMapDropPoints3 > 11);
-        assertTrue(tinyMap.howManyDropPoints() == 1);
     }
 
     @Test
@@ -105,7 +86,7 @@ public class MapTest {
     @Test
     public void intArrayNumbersStayWithinBounds() {
         boolean underZero = false;
-        boolean overNine = false;
+        boolean overNineteen = false;
 
         map.assignTiles();
 
@@ -117,60 +98,55 @@ public class MapTest {
                 if (intArray[i][j] < 0) {
                     underZero = true;
                 }
-                if (intArray[i][j] > 9) {
-                    overNine = true;
+                if (intArray[i][j] > 19) {
+                    overNineteen = true;
                 }
             }
         }
-
         assertFalse(underZero);
-        assertFalse(overNine);
+        assertFalse(overNineteen);
 
-    }
-
-    @Test
-    public void randomizeLocationOfDropPointsWorks() {
-        assertTrue(bigMap.randomizeLocationOfDropPoints(12).length == 12);
-    }
-
-    @Test
-    public void randomizeSmarterWorks() {
-        map.randomizeSmarter();
     }
 
     @Test
     public void isAssignedWorks() {
-        assertFalse(tinyMap.isAssigned(0, 0));
+        assertFalse(tinyMap.isAssigned(1, 1));
         tinyMap.assignTiles();
         assertTrue(tinyMap.isAssigned(1, 1));
     }
 
     @Test
     public void randomizeOneReturnsValuesInRange() {
-        tinyMap.randomizeOne(0, 0, 3);
-        assertEquals(1, tinyMap.getIntArray()[0][0]);
-
+        tinyMap.randomizeOne(0, 0, 3, 3);
+        assertTrue(tinyMap.getIntArray()[0][0] < 20);
+        assertTrue(tinyMap.getIntArray()[0][0] > 0);
     }
 
     @Test
     public void randomizeOneReturnsValuesInRange2() {
         tinyMap.setInt(0, 1, 10);
         tinyMap.setInt(1, 0, 12);
-        tinyMap.randomizeOne(0, 0, 3);
+        tinyMap.randomizeOne(0, 0, 3, 3);
         assertTrue(tinyMap.getIntArray()[0][0] < 13);
         assertTrue(tinyMap.getIntArray()[0][0] > 9);
     }
-    
+
     @Test
     public void assignTilesAssignsTiles() {
         map.assignTiles();
-        int elev1 = map.getTile(0, 0).getElevation();
+        int elev1 = map.getTile(5, 5).getElevation();
         int elev2 = map.getTile(8, 10).getElevation();
-        int elev3 = map.getTile(9, 14).getElevation();
-        
-        assertTrue(elev1 > 0);
-        assertTrue(elev2 > 0);
-        assertTrue(elev3 > 0);
+        int elev3 = map.getTile(3, 12).getElevation();
+
+        // since some tiles may be left unassigned
+        // but it's extremely unlikely all three will be unassigned
+        // assign value someAssigned to signify some of these are assigned
+        boolean someAssigned = false;
+
+        if (elev1 > 0 || elev2 > 0 || elev3 > 0) {
+            someAssigned = true;
+        }
+        assertTrue(someAssigned);
     }
-    
+
 }

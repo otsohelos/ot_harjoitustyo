@@ -14,6 +14,7 @@ import java.io.*;
 import javax.swing.SwingUtilities;
 import java.io.File;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import mapgenerator.domain.MapCreator;
 import javafx.scene.Scene;
@@ -35,6 +36,7 @@ import mapgenerator.domain.Tile;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 
@@ -52,18 +54,28 @@ public class MapUi extends Application {
     public void viewSettings(Stage stage) {
         stage.setTitle("MapGenerator");
         VBox settings = new VBox();
-        settings.setMinWidth(200);
-        settings.setMinHeight(200);
+        settings.setSpacing(10);
+        settings.setPadding(new Insets(10,10,10,10));
+        //settings.setMinWidth(200);
+        //settings.setMinHeight(200);
+        Label headerLabel = new Label("MapGenerator settings");
+        headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        settings.setPadding(new Insets(10,0,10,10));
+        
         TextField heightField = new TextField();
         Label heightLabel = new Label("Height");
         TextField widthField = new TextField();
         Label widthLabel = new Label("Width");
+        
+        Tip sizeTip = new Tip("Values between 20 and 100 get best results.");
 
         HBox fieldBox = new HBox();
+        settings.getChildren().add(headerLabel);
         fieldBox.getChildren().add(heightLabel);
         fieldBox.getChildren().add(heightField);
         fieldBox.getChildren().add(widthLabel);
         fieldBox.getChildren().add(widthField);
+        fieldBox.getChildren().add(sizeTip.getTip());
         settings.getChildren().add(fieldBox);
 
         // make variability selection
@@ -84,6 +96,10 @@ public class MapUi extends Application {
         variabilityBox.getChildren().add(varLabel);
         variabilityBox.getChildren().add(lowVar);
         variabilityBox.getChildren().add(highVar);
+        
+        Tip varTip = new Tip("How quickly the elevation changes");
+        
+        variabilityBox.getChildren().add(varTip.getTip());
 
         settings.getChildren().add(variabilityBox);
 
@@ -92,17 +108,14 @@ public class MapUi extends Application {
         RadioButton coastalButton = new RadioButton("Coastal");
         RadioButton inlandButton = new RadioButton("Inland");
         Label islandLabel = new Label("Land type");
-        Label varInfo = new Label("?");
-        varInfo.setFont(new Font("Arial", 20));
 
-        Tooltip varTip = new Tooltip("\"Coastal\" is more likely to have large areas of water on the map than \"Inland\".");
-        varTip.setFont(new Font("Arial", 14));
-        Tooltip.install(varInfo, varTip);
-
+        Tip coastTip = new Tip("\"Coastal\" is more likely to have large areas of water on the map than \"Inland\".");
+        
+        
         islandBox.getChildren().add(islandLabel);
         islandBox.getChildren().add(coastalButton);
         islandBox.getChildren().add(inlandButton);
-        islandBox.getChildren().add(varInfo);
+        islandBox.getChildren().add(coastTip.getTip());
 
         ToggleGroup islandGroup = new ToggleGroup();
         coastalButton.setToggleGroup(islandGroup);
@@ -152,55 +165,6 @@ public class MapUi extends Application {
         stage.show();
     }
 
-    public void viewMap(Stage stage, int height, int width, int variability, boolean coastal) {
-        MapCreator mapCreator = new MapCreator(height, width);
-        Tile[][] map = mapCreator.showMap(variability, coastal);
-        GridPane mapGrid = new GridPane();
-        //mapGrid.setHgap(1);
-        //mapGrid.setVgap(1);
-        mapGrid.setMinHeight(200);
-        mapGrid.setMinWidth(200);
-        for (int i = 0; i < map.length; i++) {
-            //System.out.println("");
-            for (int j = 0; j < map[i].length; j++) {
-                String color = map[i][j].getColor();
-                //System.out.print(color + " ");
-                Pane pane = new Pane();
-                pane.setPrefSize(10, 10);
-                pane.setMaxSize(10, 10);
-                int top = map[i][j].getTopBorder();
-                int left = map[i][j].getLeftBorder();
-                int rectHeight = 10 - top;
-                int rectWidth = 10 - left;
-                Rectangle rectangle = new Rectangle(rectWidth, rectHeight, Paint.valueOf(color));
-                rectangle.setY(top);
-                rectangle.setX(left);
-                pane.getChildren().add(rectangle);
-
-                mapGrid.add(pane, j, i);
-            }
-        }
-        FlowPane mapPane = new FlowPane();
-        mapPane.getChildren().add(mapGrid);
-        Button redoButton = new Button("Redo");
-        mapPane.getChildren().add(redoButton);
-        redoButton.setOnAction((event) -> {
-            viewMapCanvas(stage, height, width, variability, coastal);
-        });
-
-        Button backButton = new Button("Back");
-        mapPane.getChildren().add(backButton);
-
-        backButton.setOnAction((event) -> {
-            viewSettings(stage);
-        });
-
-        Scene mapView = new Scene(mapPane);
-        mapView.getStylesheets().add("mapstyle.css");
-
-        stage.setScene(mapView);
-    }
-
     public void viewMapCanvas(Stage stage, int height, int width, int variability, boolean coastal) {
         MapCreator mapCreator = new MapCreator(height, width);
         Tile[][] map = mapCreator.showMap(variability, coastal);
@@ -239,7 +203,7 @@ public class MapUi extends Application {
         Button redoButton = new Button("Redo");
         mapButtonBox.getChildren().add(redoButton);
         redoButton.setOnAction((event) -> {
-            viewMap(stage, height, width, variability, coastal);
+            viewMapCanvas(stage, height, width, variability, coastal);
         });
 
         Button backButton = new Button("Back");

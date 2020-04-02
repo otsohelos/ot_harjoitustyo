@@ -25,6 +25,7 @@ public class Map {
     }
 
     public void assignTiles() {
+        // if no parametres, then range = 3 and coastal = true
         this.assignTiles(3, true);
     }
 
@@ -65,16 +66,6 @@ public class Map {
         tileArray[i][j] = tile;
     }
 
-    /*    public void startRecursively(int range) {
-        // random spot, central-ish
-        int i = rnd.nextInt(height / 3) + height / 3;
-        int j = rnd.nextInt(width / 3) + width / 3;
-        System.out.println("seed is " + i + ", " + j);
-        intArray[i][j] = rnd.nextInt(10) + 9;
-        randomizeRecursively(i + 1, j, range, 9, 4);
-        fillTheRest(range);
-        //this.printIntArray();
-    }*/
     public void startRecursively(int range, int islandTendency) {
         int i = rnd.nextInt(height / 3) + height / 3;
         int j = rnd.nextInt(width / 3) + width / 3;
@@ -88,6 +79,7 @@ public class Map {
         this.printIntArray();
     }
 
+    // fill in unassigned tiles that are surrounded by much higher land
     public void fillTheRest(int range, int islandTendency) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -102,18 +94,8 @@ public class Map {
         }
     }
 
-    /*public void randomizeRecursively(int i, int j, int range) {
-        if (i < 0 || j < 0 || i >= height || j >= width || isAssigned(i, j)) {
-            return;
-        } else {
-            randomizeOne(i, j, range);
-        }
-        randomizeRecursively(i - 1, j, range);
-        randomizeRecursively(i, j - i, range);
-        randomizeRecursively(i, j + i, range);
-        randomizeRecursively(i + 1, j, range);
-    } */
-    // this one has a kill switch:
+
+    // randomize recursively with a kill switch:
     public void randomizeRecursively(int i, int j, int range, int stopWhen, int islandTendency) {
         if (i < 0 || j < 0 || i >= height || j >= width || isAssigned(i, j) || stopWhen < 1) {
             return;
@@ -407,36 +389,6 @@ public class Map {
             }
         }
         System.out.println("");
-    }
-
-    public int[][] randomizeLocationOfDropPoints(int dropPoints) {
-        int[][] dropPointsArray = new int[dropPoints][2];
-
-        // randomize location of drop points
-        for (int i = 0; i < dropPoints; i++) {
-            dropPointsArray[i][0] = rnd.nextInt(height);
-            dropPointsArray[i][1] = rnd.nextInt(width);
-        }
-        return dropPointsArray;
-    }
-
-    public int howManyDropPoints() {
-
-        int tiles = this.height * this.width;
-        // determine amount of initial free points, with randomness :
-        int dropPoints = tiles / 50;
-        int newSeed = dropPoints / 2;
-
-        // add randomness into number of free points
-        if (newSeed > 1) {
-            dropPoints = dropPoints + rnd.nextInt(newSeed) - (newSeed / 2);
-        }
-        // one drop point for tiny maps
-        if (dropPoints < 1) {
-            dropPoints = 1;
-        }
-        //System.out.println("dropPoints is " + dropPoints);
-        return dropPoints;
     }
 
     public Tile[][] getTileArray() {
