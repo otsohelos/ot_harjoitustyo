@@ -35,6 +35,11 @@ public class Map {
         if (!coastal) {
             islandTendency = 1;
         }
+        if (range % 2 == 0) {
+            // warn for even ranges
+            System.out.println("Warning: range should optimally be an odd number. Range is " + range);
+        }
+
         this.startRecursively(range, islandTendency);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -113,9 +118,7 @@ public class Map {
 
     public void growRecursively(int i, int j, int range, int stopWhen, int islandTendency) {
 
-        int[][] neighborsWithRandomness = {{rzr.randomize(3), i - 1, j},
-        {rzr.randomize(3), i + 1, j}, {rzr.randomize(3), i, j - 1},
-        {rzr.randomize(3), i, j + 1}};
+        int[][] neighborsWithRandomness = {{rzr.randomize(3), i - 1, j}, {rzr.randomize(3), i + 1, j}, {rzr.randomize(3), i, j - 1}, {rzr.randomize(3), i, j + 1}};
         // make sure that every square tries to grow in at least one direction
         int grown = 0;
         while (grown < 1) {
@@ -125,8 +128,8 @@ public class Map {
                             neighborsWithRandomness[k][2], range,
                             stopWhen, islandTendency);
                     grown++;
-                    System.out.println("i is " + i + ", j is " + j);
-                    System.out.println("randomized; grown is " + grown);
+                    //System.out.println("i is " + i + ", j is " + j);
+                    //System.out.println("randomized; grown is " + grown);
                 }
             }
             // randomize them again
@@ -141,9 +144,6 @@ public class Map {
             return;
         } else if (isAssigned(i, j)) {
             return;
-        } else if (range % 2 == 0) {
-            // warn for even ranges
-            System.out.println("Warning: range should optimally be an odd number. Range is " + range);
         }
 
         double avg = neighborsAverage(i, j);
@@ -182,9 +182,7 @@ public class Map {
         int assignedNeighbors = 0;
         int sumOfNeighbors = 0;
 
-        int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j},
-        {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1},
-        {i + 1, j}, {i + 1, j - 1}};
+        int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j - 1}};
 
         // check already assigned neighbors' values and calculate their sum
         for (int k = 0; k < neighborCoordinates.length; k++) {
@@ -208,12 +206,9 @@ public class Map {
 
         // assign new tile a value within range
         if (assignedNeighbors == 1) {
-            return 1.0 * sumOfNeighbors;
+            return sumOfNeighbors;
         }
 
-        //System.out.println(rndInt);
-        //System.out.println(assignedNeighbors);
-        //System.out.println(sumOfNeighbors);
         double avg = 1.0 * sumOfNeighbors / assignedNeighbors;
 
         // check if two very disparate neighbors and pick one of them or both
@@ -227,16 +222,14 @@ public class Map {
                 sumOfNeighbors = lowestNeighbor;
             }
             //System.out.println("reassigned, sum of neighbors is " + sumOfNeighbors);
-        } // take biggest outliers closer to average
-        else if (assignedNeighbors > 2) {
+        } else {
+            // take out biggest outliers and replace them with average
             if (highestNeighbor - avg > 4) {
-                sumOfNeighbors = sumOfNeighbors - highestNeighbor + (int) avg;
+                avg -= (1.0 * highestNeighbor - avg) / (1.0 * assignedNeighbors);
             }
             if (avg - lowestNeighbor > 4) {
-                sumOfNeighbors = sumOfNeighbors - lowestNeighbor + (int) avg;
+                avg += (avg - 1.0 * lowestNeighbor) / (1.0 * assignedNeighbors);
             }
-
-            avg = 1.0 * sumOfNeighbors / assignedNeighbors;
         }
         return avg;
     }
