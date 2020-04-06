@@ -13,8 +13,10 @@ public class Map {
     private int width;
     private Tile[][] tileArray;
     private int[][] intArray;
-    //private Random rnd;
     private Randomizer rzr;
+    private int maxElevation;
+    private int islandTendency;
+    private int variability;
 
     public Map(int height, int width) {
         this.height = height;
@@ -22,25 +24,27 @@ public class Map {
         this.intArray = new int[height][width];
         this.tileArray = new Tile[height][width];
         this.rzr = new Randomizer();
-        //this.rnd = new Random();
+        this.maxElevation = 40;
+        this.islandTendency = 3;
+        this.variability = 3;
     }
 
     public void assignTiles() {
-        // if no parametres, then range = 3 and coastal = true
+        // if no parametres, then variability = 3 and coastal = true
         this.assignTiles(3, true);
     }
 
-    public void assignTiles(int range, boolean coastal) {
-        int islandTendency = 3;
+    public void assignTiles(int variabilityValue, boolean coastal) {
         if (!coastal) {
-            islandTendency = 1;
+            this.islandTendency = 1;
         }
-        if (range % 2 == 0) {
-            // warn for even ranges
-            System.out.println("Warning: range should optimally be an odd number. Range is " + range);
+        this.variability = variabilityValue;
+        if (variability % 2 == 0) {
+            // warn for even variabilities
+            System.out.println("Warning: variability should optimally be an odd number. Variability is " + variability);
         }
 
-        this.startRecursively(range, islandTendency);
+        this.startRecursively();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 makeTile(i, j, intArray[i][j]);
@@ -72,28 +76,62 @@ public class Map {
         tileArray[i][j] = tile;
     }
 
-    public void startRecursively(int range, int islandTendency) {
+    public void startRecursively() {
+        // randomize central-ish location for start point
         int i = rzr.randomizePlus((height / 3), (height / 3));
         int j = rzr.randomizePlus((width / 3), (width / 3));
         System.out.println("seed is " + i + ", " + j);
-        intArray[i][j] = rzr.randomizePlus(10, 9);
-        randomizeRecursively(i + 1, j, range, 9, islandTendency);
+
+        // start building map from that point
+        intArray[i][j] = rzr.randomizePlus(maxElevation / 2, (maxElevation / 2 - 2));
+        randomizeRecursively(i + 1, j, 18);
         //System.out.println("before fillTheRest:");
         //this.printIntArray();
-        fillTheRest(range, islandTendency);
+
+        //on large maps do another startpoint
+        if (this.height > 8 || this.width > 8) {
+            makeAnotherPoint(i, j);
+        }
+        fillTheRest();
         //System.out.println("after:");
-        this.printIntArray();
+        //this.printIntArray();
+    }
+
+    public void makeAnotherPoint(int i, int j) {
+        // determine startpoint of checking
+        int anotherPointI = 0;
+        int anotherPointJ = 0;
+
+        // if first startpoint coordinate is small, prefer to start after it
+        int whereStartI = Math.min(i / 2, rzr.randomize(height / 4));
+        int whereStartJ = Math.min(j / 2, rzr.randomize(width / 4));
+        outerLoop:
+        for (int k = (height / 4 + height / 4) + whereStartI; k < 3 * height / 4; k++) {
+            for (int l = (width / 4 + width / 4) + whereStartJ; l < 3 * width / 4; l++) {
+                //System.out.println("checking " + k + ", " + l);
+                if (!isAssigned(k, l)) {
+                    anotherPointI = k;
+                    anotherPointJ = l;
+                    System.out.println("other seed is " + anotherPointI + ", " + anotherPointJ);
+                    break outerLoop;
+                }
+            }
+        }
+        System.out.println("other seed is " + anotherPointI + ", " + anotherPointJ);
+        if (anotherPointI != 0 && anotherPointJ != 0) {
+            randomizeRecursively(anotherPointI, anotherPointJ, 18);
+        }
     }
 
     // fill in unassigned tiles that are surrounded by much higher land
-    public void fillTheRest(int range, int islandTendency) {
+    public void fillTheRest() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (!isAssigned(i, j)) {
                     int sum = neighborsSum(i, j);
 
-                    if (sum > range * 7) {
-                        randomizeRecursively(i, j, range, 2, islandTendency);
+                    if (sum > variability * 7) {
+                        randomizeRecursively(i, j, 2);
                     }
                 }
             }
@@ -101,11 +139,11 @@ public class Map {
     }
 
     // randomize recursively with a kill switch:
-    public void randomizeRecursively(int i, int j, int range, int stopWhen, int islandTendency) {
+    public void randomizeRecursively(int i, int j, int stopWhen) {
         if (i < 0 || j < 0 || i >= height || j >= width || isAssigned(i, j) || stopWhen < 1) {
             return;
         }
-        randomizeOne(i, j, range, islandTendency);
+        randomizeOne(i, j);
 
         // only stop at the sea
         if (intArray[i][j] < 5) {
@@ -113,20 +151,21 @@ public class Map {
             //System.out.println("coinToss " + coinToss + ", stopWhen " + stopWhen);
         }
 
-        growRecursively(i, j, range, stopWhen, islandTendency);
+        growRecursively(i, j, stopWhen);
     }
 
-    public void growRecursively(int i, int j, int range, int stopWhen, int islandTendency) {
-
+    public void growRecursively(int i, int j, int stopWhen) {
+        // make array that has random number 0-2 and coordinates of neighbors
         int[][] neighborsWithRandomness = {{rzr.randomize(3), i - 1, j}, {rzr.randomize(3), i + 1, j}, {rzr.randomize(3), i, j - 1}, {rzr.randomize(3), i, j + 1}};
         // make sure that every square tries to grow in at least one direction
         int grown = 0;
         while (grown < 1) {
             for (int k = 0; k < neighborsWithRandomness.length; k++) {
+                // continue growing from neighbor if random number is over 0
                 if (neighborsWithRandomness[k][0] > 0) {
                     randomizeRecursively(neighborsWithRandomness[k][1],
-                            neighborsWithRandomness[k][2], range,
-                            stopWhen, islandTendency);
+                            neighborsWithRandomness[k][2],
+                            stopWhen);
                     grown++;
                     //System.out.println("i is " + i + ", j is " + j);
                     //System.out.println("randomized; grown is " + grown);
@@ -139,18 +178,15 @@ public class Map {
         }
     }
 
-    public void randomizeOne(int i, int j, int range, int islandTendency) {
-        if (i < 0 || j < 0 || i >= this.height || j >= this.width) {
-            return;
-        } else if (isAssigned(i, j)) {
+    public void randomizeOne(int i, int j) {
+        if (i < 0 || j < 0 || i >= this.height || j >= this.width || isAssigned(i, j)) {
             return;
         }
 
         double avg = neighborsAverage(i, j);
 
         if (avg == 0) {
-            intArray[i][j] = rzr.randomizePlus(20, 1);
-            //System.out.println("free randomization done!");
+            intArray[i][j] = rzr.randomizePlus(maxElevation, 1);
             return;
         }
 
@@ -158,19 +194,17 @@ public class Map {
         int intAvg = (int) Math.round(avg);
 
         // tend toward downhill slopes repending on island tendency
-        if (rzr.isSmaller(7, islandTendency)) {
+        if (rzr.isSmaller(9, islandTendency)) {
             intAvg--;
         }
 
-        //System.out.println("sum of neighbors: " + sumOfNeighbors);
-        int newInt = intAvg + rzr.randomizePlus(range, (range / (-2)));
-        //System.out.println("newInt is " + newInt);
+        int newInt = intAvg + rzr.randomizePlus(variability, (variability / (-2)));
 
         // ensure that newInt is within bounds
         if (newInt < 1) {
             newInt = 1;
-        } else if (newInt > 19) {
-            newInt = 19;
+        } else if (newInt > (maxElevation - 1)) {
+            newInt = maxElevation - 1;
         }
         intArray[i][j] = newInt;
     }
@@ -212,7 +246,7 @@ public class Map {
         double avg = 1.0 * sumOfNeighbors / assignedNeighbors;
 
         // check if two very disparate neighbors and pick one of them or both
-        if (assignedNeighbors == 2 && highestNeighbor - avg > 5) {
+        if (assignedNeighbors == 2 && highestNeighbor - avg > 10) {
             int coinToss = rzr.randomize(3);
             if (coinToss == 0) {
                 assignedNeighbors--;
@@ -224,10 +258,10 @@ public class Map {
             //System.out.println("reassigned, sum of neighbors is " + sumOfNeighbors);
         } else {
             // take out biggest outliers and replace them with average
-            if (highestNeighbor - avg > 4) {
+            if (highestNeighbor - avg > 8) {
                 avg -= (1.0 * highestNeighbor - avg) / (1.0 * assignedNeighbors);
             }
-            if (avg - lowestNeighbor > 4) {
+            if (avg - lowestNeighbor > 8) {
                 avg += (avg - 1.0 * lowestNeighbor) / (1.0 * assignedNeighbors);
             }
         }
@@ -237,9 +271,7 @@ public class Map {
     public int neighborsSum(int i, int j) {
         int sumOfNeighbors = 0;
 
-        int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j},
-        {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1},
-        {i + 1, j}, {i + 1, j - 1}};
+        int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j - 1}};
 
         for (int k = 0; k < neighborCoordinates.length; k++) {
             if (isAssigned(neighborCoordinates[k][0], neighborCoordinates[k][1])) {
@@ -297,6 +329,10 @@ public class Map {
 
     public Tile getTile(int i, int j) {
         return tileArray[i][j];
+    }
+
+    public int getMaxElevation() {
+        return this.maxElevation;
     }
 
 }

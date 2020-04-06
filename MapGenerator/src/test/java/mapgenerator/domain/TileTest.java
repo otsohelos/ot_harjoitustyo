@@ -24,17 +24,17 @@ public class TileTest {
     @Before
     public void setUp() {
         this.seaTile = new Tile(2);
-        this.landTile = new Tile(15);
+        this.landTile = new Tile(20);
     }
 
     @Test
     public void seaTileIsBlue() {
-        assertEquals("rgb(42,149,244)", seaTile.getColor());
+        assertEquals("rgb(0,115,196)", seaTile.getColor());
     }
 
     @Test
     public void landTileIsYellow() {
-        assertEquals("rgb(242,183,43)", landTile.getColor());
+        assertEquals("rgb(215,255,152)", landTile.getColor());
     }
 
     @Test

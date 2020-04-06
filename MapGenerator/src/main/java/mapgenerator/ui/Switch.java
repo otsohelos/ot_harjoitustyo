@@ -1,5 +1,6 @@
 package mapgenerator.ui;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleButton;
@@ -33,6 +34,8 @@ class Switch {
         box.getChildren().add(button1);
         box.getChildren().add(button2);
         box.getChildren().add(tip.getTip());
+        box.setPadding(new Insets(0, 10, 0, 10));
+
     }
 
     public HBox getBox() {

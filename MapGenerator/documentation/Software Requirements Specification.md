@@ -41,7 +41,7 @@ Map view has elevation indicated by color darkness.
 
 - DONE: User can set the size of the map within certain constraints.
 - DONE: User can set the amount of variability in elevation of both water and land squares.
-- Question mark labels will show tips on hover
+- DONE: Question mark labels will show tips on hover
 
 ### Map Views
 

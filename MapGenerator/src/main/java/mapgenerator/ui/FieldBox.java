@@ -5,6 +5,7 @@
  */
 package mapgenerator.ui;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -15,6 +16,7 @@ import javafx.scene.layout.HBox;
  */
 class FieldBox {
 
+    // FieldBox is solely for the purpose of displaying the height and width fields
     private HBox box;
     private Label heightLabel;
     private Label widthLabel;
@@ -26,7 +28,7 @@ class FieldBox {
         this.box = new HBox();
         this.widthLabel = new Label("Width");
         this.heightLabel = new Label("Height");
-        this.sizeTip = new Tip("Values between 20 and 100 get best results.");
+        this.sizeTip = new Tip("Values between 40 and 150 get best results.");
         this.heightField = new TextField();
         this.widthField = new TextField();
         box.getChildren().add(heightLabel);
@@ -34,6 +36,8 @@ class FieldBox {
         box.getChildren().add(widthLabel);
         box.getChildren().add(widthField);
         box.getChildren().add(sizeTip.getTip());
+        box.setPadding(new Insets(0, 10, 0, 10));
+
     }
 
     public HBox getBox() {

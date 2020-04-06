@@ -6,14 +6,17 @@ public class Tile {
     private int topBorder;
     private int leftBorder;
     private int terrain;
+    private int cutUnit;
 
     public Tile(int elevation) {
         this.elevation = elevation;
         this.topBorder = 0;
         this.leftBorder = 0;
         this.terrain = 0;
+        this.cutUnit = 3;
+
     }
-    
+
     public int getTerrain() {
         return terrain;
     }
@@ -23,29 +26,29 @@ public class Tile {
     }
 
     boolean isWater() {
-        if (elevation < 6) {
+        if (elevation < cutUnit * 3) {
             return true;
         }
         return false;
     }
 
     public String getColor() {
-        if (elevation < 2) {
-            // deep water
+        // deep water:
+        if (elevation < cutUnit) {
             return "rgb(0,115,196)";
-        } else if (elevation < 4) {
+        } else if (elevation < cutUnit * 2) {
             // mid-depth water
             return "rgb(42,149,244)";
-        } else if (elevation < 6) {
+        } else if (elevation < cutUnit * 3) {
             // shallow water
             return "rgb(149,205,255)";
-        } else if (elevation < 10) {
+        } else if (elevation < cutUnit * 7) {
             // lowland
             return "rgb(215,255,152)";
-        } else if (elevation < 15) {
+        } else if (elevation < cutUnit * 9) {
             // low-mid land
             return "rgb(254,255,129)";
-        } else if (elevation < 18) {
+        } else if (elevation < cutUnit * 11) {
             // high-mid land
             return "rgb(242,183,43)";
         } else {

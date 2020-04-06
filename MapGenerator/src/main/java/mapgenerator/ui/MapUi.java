@@ -39,7 +39,6 @@ public class MapUi extends Application {
         settings.setPadding(new Insets(10, 10, 10, 10));
         Label headerLabel = new Label("MapGenerator settings");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 15));
-        settings.setPadding(new Insets(10, 0, 10, 10));
 
         settings.getChildren().add(headerLabel);
 
@@ -99,7 +98,7 @@ public class MapUi extends Application {
     public void viewMapCanvas(Stage stage, int height, int width, int variability, boolean coastal) {
         MapCreator mapCreator = new MapCreator(height, width);
         Tile[][] map = mapCreator.showMap(variability, coastal);
-        int squareSize = 10;
+        int squareSize = 5;
         int canvasWidth = width * squareSize;
         int canvasHeight = height * squareSize;
         Canvas mapCanvas = new Canvas(canvasWidth, canvasHeight);
@@ -114,8 +113,8 @@ public class MapUi extends Application {
 
                 int top = map[i][j].getTopBorder();
                 int left = map[i][j].getLeftBorder();
-                int rectHeight = 10 - top;
-                int rectWidth = 10 - left;
+                int rectHeight = squareSize - top;
+                int rectWidth = squareSize - left;
 
                 GraphicsContext gc = mapCanvas.getGraphicsContext2D();
 

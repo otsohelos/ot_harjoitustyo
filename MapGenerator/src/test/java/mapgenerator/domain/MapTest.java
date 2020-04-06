@@ -86,7 +86,7 @@ public class MapTest {
     @Test
     public void intArrayNumbersStayWithinBounds() {
         boolean underZero = false;
-        boolean overNineteen = false;
+        boolean overUpperLimit = false;
 
         map.assignTiles();
 
@@ -98,13 +98,13 @@ public class MapTest {
                 if (intArray[i][j] < 0) {
                     underZero = true;
                 }
-                if (intArray[i][j] > 19) {
-                    overNineteen = true;
+                if (intArray[i][j] > map.getMaxElevation()) {
+                    overUpperLimit = true;
                 }
             }
         }
         assertFalse(underZero);
-        assertFalse(overNineteen);
+        assertFalse(overUpperLimit);
 
     }
 
@@ -117,8 +117,8 @@ public class MapTest {
 
     @Test
     public void randomizeOneReturnsValuesInRange() {
-        tinyMap.randomizeOne(0, 0, 3, 3);
-        assertTrue(tinyMap.getIntArray()[0][0] < 20);
+        tinyMap.randomizeOne(0, 0);
+        assertTrue(tinyMap.getIntArray()[0][0] < 40);
         assertTrue(tinyMap.getIntArray()[0][0] > 0);
     }
 
@@ -126,7 +126,7 @@ public class MapTest {
     public void randomizeOneReturnsValuesInRange2() {
         tinyMap.setInt(0, 1, 10);
         tinyMap.setInt(1, 0, 12);
-        tinyMap.randomizeOne(0, 0, 3, 3);
+        tinyMap.randomizeOne(0, 0);
         assertTrue(tinyMap.getIntArray()[0][0] < 13);
         assertTrue(tinyMap.getIntArray()[0][0] > 9);
     }
