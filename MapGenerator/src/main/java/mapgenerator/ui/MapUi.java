@@ -7,6 +7,7 @@ package mapgenerator.ui;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+import javafx.embed.swing.SwingFXUtils;
 
 /**
  *
@@ -171,16 +173,36 @@ public class MapUi extends Application {
         mapButtonBox.getChildren().add(backButton);
 
         Button saveButton = new Button("Save");
+
         saveButton.setOnAction((event2) -> {
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Map");
+            FileChooser.ExtensionFilter filter
+                    = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+            fileChooser.getExtensionFilters().add(filter);
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                try {
+                    WritableImage writableImage = new WritableImage(width * squareSize, height * squareSize);
+                    mapCanvas.snapshot(null, writableImage);
+                    RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                    ImageIO.write(renderedImage, "png", file);
+                } catch (IOException e) {
+                    System.out.println("Error!");
+                }
+            }
+
+        });
+
+        /*saveButton.setOnAction((event2) -> {
             FileChooser fileChooser = new FileChooser();
 
             FileChooser.ExtensionFilter extFilter
                     = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
             fileChooser.getExtensionFilters().add(extFilter);
             BufferedImage bi = new BufferedImage(width * squareSize, height * squareSize, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = bi.createGraphics();
-
-            WritableImage wi = new WritableImage(width * squareSize, height * squareSize);
+//            Graphics2D g2 = bi.createGraphics();
             
             mapCanvas.snapshot(new SnapshotParameters(), wi);
             
@@ -210,22 +232,22 @@ public class MapUi extends Application {
                 } catch (IOException ex) {
                     System.out.println("Error");
                 }
-            }*/
+            }
+        });*/
+        mapButtonBox.getChildren().add(saveButton);
+
+        mapBox.getChildren().add(mapButtonBox);
+
+        backButton.setOnAction((event) -> {
+            viewSettings(stage);
         });
-            mapButtonBox.getChildren().add(saveButton);
 
-            mapBox.getChildren().add(mapButtonBox);
+        Scene mapView = new Scene(mapBox);
+        mapView.getStylesheets().add("mapstyle.css");
 
-            backButton.setOnAction((event) -> {
-                viewSettings(stage);
-            });
+        stage.setScene(mapView);
 
-            Scene mapView = new Scene(mapBox);
-            mapView.getStylesheets().add("mapstyle.css");
-
-            stage.setScene(mapView);
-
-        }
+    }
 
     public static void main(String[] args) {
         launch(MapUi.class);
