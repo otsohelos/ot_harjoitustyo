@@ -5,6 +5,11 @@
  */
 package mapgenerator.ui;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,18 +17,24 @@ import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import mapgenerator.domain.MapCreator;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import mapgenerator.domain.Tile;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 
 /**
  *
@@ -159,43 +170,62 @@ public class MapUi extends Application {
         Button backButton = new Button("Back");
         mapButtonBox.getChildren().add(backButton);
 
-        /*Button saveButton = new Button("Save");
+        Button saveButton = new Button("Save");
         saveButton.setOnAction((event2) -> {
             FileChooser fileChooser = new FileChooser();
 
             FileChooser.ExtensionFilter extFilter
                     = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
             fileChooser.getExtensionFilters().add(extFilter);
+            BufferedImage bi = new BufferedImage(width * squareSize, height * squareSize, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = bi.createGraphics();
 
-            //Show save file dialog
-            File file = fileChooser.showSaveDialog(stage);
+            WritableImage wi = new WritableImage(width * squareSize, height * squareSize);
             
+            mapCanvas.snapshot(new SnapshotParameters(), wi);
+            
+
+            Iterator imageWriters = ImageIO.getImageWritersByFormatName("PNG");
+            ImageWriter imageWriter = (ImageWriter) imageWriters.next();
+            File file = fileChooser.showSaveDialog(stage);
+
+            try {
+                ImageOutputStream ios = ImageIO.createImageOutputStream(file);
+                imageWriter.setOutput(ios);
+                imageWriter.write(bi);
+            } catch (Exception e) {
+                System.out.println("nooooo!");
+            }
+            //Show save file dialog
+            /* File file = fileChooser.showSaveDialog(stage);
+
             if (file != null) {
                 try {
-                    WritableImage writableImage = new WritableImage(canvasWidth, canvasHeight);
-                    BufferedImage image = new BufferedImage(mapCanvas.getWidth(), mapCanvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-                    Graphics2D graphics = (Graphics2D) image.getGraphics();
-                    
-
-                    ImageIO.write(SwingFXUtils.fromFXImage(snapshot, "png", file));
+                    Iterator imageWriters = ImageIO.getImageWritersByFormatName("PNG");
+                    ImageWriter imageWriter = (ImageWriter) imageWriters.next();
+                    //File file = new File("filename.gif");
+                    ImageOutputStream ios = ImageIO.createImageOutputStream(file);
+                    imageWriter.setOutput(ios);
+                    imageWriter.write(bi);
                 } catch (IOException ex) {
-                    Logger.getLogger(JavaFX_DrawOnCanvas.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Error");
                 }
-            }
-        })*/
-        mapBox.getChildren().add(mapButtonBox);
-
-        backButton.setOnAction((event) -> {
-            viewSettings(stage);
+            }*/
         });
+            mapButtonBox.getChildren().add(saveButton);
 
-        Scene mapView = new Scene(mapBox);
-        mapView.getStylesheets().add("mapstyle.css");
+            mapBox.getChildren().add(mapButtonBox);
 
-        stage.setScene(mapView);
+            backButton.setOnAction((event) -> {
+                viewSettings(stage);
+            });
 
-    }
+            Scene mapView = new Scene(mapBox);
+            mapView.getStylesheets().add("mapstyle.css");
+
+            stage.setScene(mapView);
+
+        }
 
     public static void main(String[] args) {
         launch(MapUi.class);

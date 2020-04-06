@@ -25,7 +25,7 @@ public class Map {
         this.tileArray = new Tile[height][width];
         this.rzr = new Randomizer();
         this.maxElevation = 40;
-        this.islandTendency = 3;
+        this.islandTendency = 2;
         this.variability = 3;
     }
 
