@@ -9,6 +9,6 @@
 | 26 Mar | 8 | Algorithm re-done to be less constrained, lots of testing |
 | 30 Mar | 8 | Colors redone; worked on saving; variability & coastal switches added |
 | 2 Apr | 3 | More tests; prettier Settings view; architecture diagram; Tip class |
-| 6 Apr |  | Tests redone; 
+
 
 *Total hours* 31
