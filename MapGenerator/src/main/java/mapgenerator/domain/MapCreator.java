@@ -11,20 +11,32 @@ package mapgenerator.domain;
  */
 public class MapCreator {
 
+    private int height;
+    private int width;
     private Map map;
 
     public MapCreator(int height, int width) {
-        map = new Map(height, width);
+        this.height = height;
+        this.width = width;
     }
 
     public Tile[][] showMap() {
+        this.map = new Map(height, width);
         map.assignTiles();
         return map.getTileArray();
     }
 
     public Tile[][] showMap(int variability, boolean coastal) {
+        this.map = new Map(height, width);
         map.assignTiles(variability, coastal);
         return map.getTileArray();
+    }
+
+    public boolean checkDimensions(int height, int width) {
+        if (height < 10 || width < 10 || height > 150 || width > 150) {
+            return false;
+        }
+        return true;
     }
 
 }

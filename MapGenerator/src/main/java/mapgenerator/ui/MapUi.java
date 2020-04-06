@@ -6,12 +6,16 @@
 package mapgenerator.ui;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import mapgenerator.domain.MapCreator;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -62,42 +66,57 @@ public class MapUi extends Application {
         HBox generateBox = new HBox();
         generateBox.getChildren().add(generateButton);
         settings.getChildren().add(generateBox);
+        Alert dimensionsAlert = new Alert(AlertType.ERROR);
 
-        generateButton.setOnAction((event) -> {
-            int height = Integer.valueOf(fieldBox.getHeight());
-            int width = Integer.valueOf(fieldBox.getWidth());
-            int selectedVariability = varSwitch.getSelected();
+        EventHandler<ActionEvent> moveToMapView = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {
+                int width = -1;
+                int height = -1;
+                try {
+                    height = Integer.valueOf(fieldBox.getHeight());
+                    width = Integer.valueOf(fieldBox.getWidth());
+                } catch (Exception exception) {
+                    dimensionsAlert.setContentText("Give height and width as integers.\n\n Height and width should be between 10 and 150.");
+                    dimensionsAlert.show();
+                    return;
+                }
+                int selectedVariability = varSwitch.getSelected();
 
-            if (width < 5) {
-                width = 5;
+                int variability = 3;
+
+                if (selectedVariability == 2) {
+                    variability = 5;
+                }
+
+                boolean coastal = true;
+                int selectedIsland = coastalSwitch.getSelected();
+
+                if (selectedIsland == 2) {
+                    coastal = false;
+                }
+
+                MapCreator mapCreator = new MapCreator(height, width);
+
+                if (mapCreator.checkDimensions(height, width)) {
+
+                    Tile[][] map = mapCreator.showMap(variability, coastal);
+
+                    viewMapCanvas(stage, height, width, variability, coastal, map, mapCreator);
+                } else {
+                    dimensionsAlert.setContentText("Height and width should be between 10 and 150.");
+                    dimensionsAlert.show();
+                }
             }
-            if (height < 5) {
-                height = 5;
-            }
+        };
 
-            int variability = 3;
+        generateButton.setOnAction(moveToMapView);
 
-            if (selectedVariability == 2) {
-                variability = 5;
-            }
-
-            boolean coastal = true;
-            int selectedIsland = coastalSwitch.getSelected();
-
-            if (selectedIsland == 2) {
-                coastal = false;
-            }
-
-            viewMapCanvas(stage, height, width, variability, coastal);
-        });
         Scene settingsView = new Scene(settings);
         stage.setScene(settingsView);
         stage.show();
     }
 
-    public void viewMapCanvas(Stage stage, int height, int width, int variability, boolean coastal) {
-        MapCreator mapCreator = new MapCreator(height, width);
-        Tile[][] map = mapCreator.showMap(variability, coastal);
+    public void viewMapCanvas(Stage stage, int height, int width, int variability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
         int squareSize = 5;
         int canvasWidth = width * squareSize;
         int canvasHeight = height * squareSize;
@@ -133,7 +152,8 @@ public class MapUi extends Application {
         Button redoButton = new Button("Redo");
         mapButtonBox.getChildren().add(redoButton);
         redoButton.setOnAction((event) -> {
-            viewMapCanvas(stage, height, width, variability, coastal);
+            Tile[][] newMap = mapCreator.showMap(variability, coastal);
+            viewMapCanvas(stage, height, width, variability, coastal, newMap, mapCreator);
         });
 
         Button backButton = new Button("Back");
