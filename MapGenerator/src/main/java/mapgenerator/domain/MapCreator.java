@@ -39,4 +39,7 @@ public class MapCreator {
         return true;
     }
 
+    public void assignTerrain() {
+        map.assignTerrain();
+    }
 }

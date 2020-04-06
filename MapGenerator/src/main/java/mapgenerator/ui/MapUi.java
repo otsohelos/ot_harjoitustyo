@@ -172,7 +172,7 @@ public class MapUi extends Application {
         Button backButton = new Button("Back");
         mapButtonBox.getChildren().add(backButton);
 
-        Button saveButton = new Button("Save");
+        Button saveButton = new Button("Save...");
 
         saveButton.setOnAction((event2) -> {
 
@@ -195,46 +195,37 @@ public class MapUi extends Application {
 
         });
 
-        /*saveButton.setOnAction((event2) -> {
-            FileChooser fileChooser = new FileChooser();
+        Button terrainButton = new Button("Terrain");
+        terrainButton.setOnAction((event3) -> {
+            mapCreator.assignTerrain();
 
-            FileChooser.ExtensionFilter extFilter
-                    = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
-            fileChooser.getExtensionFilters().add(extFilter);
-            BufferedImage bi = new BufferedImage(width * squareSize, height * squareSize, BufferedImage.TYPE_INT_ARGB);
-//            Graphics2D g2 = bi.createGraphics();
-            
-            mapCanvas.snapshot(new SnapshotParameters(), wi);
-            
+            for (int i = 0; i < map.length; i++) {
+                //System.out.println("");
 
-            Iterator imageWriters = ImageIO.getImageWritersByFormatName("PNG");
-            ImageWriter imageWriter = (ImageWriter) imageWriters.next();
-            File file = fileChooser.showSaveDialog(stage);
+                for (int j = 0; j < map[i].length; j++) {
+                    String color = map[i][j].getTerrainColor();
+                    //System.out.print(color + " ");
+                    //Rectangle rectangle = new Rectangle(rectSize, rectSize, Paint.valueOf(color));
 
-            try {
-                ImageOutputStream ios = ImageIO.createImageOutputStream(file);
-                imageWriter.setOutput(ios);
-                imageWriter.write(bi);
-            } catch (Exception e) {
-                System.out.println("nooooo!");
-            }
-            //Show save file dialog
-            /* File file = fileChooser.showSaveDialog(stage);
+                    int top = map[i][j].getTopBorder();
+                    int left = map[i][j].getLeftBorder();
+                    int rectHeight = squareSize - top;
+                    int rectWidth = squareSize - left;
 
-            if (file != null) {
-                try {
-                    Iterator imageWriters = ImageIO.getImageWritersByFormatName("PNG");
-                    ImageWriter imageWriter = (ImageWriter) imageWriters.next();
-                    //File file = new File("filename.gif");
-                    ImageOutputStream ios = ImageIO.createImageOutputStream(file);
-                    imageWriter.setOutput(ios);
-                    imageWriter.write(bi);
-                } catch (IOException ex) {
-                    System.out.println("Error");
+                    GraphicsContext gc = mapCanvas.getGraphicsContext2D();
+
+                    gc.setFill(Paint.valueOf(color));
+                    gc.setLineWidth(0);
+
+                    gc.fillRect(j * squareSize + left, i * squareSize + top, rectWidth, rectHeight);
+
+                    // System.out.println("rectangle, height " + rectHeight + ", width " + rectWidth + ", color " + color);
                 }
             }
-        });*/
+            //FlowPane mapPane = new FlowPane();
+        });
         mapButtonBox.getChildren().add(saveButton);
+        mapButtonBox.getChildren().add(terrainButton);
 
         mapBox.getChildren().add(mapButtonBox);
 

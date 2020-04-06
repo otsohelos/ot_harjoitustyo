@@ -50,6 +50,7 @@ public class Map {
                 makeTile(i, j, intArray[i][j]);
             }
         }
+        assignTerrain();
     }
 
     public void makeTile(int i, int j, int elevation) {
@@ -333,6 +334,48 @@ public class Map {
 
     public int getMaxElevation() {
         return this.maxElevation;
+    }
+
+    public void assignTerrain() {
+        // assign base rainfall number between 1 and 6
+        int baseRainfall = this.islandTendency + rzr.randomize(4);
+
+        // go through map in 5x5 areas
+        int multiplier = 5;
+        for (int i = 0; i < height / multiplier; i++) {
+            for (int j = 0; j < width / multiplier; j++) {
+                // check how many water squares in this area
+                int howManyWaters = howManyWaters(i, j, multiplier);
+
+                assignTerrainSquares(i, j, howManyWaters, multiplier, baseRainfall);
+            }
+
+        }
+    }
+
+    public int howManyWaters(int i, int j, int multiplier) {
+        int waters = 0;
+        for (int k = i * multiplier; k < i * multiplier + multiplier; k++) {
+            for (int l = j * multiplier; l < j * multiplier + multiplier; l++) {
+                if (this.tileArray[k][l].isWater()) {
+                    waters++;
+                }
+            }
+        }
+        return waters;
+    }
+
+    public void assignTerrainSquares(int i, int j, int howManyWaters, int multiplier, int baseRainfall) {
+
+        for (int k = i * multiplier; k < i * multiplier + multiplier; k++) {
+            for (int l = j * multiplier; l < j * multiplier + multiplier; l++) {
+                // final rainfall number: proportion of surrounding water tiles times base number 1 to 6
+                // plus random number 0 to 4, total rainfall 0 to 10
+                double rainfall = 1.0 * howManyWaters * baseRainfall / multiplier + rzr.randomize(5);
+                tileArray[k][l].setRainfall((int) rainfall);
+                tileArray[k][l].assignTerrain();
+            }
+        }
     }
 
 }

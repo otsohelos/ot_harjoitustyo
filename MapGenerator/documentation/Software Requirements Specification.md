@@ -46,7 +46,7 @@ Map view has elevation indicated by color darkness.
 ### Map Views
 
 - DONE: Initially, the Elevation view will be generated.
-- Save button: User can choose to save the map.
+- DONE: Save button: User can choose to save the map.
 - DONE: Redo button: User can generate a new map with the same settings.
 - DONE: Back button: User can go back to the Settings view to change settings.
 - Addition of Terrain: Terrain types will be generated depending on settings and the altitude or a given terrain square
