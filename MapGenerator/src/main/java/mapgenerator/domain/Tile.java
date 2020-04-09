@@ -97,8 +97,8 @@ public class Tile {
     }
 
     public void assignTerrain() {
-        // very high terrains are desert
-        if (elevation > cutUnit * 12) {
+        // very high or dry squares are always desert
+        if (elevation > cutUnit * 12 || rainfall < 4) {
             terrain = 4;
         } else if (elevation < cutUnit * 3) {
             // it's water

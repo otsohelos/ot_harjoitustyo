@@ -31,6 +31,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 /**
@@ -181,7 +183,9 @@ public class MapUi extends Application {
         Button terrainButton = new Button("Terrain");
 
         VBox terrainBox = new VBox();
-        terrainBox.getChildren().add(terrainCanvas);
+        HBox terrainCanvasBox = new HBox();
+        terrainCanvasBox.getChildren().add(terrainCanvas);
+        terrainBox.getChildren().add(terrainCanvasBox);
         HBox terrainButtonBox = new HBox();
         Scene terrainView = new Scene(terrainBox);
 
@@ -215,6 +219,9 @@ public class MapUi extends Application {
 
             stage.setScene(terrainView);
         });
+        Image legend = new Image("legend.jpg");
+        ImageView legendView = new ImageView(legend);
+        terrainCanvasBox.getChildren().add(legendView);
         terrainBox.getChildren().add(terrainButtonBox);
 
         mapButtonBox.getChildren().add(saveButton);

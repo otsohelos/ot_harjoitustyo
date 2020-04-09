@@ -40,6 +40,7 @@ public class Map {
         if (!coastal) {
             this.islandTendency = 1;
         }
+        // set variability: 3 or 5
         this.variability = variabilityValue;
         if (variability % 2 == 0) {
             // warn for even variabilities
