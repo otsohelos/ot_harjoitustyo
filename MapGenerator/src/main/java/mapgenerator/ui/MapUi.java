@@ -5,12 +5,9 @@
  */
 package mapgenerator.ui;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import mapgenerator.domain.MapCreator;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
@@ -34,9 +30,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -133,34 +128,39 @@ public class MapUi extends Application {
         int squareSize = 5;
         int canvasWidth = width * squareSize;
         int canvasHeight = height * squareSize;
-        Canvas mapCanvas = new Canvas(canvasWidth, canvasHeight);
+        Canvas altitudeCanvas = new Canvas(canvasWidth, canvasHeight);
+        Canvas terrainCanvas = new Canvas(canvasWidth, canvasHeight);
 
         for (int i = 0; i < map.length; i++) {
             //System.out.println("");
 
             for (int j = 0; j < map[i].length; j++) {
                 String color = map[i][j].getColor();
-                //System.out.print(color + " ");
-                //Rectangle rectangle = new Rectangle(rectSize, rectSize, Paint.valueOf(color));
 
-                int top = map[i][j].getTopBorder();
-                int left = map[i][j].getLeftBorder();
-                int rectHeight = squareSize - top;
-                int rectWidth = squareSize - left;
+                boolean left = map[i][j].getLeftBorder();
 
-                GraphicsContext gc = mapCanvas.getGraphicsContext2D();
+                GraphicsContext gc = altitudeCanvas.getGraphicsContext2D();
 
                 gc.setFill(Paint.valueOf(color));
                 gc.setLineWidth(0);
 
-                gc.fillRect(j * squareSize + left, i * squareSize + top, rectWidth, rectHeight);
+                gc.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
 
-                // System.out.println("rectangle, height " + rectHeight + ", width " + rectWidth + ", color " + color);
+                gc.setLineWidth(1);
+                gc.setStroke(Color.BLACK);
+                // draw borders if there are any
+                if (map[i][j].getTopBorder()) {
+                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize + squareSize, i * squareSize);
+                }
+                if (map[i][j].getLeftBorder()) {
+                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize, i * squareSize + squareSize);
+
+                }
             }
         }
         //FlowPane mapPane = new FlowPane();
-        VBox mapBox = new VBox();
-        mapBox.getChildren().add(mapCanvas);
+        VBox altitudeBox = new VBox();
+        altitudeBox.getChildren().add(altitudeCanvas);
         HBox mapButtonBox = new HBox();
         Button redoButton = new Button("Redo");
         mapButtonBox.getChildren().add(redoButton);
@@ -175,69 +175,87 @@ public class MapUi extends Application {
         Button saveButton = new Button("Save...");
 
         saveButton.setOnAction((event2) -> {
-
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Map");
-            FileChooser.ExtensionFilter filter
-                    = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
-            fileChooser.getExtensionFilters().add(filter);
-            File file = fileChooser.showSaveDialog(stage);
-            if (file != null) {
-                try {
-                    WritableImage writableImage = new WritableImage(width * squareSize, height * squareSize);
-                    mapCanvas.snapshot(null, writableImage);
-                    RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
-                    ImageIO.write(renderedImage, "png", file);
-                } catch (IOException e) {
-                    System.out.println("Error!");
-                }
-            }
-
+            saveThisView(stage, width * squareSize, height * squareSize, altitudeCanvas);
         });
 
         Button terrainButton = new Button("Terrain");
-        terrainButton.setOnAction((event3) -> {
-            mapCreator.assignTerrain();
 
+        VBox terrainBox = new VBox();
+        terrainBox.getChildren().add(terrainCanvas);
+        HBox terrainButtonBox = new HBox();
+        Scene terrainView = new Scene(terrainBox);
+
+        Button altitudeButton = new Button("Altitude");
+
+        terrainButton.setOnAction((event3) -> {
+            //mapCreator.assignTerrain();
             for (int i = 0; i < map.length; i++) {
                 //System.out.println("");
 
                 for (int j = 0; j < map[i].length; j++) {
                     String color = map[i][j].getTerrainColor();
-                    //System.out.print(color + " ");
-                    //Rectangle rectangle = new Rectangle(rectSize, rectSize, Paint.valueOf(color));
 
-                    int top = map[i][j].getTopBorder();
-                    int left = map[i][j].getLeftBorder();
-                    int rectHeight = squareSize - top;
-                    int rectWidth = squareSize - left;
-
-                    GraphicsContext gc = mapCanvas.getGraphicsContext2D();
+                    GraphicsContext gc = terrainCanvas.getGraphicsContext2D();
 
                     gc.setFill(Paint.valueOf(color));
                     gc.setLineWidth(0);
 
-                    gc.fillRect(j * squareSize + left, i * squareSize + top, rectWidth, rectHeight);
-
-                    // System.out.println("rectangle, height " + rectHeight + ", width " + rectWidth + ", color " + color);
+                    gc.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+                    gc.setLineWidth(1);
+                    gc.setStroke(Color.BLACK);
+                    // draw borders if there are any
+                    if (map[i][j].getTopBorder()) {
+                        gc.strokeLine(j * squareSize, i * squareSize, j * squareSize + squareSize, i * squareSize);
+                    }
+                    if (map[i][j].getLeftBorder()) {
+                        gc.strokeLine(j * squareSize, i * squareSize, j * squareSize, i * squareSize + squareSize);
+                    }
                 }
             }
-            //FlowPane mapPane = new FlowPane();
+
+            stage.setScene(terrainView);
         });
+        terrainBox.getChildren().add(terrainButtonBox);
+
         mapButtonBox.getChildren().add(saveButton);
         mapButtonBox.getChildren().add(terrainButton);
-
-        mapBox.getChildren().add(mapButtonBox);
+                        
+        terrainButtonBox.getChildren().add(altitudeButton);
+        terrainButtonBox.getChildren().add(saveButton);
+        altitudeBox.getChildren().add(mapButtonBox);
 
         backButton.setOnAction((event) -> {
             viewSettings(stage);
         });
 
-        Scene mapView = new Scene(mapBox);
-        mapView.getStylesheets().add("mapstyle.css");
+        Scene altitudeView = new Scene(altitudeBox);
+        altitudeView.getStylesheets().add("mapstyle.css");
 
-        stage.setScene(mapView);
+        altitudeButton.setOnAction((event) -> {
+            stage.setScene(altitudeView);
+        });
+        stage.setScene(altitudeView);
 
+    }
+
+    public void saveThisView(Stage stage, int imgWidth, int imgHeight, Canvas canvas) {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Map");
+        FileChooser.ExtensionFilter filter
+                = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(filter);
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            try {
+                WritableImage writableImage = new WritableImage(imgWidth, imgHeight);
+                canvas.snapshot(null, writableImage);
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                ImageIO.write(renderedImage, "png", file);
+            } catch (IOException e) {
+                System.out.println("Error!");
+            }
+        }
     }
 
     public static void main(String[] args) {

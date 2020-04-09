@@ -49,8 +49,8 @@ public class TileTest {
     }
     
     public void assignedBordersReturnOne() {
-        seaTile.setLeftBorder(1);
-        seaTile.setTopBorder(1);
+        seaTile.setLeftBorder();
+        seaTile.setTopBorder();
         assertEquals(1, seaTile.getLeftBorder());
         assertEquals(1, seaTile.getTopBorder());
     }

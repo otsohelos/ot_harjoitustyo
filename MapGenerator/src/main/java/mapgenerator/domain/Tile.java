@@ -3,16 +3,16 @@ package mapgenerator.domain;
 public class Tile {
 
     private int elevation;
-    private int topBorder;
-    private int leftBorder;
+    private boolean topBorder;
+    private boolean leftBorder;
     private int terrain;
     private int cutUnit;
     private int rainfall;
 
     public Tile(int elevation) {
         this.elevation = elevation;
-        this.topBorder = 0;
-        this.leftBorder = 0;
+        this.topBorder = false;
+        this.leftBorder = false;
         this.terrain = 0;
         this.cutUnit = 3;
         this.rainfall = 0;
@@ -72,19 +72,19 @@ public class Tile {
         }
     }
 
-    public void setLeftBorder(int i) {
-        leftBorder = i;
+    public void setLeftBorder() {
+        leftBorder = !leftBorder;
     }
 
-    public void setTopBorder(int i) {
-        topBorder = i;
+    public void setTopBorder() {
+        topBorder = !topBorder;
     }
 
-    public int getTopBorder() {
+    public boolean getTopBorder() {
         return topBorder;
     }
 
-    public int getLeftBorder() {
+    public boolean getLeftBorder() {
         return leftBorder;
     }
 
@@ -92,8 +92,15 @@ public class Tile {
         this.rainfall = rainfall;
     }
 
+    public int getRainfall() {
+        return this.rainfall;
+    }
+
     public void assignTerrain() {
-        if (elevation < cutUnit * 3) {
+        // very high terrains are desert
+        if (elevation > cutUnit * 12) {
+            terrain = 4;
+        } else if (elevation < cutUnit * 3) {
             // it's water
             terrain = 1;
         } else if (elevation < cutUnit * 7) {
@@ -107,19 +114,27 @@ public class Tile {
             }
         } else if (elevation < cutUnit * 11) {
             // mid land
-            if (rainfall < 3) {
+            if (rainfall < 5) {
                 // desert
                 terrain = 4;
-            } else if (rainfall < 5) {
+            } else if (rainfall < 7) {
                 // grassland
                 terrain = 3;
-            } else {
-                //forest
+            } else if (rainfall < 11) {
+                // forest
                 terrain = 5;
+            } else {
+                // wetlands
+                terrain = 2;
             }
         } else {
             // highland
-            terrain = 4;
+            if (rainfall > 8) {
+                // grassland
+                terrain = 3;
+            } else {
+                terrain = 4;
+            }
         }
     }
 

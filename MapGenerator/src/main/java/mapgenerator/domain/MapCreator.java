@@ -14,10 +14,12 @@ public class MapCreator {
     private int height;
     private int width;
     private Map map;
+    private boolean terrainAssigned;
 
     public MapCreator(int height, int width) {
         this.height = height;
         this.width = width;
+        this.terrainAssigned = false;
     }
 
     public Tile[][] showMap() {
@@ -39,7 +41,16 @@ public class MapCreator {
         return true;
     }
 
-    public void assignTerrain() {
-        map.assignTerrain();
+    public boolean assignTerrain() {
+        if (!terrainAssigned) {
+            terrainAssigned = true;
+            map.assignTerrain();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean terrainIsAssigned() {
+        return this.terrainAssigned;
     }
 }

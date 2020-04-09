@@ -17,6 +17,7 @@ public class Map {
     private int maxElevation;
     private int islandTendency;
     private int variability;
+    private int madeSmaller;
 
     public Map(int height, int width) {
         this.height = height;
@@ -25,8 +26,9 @@ public class Map {
         this.tileArray = new Tile[height][width];
         this.rzr = new Randomizer();
         this.maxElevation = 40;
-        this.islandTendency = 2;
+        this.islandTendency = 3;
         this.variability = 3;
+        this.madeSmaller = 0;
     }
 
     public void assignTiles() {
@@ -68,10 +70,10 @@ public class Map {
 
             // if water changes to land or vice versa, make border
             if (leftIsWater != tile.isWater()) {
-                tile.setLeftBorder(1);
+                tile.setLeftBorder();
             }
             if (aboveIsWater != tile.isWater()) {
-                tile.setTopBorder(1);
+                tile.setTopBorder();
             }
         }
         tileArray[i][j] = tile;
@@ -94,8 +96,7 @@ public class Map {
             makeAnotherPoint(i, j);
         }
         fillTheRest();
-        //System.out.println("after:");
-        //this.printIntArray();
+        System.out.println("made smaller " + madeSmaller + " times");
     }
 
     public void makeAnotherPoint(int i, int j) {
@@ -195,7 +196,8 @@ public class Map {
         int intAvg = (int) Math.round(avg);
 
         // tend toward downhill slopes repending on island tendency
-        if (rzr.isSmaller(9, islandTendency)) {
+        if (rzr.isSmaller(12, islandTendency)) {
+            madeSmaller++;
             intAvg--;
         }
 
@@ -328,6 +330,26 @@ public class Map {
         return intArray;
     }
 
+    public void printRainArray() {
+        for (int i = 0; i < height; i++) {
+            System.out.println("");
+            for (int j = 0; j < width; j++) {
+                System.out.print(tileArray[i][j].getRainfall() + " ");
+            }
+        }
+        System.out.println("");
+    }
+
+    public void printTerrainArray() {
+        for (int i = 0; i < height; i++) {
+            System.out.println("");
+            for (int j = 0; j < width; j++) {
+                System.out.print(tileArray[i][j].getTerrain() + " ");
+            }
+        }
+        System.out.println("");
+    }
+
     public Tile getTile(int i, int j) {
         return tileArray[i][j];
     }
@@ -337,27 +359,35 @@ public class Map {
     }
 
     public void assignTerrain() {
-        // assign base rainfall number between 1 and 6
-        int baseRainfall = this.islandTendency + rzr.randomize(4);
+        // assign base rainfall number between 3 and 9
+        int baseRainfall = this.islandTendency + 2 + rzr.randomize(5);
+        if (islandTendency == 1) {
+            baseRainfall++;
+        }
+        System.out.println("baserainfall: " + baseRainfall);
 
-        // go through map in 5x5 areas
-        int multiplier = 5;
-        for (int i = 0; i < height / multiplier; i++) {
-            for (int j = 0; j < width / multiplier; j++) {
+        // go through map in 3x3 areas
+        int multiplier = 3;
+        for (int i = 0; i < height; i = i + multiplier) {
+            for (int j = 0; j < width; j = j + multiplier) {
                 // check how many water squares in this area
                 int howManyWaters = howManyWaters(i, j, multiplier);
 
                 assignTerrainSquares(i, j, howManyWaters, multiplier, baseRainfall);
-            }
 
+            }
         }
+
+        //printRainArray();
+        //printTerrainArray();
+        //printIntArray();
     }
 
     public int howManyWaters(int i, int j, int multiplier) {
         int waters = 0;
-        for (int k = i * multiplier; k < i * multiplier + multiplier; k++) {
-            for (int l = j * multiplier; l < j * multiplier + multiplier; l++) {
-                if (this.tileArray[k][l].isWater()) {
+        for (int k = i; k < i + multiplier; k++) {
+            for (int l = j; l < j + multiplier; l++) {
+                if (k < height && l < width && tileArray[k][l].isWater()) {
                     waters++;
                 }
             }
@@ -367,13 +397,22 @@ public class Map {
 
     public void assignTerrainSquares(int i, int j, int howManyWaters, int multiplier, int baseRainfall) {
 
-        for (int k = i * multiplier; k < i * multiplier + multiplier; k++) {
-            for (int l = j * multiplier; l < j * multiplier + multiplier; l++) {
-                // final rainfall number: proportion of surrounding water tiles times base number 1 to 6
+        for (int k = i; k < i + multiplier; k++) {
+            for (int l = j; l < j + multiplier; l++) {
+                // final rainfall number: proportion of surrounding water tiles times base number 2 to 10
                 // plus random number 0 to 4, total rainfall 0 to 10
-                double rainfall = 1.0 * howManyWaters * baseRainfall / multiplier + rzr.randomize(5);
-                tileArray[k][l].setRainfall((int) rainfall);
-                tileArray[k][l].assignTerrain();
+                int random = rzr.randomize(3);
+                double rainfall = 1.0 * (howManyWaters) / (multiplier * multiplier) + baseRainfall + random;
+                //System.out.println("how many waters: " + howManyWaters);
+                //System.out.println("rainfall proportion: " + (1.0 * howManyWaters / (multiplier * multiplier)));
+                //System.out.println("random: " + random);
+                //System.out.println("final rainfall: " + rainfall);
+
+                if (k < height && l < width) {
+                    tileArray[k][l].setRainfall((int) rainfall);
+                    tileArray[k][l].assignTerrain();
+                }
+                //System.out.println("rainfall " + rainfall + ", terrain " + tileArray[k][l].getTerrain());
             }
         }
     }
