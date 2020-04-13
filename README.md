@@ -19,3 +19,52 @@ MapGenerator is done with Java 11. A working version will be finished during Apr
 [Software Architecture](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/architecture.md)
 
 [Log of working hours](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/WorkHoursLog.md)
+
+## Command Line Commands
+
+### Testing
+
+Perform tests:
+
+```
+mvn test
+```
+
+Create test coverage report:
+
+```
+mvn jacoco:report
+```
+
+Coverage report can be found at _target/site/jacoco/index.html_
+
+### Generate runnable jar file
+
+Generate runnable jar fine:
+
+```
+mvn package
+```
+
+Runnable jar file _MapGenerator-1.0-SNAPSHOT.jar_ can be found in _target_
+
+### JavaDoc
+
+Generate JavaDoc:
+
+```
+mvn javadoc:javadoc
+```
+
+JavaDoc can be found at _target/site/apidocs/index.html_
+
+### Checkstyle
+
+Perform checks defined in [checkstyle.xml](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/checkstyle.xml):
+
+```
+ mvn jxr:jxr checkstyle:checkstyle
+```
+
+Possible errors can be found at _target/site/checkstyle.html_
+

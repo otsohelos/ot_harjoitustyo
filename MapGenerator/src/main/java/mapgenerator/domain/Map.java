@@ -94,7 +94,7 @@ public class Map {
             firstPoint = maxElevation;
         }
         intArray[i][j] = firstPoint;
-        randomizeRecursively(i + 1, j, (25 - 4 * variability));
+        randomizeRecursively(i + 1, j, (27 - 4 * variability));
         //System.out.println("before fillTheRest:");
         //this.printIntArray();
 
@@ -128,7 +128,7 @@ public class Map {
         }
         System.out.println("other seed is " + anotherPointI + ", " + anotherPointJ);
         if (anotherPointI != 0 && anotherPointJ != 0) {
-            randomizeRecursively(anotherPointI, anotherPointJ, (25 - 4 * variability));
+            randomizeRecursively(anotherPointI, anotherPointJ, (27 - 4 * variability));
         }
     }
 
@@ -203,8 +203,7 @@ public class Map {
         int intAvg = (int) Math.round(avg);
 
         // tend toward downhill slopes repending on island tendency
-        // make this tendency starker with high variability
-        if (rzr.isSmaller(13, islandTendency)) {
+            if (rzr.isSmaller(26, (islandTendency * islandTendency))) {
             madeSmaller++;
             intAvg--;
         }
@@ -257,14 +256,16 @@ public class Map {
         double avg = 1.0 * sumOfNeighbors / assignedNeighbors;
 
         // check if two very disparate neighbors and pick one of them or both
-        if (assignedNeighbors == 2 && highestNeighbor - avg > 10) {
-            int coinToss = rzr.randomize(3);
-            if (coinToss == 0) {
-                assignedNeighbors--;
-                sumOfNeighbors = highestNeighbor;
-            } else if (coinToss == 1) {
-                assignedNeighbors--;
-                sumOfNeighbors = lowestNeighbor;
+        if (assignedNeighbors == 2) {
+            if (highestNeighbor - avg > 10) {
+                int coinToss = rzr.randomize(3);
+                if (coinToss == 0) {
+                    assignedNeighbors--;
+                    sumOfNeighbors = highestNeighbor;
+                } else if (coinToss == 1) {
+                    assignedNeighbors--;
+                    sumOfNeighbors = lowestNeighbor;
+                }
             }
             //System.out.println("reassigned, sum of neighbors is " + sumOfNeighbors);
         } else {

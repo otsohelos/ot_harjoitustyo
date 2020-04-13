@@ -89,8 +89,7 @@ public class MapTest {
         boolean overUpperLimit = false;
 
         map.assignTiles();
-
-        map.getTileArray();
+        
         int[][] intArray = map.getIntArray();
 
         for (int i = 0; i < 10; i++) {

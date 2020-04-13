@@ -35,7 +35,7 @@ public class MapCreator {
     }
 
     public boolean checkDimensions(int height, int width) {
-        if (height < 10 || width < 10 || height > 200 || width > 200) {
+        if (height < 40 || width < 40 || height > 260 || width > 260) {
             return false;
         }
         return true;

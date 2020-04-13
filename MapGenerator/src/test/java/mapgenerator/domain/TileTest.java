@@ -5,10 +5,7 @@
  */
 package mapgenerator.domain;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -34,7 +31,7 @@ public class TileTest {
 
     @Test
     public void landTileIsYellow() {
-        assertEquals("rgb(215,255,152)", landTile.getColor());
+        assertEquals("rgb(155,210,75)", landTile.getColor());
     }
 
     @Test

@@ -86,7 +86,7 @@ public class MapUi extends Application {
                     height = Integer.valueOf(fieldBox.getHeight());
                     width = Integer.valueOf(fieldBox.getWidth());
                 } catch (Exception exception) {
-                    dimensionsAlert.setContentText("Give height and width as integers.\n\n Height and width should be between 10 and 200.");
+                    dimensionsAlert.setContentText("Give height and width as integers.\n\n Height and width should be between 40 and 260.");
                     dimensionsAlert.show();
                     return;
                 }
@@ -113,7 +113,7 @@ public class MapUi extends Application {
 
                     viewAltitudeCanvas(stage, height, width, variability, coastal, map, mapCreator);
                 } else {
-                    dimensionsAlert.setContentText("Height and width should be between 10 and 200.");
+                    dimensionsAlert.setContentText("Height and width should be between 40 and 260.");
                     dimensionsAlert.show();
                 }
             }
