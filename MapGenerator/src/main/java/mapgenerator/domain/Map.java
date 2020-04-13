@@ -18,6 +18,7 @@ public class Map {
     private int islandTendency;
     private int variability;
     private int madeSmaller;
+    private int baseRainfall;
 
     public Map(int height, int width) {
         this.height = height;
@@ -87,8 +88,13 @@ public class Map {
         System.out.println("seed is " + i + ", " + j);
 
         // start building map from that point
-        intArray[i][j] = rzr.randomizePlus(maxElevation / 2, (maxElevation / 2 - 2));
-        randomizeRecursively(i + 1, j, 18);
+        // high variability maps are likely to start higher
+        int firstPoint = rzr.randomizePlus(maxElevation / 2, (maxElevation / 2 - 5 + variability));
+        if (firstPoint > maxElevation) {
+            firstPoint = maxElevation;
+        }
+        intArray[i][j] = firstPoint;
+        randomizeRecursively(i + 1, j, (25 - 4 * variability));
         //System.out.println("before fillTheRest:");
         //this.printIntArray();
 
@@ -122,7 +128,7 @@ public class Map {
         }
         System.out.println("other seed is " + anotherPointI + ", " + anotherPointJ);
         if (anotherPointI != 0 && anotherPointJ != 0) {
-            randomizeRecursively(anotherPointI, anotherPointJ, 18);
+            randomizeRecursively(anotherPointI, anotherPointJ, (25 - 4 * variability));
         }
     }
 
@@ -133,7 +139,7 @@ public class Map {
                 if (!isAssigned(i, j)) {
                     int sum = neighborsSum(i, j);
 
-                    if (sum > variability * 7) {
+                    if (sum > variability * 6) {
                         randomizeRecursively(i, j, 2);
                     }
                 }
@@ -197,7 +203,8 @@ public class Map {
         int intAvg = (int) Math.round(avg);
 
         // tend toward downhill slopes repending on island tendency
-        if (rzr.isSmaller(12, islandTendency)) {
+        // make this tendency starker with high variability
+        if (rzr.isSmaller(13, islandTendency)) {
             madeSmaller++;
             intAvg--;
         }
@@ -361,7 +368,9 @@ public class Map {
 
     public void assignTerrain() {
         // assign base rainfall number between 3 and 9
-        int baseRainfall = this.islandTendency + 2 + rzr.randomize(5);
+        baseRainfall = islandTendency + 2 + rzr.randomize(5);
+
+        // addition to prevent inland maps from being super dry
         if (islandTendency == 1) {
             baseRainfall++;
         }
@@ -416,6 +425,16 @@ public class Map {
                 //System.out.println("rainfall " + rainfall + ", terrain " + tileArray[k][l].getTerrain());
             }
         }
+    }
+
+    public String getRainFallString() {
+        String wetOrDry = "";
+        if (baseRainfall > 6) {
+            wetOrDry = "wet";
+        } else {
+            wetOrDry = "dry";
+        }
+        return ("This area is " + wetOrDry + ".\nAverage rainfall " + (baseRainfall - 3) + " out of 6.");
     }
 
 }

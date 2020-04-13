@@ -35,22 +35,23 @@ public class MapCreator {
     }
 
     public boolean checkDimensions(int height, int width) {
-        if (height < 10 || width < 10 || height > 150 || width > 150) {
+        if (height < 10 || width < 10 || height > 200 || width > 200) {
             return false;
         }
         return true;
     }
 
     public boolean assignTerrain() {
-        if (!terrainAssigned) {
-            terrainAssigned = true;
+
             map.assignTerrain();
             return false;
-        }
-        return true;
     }
 
     public boolean terrainIsAssigned() {
         return this.terrainAssigned;
+    }
+
+    public String getRainfallString() {
+        return map.getRainFallString();
     }
 }

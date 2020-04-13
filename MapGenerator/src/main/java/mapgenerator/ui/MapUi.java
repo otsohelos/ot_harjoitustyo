@@ -86,7 +86,7 @@ public class MapUi extends Application {
                     height = Integer.valueOf(fieldBox.getHeight());
                     width = Integer.valueOf(fieldBox.getWidth());
                 } catch (Exception exception) {
-                    dimensionsAlert.setContentText("Give height and width as integers.\n\n Height and width should be between 10 and 150.");
+                    dimensionsAlert.setContentText("Give height and width as integers.\n\n Height and width should be between 10 and 200.");
                     dimensionsAlert.show();
                     return;
                 }
@@ -111,9 +111,9 @@ public class MapUi extends Application {
 
                     Tile[][] map = mapCreator.showMap(variability, coastal);
 
-                    viewMapCanvas(stage, height, width, variability, coastal, map, mapCreator);
+                    viewAltitudeCanvas(stage, height, width, variability, coastal, map, mapCreator);
                 } else {
-                    dimensionsAlert.setContentText("Height and width should be between 10 and 150.");
+                    dimensionsAlert.setContentText("Height and width should be between 10 and 200.");
                     dimensionsAlert.show();
                 }
             }
@@ -126,20 +126,17 @@ public class MapUi extends Application {
         stage.show();
     }
 
-    public void viewMapCanvas(Stage stage, int height, int width, int variability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
-        int squareSize = 5;
+    public void viewAltitudeCanvas(Stage stage, int height, int width, int variability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
+        int squareSize = 4;
         int canvasWidth = width * squareSize;
         int canvasHeight = height * squareSize;
         Canvas altitudeCanvas = new Canvas(canvasWidth, canvasHeight);
-        Canvas terrainCanvas = new Canvas(canvasWidth, canvasHeight);
 
         for (int i = 0; i < map.length; i++) {
             //System.out.println("");
 
             for (int j = 0; j < map[i].length; j++) {
                 String color = map[i][j].getColor();
-
-                boolean left = map[i][j].getLeftBorder();
 
                 GraphicsContext gc = altitudeCanvas.getGraphicsContext2D();
 
@@ -163,25 +160,57 @@ public class MapUi extends Application {
         //FlowPane mapPane = new FlowPane();
         VBox altitudeBox = new VBox();
         altitudeBox.getChildren().add(altitudeCanvas);
-        HBox mapButtonBox = new HBox();
+        HBox altitudeButtonBox = new HBox();
         Button redoButton = new Button("Redo");
-        mapButtonBox.getChildren().add(redoButton);
+        altitudeButtonBox.getChildren().add(redoButton);
         redoButton.setOnAction((event) -> {
             Tile[][] newMap = mapCreator.showMap(variability, coastal);
-            viewMapCanvas(stage, height, width, variability, coastal, newMap, mapCreator);
+            viewAltitudeCanvas(stage, height, width, variability, coastal, newMap, mapCreator);
         });
 
         Button backButton = new Button("Back");
-        mapButtonBox.getChildren().add(backButton);
+        altitudeButtonBox.getChildren().add(backButton);
 
-        Button saveButton = new Button("Save...");
+        Button saveAltitudeButton = new Button("Save...");
 
-        saveButton.setOnAction((event2) -> {
+        saveAltitudeButton.setOnAction((event2) -> {
             saveThisView(stage, width * squareSize, height * squareSize, altitudeCanvas);
         });
 
         Button terrainButton = new Button("Terrain");
 
+        terrainButton.setOnAction((event3) -> {
+            //mapCreator.assignTerrain();
+            viewTerrainCanvas(stage, height, width, variability, coastal, map, mapCreator);
+
+        });
+
+        altitudeButtonBox.getChildren().add(saveAltitudeButton);
+        altitudeButtonBox.getChildren().add(terrainButton);
+
+        altitudeBox.getChildren().add(altitudeButtonBox);
+
+        backButton.setOnAction((event) -> {
+            viewSettings(stage);
+        });
+
+        Scene altitudeView = new Scene(altitudeBox);
+        altitudeView.getStylesheets().add("mapstyle.css");
+
+        stage.setScene(altitudeView);
+    }
+
+    public void viewTerrainCanvas(Stage stage, int height, int width, int variability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
+
+        int squareSize = 4;
+        int canvasWidth = width * squareSize;
+        int canvasHeight = height * squareSize;
+        Canvas terrainCanvas = new Canvas(canvasWidth, canvasHeight);
+        Button saveTerrainButton = new Button("Save...");
+
+        saveTerrainButton.setOnAction((event2) -> {
+            saveThisView(stage, width * squareSize, height * squareSize, terrainCanvas);
+        });
         VBox terrainBox = new VBox();
         HBox terrainCanvasBox = new HBox();
         terrainCanvasBox.getChildren().add(terrainCanvas);
@@ -190,12 +219,52 @@ public class MapUi extends Application {
         Scene terrainView = new Scene(terrainBox);
 
         Button altitudeButton = new Button("Altitude");
+        for (int i = 0; i < map.length; i++) {
+            //System.out.println("");
 
-        terrainButton.setOnAction((event3) -> {
-            //mapCreator.assignTerrain();
+            for (int j = 0; j < map[i].length; j++) {
+                String color = map[i][j].getTerrainColor();
+
+                GraphicsContext gc = terrainCanvas.getGraphicsContext2D();
+
+                gc.setFill(Paint.valueOf(color));
+                gc.setLineWidth(0);
+
+                gc.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+                gc.setLineWidth(1);
+                gc.setStroke(Color.BLACK);
+                // draw borders if there are any
+                if (map[i][j].getTopBorder()) {
+                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize + squareSize, i * squareSize);
+                }
+                if (map[i][j].getLeftBorder()) {
+                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize, i * squareSize + squareSize);
+                }
+            }
+        }
+        String rainfallString = mapCreator.getRainfallString();
+        Label rainfallLabel = new Label(rainfallString);
+
+        Image legend = new Image("legend.jpg");
+        ImageView legendView = new ImageView(legend);
+
+        VBox legendBox = new VBox();
+        legendBox.getChildren().add(rainfallLabel);
+        legendBox.getChildren().add(legendView);
+
+        Label redoTerrainLabel = new Label("Redo rainfall and terrain:");
+        Button redoTerrainButton = new Button("Redo");
+        legendBox.getChildren().add(redoTerrainLabel);
+        legendBox.getChildren().add(redoTerrainButton);
+
+        redoTerrainButton.setOnAction((event4) -> {
+            mapCreator.assignTerrain();
+            String newRainfallString = mapCreator.getRainfallString();
+            rainfallLabel.setText(newRainfallString);
             for (int i = 0; i < map.length; i++) {
                 //System.out.println("");
 
+                // this is a repeptitive piece of code, maybe refactor
                 for (int j = 0; j < map[i].length; j++) {
                     String color = map[i][j].getTerrainColor();
 
@@ -217,32 +286,18 @@ public class MapUi extends Application {
                 }
             }
 
-            stage.setScene(terrainView);
         });
-        Image legend = new Image("legend.jpg");
-        ImageView legendView = new ImageView(legend);
-        terrainCanvasBox.getChildren().add(legendView);
+
+        terrainCanvasBox.getChildren().add(legendBox);
+
         terrainBox.getChildren().add(terrainButtonBox);
 
-        mapButtonBox.getChildren().add(saveButton);
-        mapButtonBox.getChildren().add(terrainButton);
-                        
         terrainButtonBox.getChildren().add(altitudeButton);
-        terrainButtonBox.getChildren().add(saveButton);
-        altitudeBox.getChildren().add(mapButtonBox);
-
-        backButton.setOnAction((event) -> {
-            viewSettings(stage);
-        });
-
-        Scene altitudeView = new Scene(altitudeBox);
-        altitudeView.getStylesheets().add("mapstyle.css");
-
+        terrainButtonBox.getChildren().add(saveTerrainButton);
         altitudeButton.setOnAction((event) -> {
-            stage.setScene(altitudeView);
+            viewAltitudeCanvas(stage, height, width, variability, coastal, map, mapCreator);
         });
-        stage.setScene(altitudeView);
-
+        stage.setScene(terrainView);
     }
 
     public void saveThisView(Stage stage, int imgWidth, int imgHeight, Canvas canvas) {

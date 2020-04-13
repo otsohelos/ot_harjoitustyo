@@ -43,15 +43,15 @@ public class TileTest {
     }
     
     @Test
-    public void unassignedBordersReturnZero() {
-        assertEquals(0, landTile.getLeftBorder());
-        assertEquals(0, landTile.getTopBorder());
+    public void unassignedBordersReturnFalse() {
+        assertEquals(false, landTile.getLeftBorder());
+        assertEquals(false, landTile.getTopBorder());
     }
     
-    public void assignedBordersReturnOne() {
+    public void assignedBordersReturnTrue() {
         seaTile.setLeftBorder();
         seaTile.setTopBorder();
-        assertEquals(1, seaTile.getLeftBorder());
-        assertEquals(1, seaTile.getTopBorder());
+        assertEquals(true, seaTile.getLeftBorder());
+        assertEquals(true, seaTile.getTopBorder());
     }
 }

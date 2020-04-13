@@ -45,7 +45,7 @@ public class Tile {
             return "rgb(149,205,255)";
         } else if (elevation < cutUnit * 7) {
             // lowland
-            return "rgb(215,255,152)";
+            return "rgb(155,210,75)";
         } else if (elevation < cutUnit * 9) {
             // low-mid land
             return "rgb(254,255,129)";
@@ -60,14 +60,19 @@ public class Tile {
 
     public String getTerrainColor() {
         if (terrain == 1) {
+            // water
             return "rgb(42,149,244)";
         } else if (terrain == 2) {
-            return "rgb(139,178,213)";
+            // wetland
+            return "rgb(210,220,229)";
         } else if (terrain == 3) {
-            return "rgb(215,255,152)";
+            // grassland
+            return "rgb(155,210,75)";
         } else if (terrain == 4) {
+            // desert
             return "rgb(242,183,42)";
         } else {
+            // forest
             return "rgb(80,168,0)";
         }
     }
@@ -97,12 +102,12 @@ public class Tile {
     }
 
     public void assignTerrain() {
-        // very high or dry squares are always desert
-        if (elevation > cutUnit * 12 || rainfall < 4) {
-            terrain = 4;
-        } else if (elevation < cutUnit * 3) {
+        if (elevation < cutUnit * 3) {
             // it's water
             terrain = 1;
+        } else // very high or dry squares are always desert
+        if (elevation > cutUnit * 12.5 || rainfall < 5) {
+            terrain = 4;
         } else if (elevation < cutUnit * 7) {
             // lowland
             if (rainfall > 8) {
@@ -114,10 +119,7 @@ public class Tile {
             }
         } else if (elevation < cutUnit * 11) {
             // mid land
-            if (rainfall < 5) {
-                // desert
-                terrain = 4;
-            } else if (rainfall < 7) {
+            if (rainfall < 7) {
                 // grassland
                 terrain = 3;
             } else if (rainfall < 11) {

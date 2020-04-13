@@ -49,8 +49,8 @@ Map view has elevation indicated by color darkness.
 - DONE: Save button: User can choose to save the map.
 - DONE: Redo button: User can generate a new map with the same settings.
 - DONE: Back button: User can go back to the Settings view to change settings.
-- Addition of Terrain: Terrain types will be generated depending on settings and the altitude or a given terrain square
-- Switch buttons: Possibility to switch between Elevation and Terrain views
+- DONE: Addition of Terrain: Terrain types will be generated depending on settings and the altitude or a given terrain square
+- DONE: Switch buttons: Possibility to switch between Elevation and Terrain views
 
 
 ## Further Development Ideas
@@ -58,6 +58,10 @@ Map view has elevation indicated by color darkness.
 After the basic version is functional, it will be complemented by the following functionalities, time permitting:
 
 - Contiguity of terrain types setting: how likely adjacent squares are to have the same type of terrain
-- Addition of Legend and customisable map name
-- Addition of roads and rivers
+- Addition of Legend (DONE for Terrain view) and customisable map name
+- Rainy / dry setting
+- DONE: Option to re-randomize terrain
+- Addition of cities
+- Addition of roads
+- Addition of rivers
 - Possibility to go back a couple of maps if user clicked Redo by accident
