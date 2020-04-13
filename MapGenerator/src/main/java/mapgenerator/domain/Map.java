@@ -31,7 +31,7 @@ public class Map {
         this.islandTendency = 3;
         this.variability = 3;
         this.madeSmaller = 0;
-        this.otherPoints = 0;
+        this.otherPoints = rzr.randomize(3) + 1;
     }
 
     public void assignTiles() {
@@ -100,9 +100,10 @@ public class Map {
         //System.out.println("before fillTheRest:");
         //this.printIntArray();
 
-        //on large maps do another startpoint
+        // on large maps make a few other startpoints
+        // also in case of stackoverflow
         if (this.height > 80 || this.width > 80) {
-            for (int k = 0; k < otherPoints + 3; k++) {
+            for (int k = 0; k < otherPoints; k++) {
                 makeAnotherPoint(i, j);
             }
         }
@@ -182,8 +183,11 @@ public class Map {
                                 stopWhen);
                         grown++;
                     } catch (StackOverflowError soe) {
-                        System.out.println("overflow, staring again");
+                        // if stack overflows just mark that down
+                        // and make one more starting point
                         otherPoints++;
+                        System.out.println("overflow, starting again");
+
                     }
                     //System.out.println("i is " + i + ", j is " + j);
                     //System.out.println("randomized; grown is " + grown);
@@ -200,32 +204,34 @@ public class Map {
         if (i < 0 || j < 0 || i >= this.height || j >= this.width || isAssigned(i, j)) {
             return;
         }
+        int newInt = 0;
 
         double avg = neighborsAverage(i, j);
 
         if (avg == 0) {
-            intArray[i][j] = rzr.randomizePlus(maxElevation, 1);
-            return;
+            newInt = rzr.randomizePlus(maxElevation, 1);
+        } else {
+
+            // convert average to int witn rounding either up or down
+            int intAvg = (int) Math.round(avg);
+
+            // tend toward downhill slopes repending on island tendency
+            if (rzr.isSmaller(26, (islandTendency * islandTendency))) {
+                madeSmaller++;
+                intAvg--;
+            }
+
+            newInt = intAvg + rzr.randomizePlus(variability, (variability / (-2)));
         }
-
-        // convert average to int witn rounding either up or down
-        int intAvg = (int) Math.round(avg);
-
-        // tend toward downhill slopes repending on island tendency
-        if (rzr.isSmaller(26, (islandTendency * islandTendency))) {
-            madeSmaller++;
-            intAvg--;
-        }
-
-        int newInt = intAvg + rzr.randomizePlus(variability, (variability / (-2)));
-
         // ensure that newInt is within bounds
         if (newInt < 1) {
             newInt = 1;
         } else if (newInt > (maxElevation - 1)) {
             newInt = maxElevation - 1;
+            //System.out.println("too large, made smaller");
         }
         intArray[i][j] = newInt;
+
     }
 
     public double neighborsAverage(int i, int j) {

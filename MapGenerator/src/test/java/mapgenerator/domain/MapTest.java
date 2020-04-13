@@ -89,7 +89,7 @@ public class MapTest {
         boolean overUpperLimit = false;
 
         map.assignTiles();
-        
+
         int[][] intArray = map.getIntArray();
 
         for (int i = 0; i < 10; i++) {
@@ -116,18 +116,23 @@ public class MapTest {
 
     @Test
     public void randomizeOneReturnsValuesInRange() {
+
+        //tinyMap.setInt(0, 0, 0);
         tinyMap.randomizeOne(0, 0);
+        //System.out.println("randomized nr is " + tinyMap.getIntArray()[0][0]);
         assertTrue(tinyMap.getIntArray()[0][0] < 40);
         assertTrue(tinyMap.getIntArray()[0][0] > 0);
+
     }
 
     @Test
     public void randomizeOneReturnsValuesInRange2() {
+        //tinyMap.setInt(0, 0, 0);
         tinyMap.setInt(0, 1, 10);
         tinyMap.setInt(1, 0, 12);
         tinyMap.randomizeOne(0, 0);
         assertTrue(tinyMap.getIntArray()[0][0] < 13);
-        assertTrue(tinyMap.getIntArray()[0][0] > 9);
+        assertTrue(tinyMap.getIntArray()[0][0] > 8);
     }
 
     @Test
