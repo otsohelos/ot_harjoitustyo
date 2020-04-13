@@ -99,7 +99,9 @@ public class Map {
         //this.printIntArray();
 
         //on large maps do another startpoint
-        if (this.height > 8 || this.width > 8) {
+        if (this.height > 80 || this.width > 80) {
+            makeAnotherPoint(i, j);
+            makeAnotherPoint(i, j);
             makeAnotherPoint(i, j);
         }
         fillTheRest();
@@ -126,7 +128,6 @@ public class Map {
                 }
             }
         }
-        System.out.println("other seed is " + anotherPointI + ", " + anotherPointJ);
         if (anotherPointI != 0 && anotherPointJ != 0) {
             randomizeRecursively(anotherPointI, anotherPointJ, (27 - 4 * variability));
         }
@@ -165,7 +166,7 @@ public class Map {
 
     public void growRecursively(int i, int j, int stopWhen) {
         // make array that has random number 0-2 and coordinates of neighbors
-        int[][] neighborsWithRandomness = {{rzr.randomize(3), i - 1, j}, {rzr.randomize(3), i + 1, j}, {rzr.randomize(3), i, j - 1}, {rzr.randomize(3), i, j + 1}};
+        int[][] neighborsWithRandomness = {{rzr.randomize(2), i - 1, j}, {rzr.randomize(2), i + 1, j}, {rzr.randomize(2), i, j - 1}, {rzr.randomize(2), i, j + 1}};
         // make sure that every square tries to grow in at least one direction
         int grown = 0;
         while (grown < 1) {
@@ -203,7 +204,7 @@ public class Map {
         int intAvg = (int) Math.round(avg);
 
         // tend toward downhill slopes repending on island tendency
-            if (rzr.isSmaller(26, (islandTendency * islandTendency))) {
+        if (rzr.isSmaller(26, (islandTendency * islandTendency))) {
             madeSmaller++;
             intAvg--;
         }
