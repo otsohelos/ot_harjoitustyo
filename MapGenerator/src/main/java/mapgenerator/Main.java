@@ -1,13 +1,9 @@
-
-
 package mapgenerator;
 
-/**
- *
- * @author otsohelos
- */
+import mapgenerator.ui.MapUi;
+
 public class Main {
     public static void main(String[] args) {
-        Starter.main(args);
+        MapUi.main(args);
     }
 }
