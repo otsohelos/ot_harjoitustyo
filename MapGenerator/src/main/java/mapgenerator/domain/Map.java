@@ -19,6 +19,7 @@ public class Map {
     private int variability;
     private int madeSmaller;
     private int baseRainfall;
+    private int otherPoints;
 
     public Map(int height, int width) {
         this.height = height;
@@ -30,6 +31,7 @@ public class Map {
         this.islandTendency = 3;
         this.variability = 3;
         this.madeSmaller = 0;
+        this.otherPoints = 0;
     }
 
     public void assignTiles() {
@@ -100,10 +102,11 @@ public class Map {
 
         //on large maps do another startpoint
         if (this.height > 80 || this.width > 80) {
-            makeAnotherPoint(i, j);
-            makeAnotherPoint(i, j);
-            makeAnotherPoint(i, j);
+            for (int k = 0; k < otherPoints + 3; k++) {
+                makeAnotherPoint(i, j);
+            }
         }
+        fillTheRest();
         fillTheRest();
         System.out.println("made smaller " + madeSmaller + " times");
     }
@@ -173,10 +176,15 @@ public class Map {
             for (int k = 0; k < neighborsWithRandomness.length; k++) {
                 // continue growing from neighbor if random number is over 0
                 if (neighborsWithRandomness[k][0] > 0) {
-                    randomizeRecursively(neighborsWithRandomness[k][1],
-                            neighborsWithRandomness[k][2],
-                            stopWhen);
-                    grown++;
+                    try {
+                        randomizeRecursively(neighborsWithRandomness[k][1],
+                                neighborsWithRandomness[k][2],
+                                stopWhen);
+                        grown++;
+                    } catch (StackOverflowError soe) {
+                        System.out.println("overflow, staring again");
+                        otherPoints++;
+                    }
                     //System.out.println("i is " + i + ", j is " + j);
                     //System.out.println("randomized; grown is " + grown);
                 }
