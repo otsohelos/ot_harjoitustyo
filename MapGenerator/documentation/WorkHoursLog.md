@@ -13,4 +13,4 @@
 | 9 Apr | 4 | Made Terrain algorithm better; added legend; test tweaking |
 | 13 Apr | 7 | Tweaks in algorithm and Readme; jar packaging configuration; more tests |
 
-**Total hours** 38
+**Total hours** 49
