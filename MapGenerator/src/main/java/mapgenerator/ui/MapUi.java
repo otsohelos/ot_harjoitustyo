@@ -145,29 +145,7 @@ public class MapUi extends Application {
         Canvas altitudeCanvas = new Canvas(canvasWidth, canvasHeight);
 
         // paint canvas
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[i].length; j++) {
-                String color = map[i][j].getColor();
-
-                GraphicsContext gc = altitudeCanvas.getGraphicsContext2D();
-
-                gc.setFill(Paint.valueOf(color));
-                gc.setLineWidth(0);
-
-                gc.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
-
-                gc.setLineWidth(1);
-                gc.setStroke(Color.BLACK);
-                // draw borders if there are any
-                if (map[i][j].getTopBorder()) {
-                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize + squareSize, i * squareSize);
-                }
-                if (map[i][j].getLeftBorder()) {
-                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize, i * squareSize + squareSize);
-
-                }
-            }
-        }
+        paintCanvas(map, altitudeCanvas, squareSize, "altitude");
 
         // sub-boxes
         HBox altitudeButtonBox = new HBox();
@@ -256,32 +234,8 @@ public class MapUi extends Application {
         terrainButtonBox.getChildren().add(altitudeButton);
         terrainButtonBox.getChildren().add(saveTerrainButton);
 
-        // paint canvas
-        
+        // paint canvas    
         paintCanvas(map, terrainCanvas, squareSize, "terrain");
- /*       for (int i = 0; i < map.length; i++) {
-            //System.out.println("");
-
-            for (int j = 0; j < map[i].length; j++) {
-                String color = map[i][j].getTerrainColor();
-
-                GraphicsContext gc = terrainCanvas.getGraphicsContext2D();
-
-                gc.setFill(Paint.valueOf(color));
-                gc.setLineWidth(0);
-
-                gc.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
-                gc.setLineWidth(1);
-                gc.setStroke(Color.BLACK);
-                // draw borders if there are any
-                if (map[i][j].getTopBorder()) {
-                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize + squareSize, i * squareSize);
-                }
-                if (map[i][j].getLeftBorder()) {
-                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize, i * squareSize + squareSize);
-                }
-            }
-        }*/
 
         // button actions
         saveTerrainButton.setOnAction((event2) -> {
@@ -291,31 +245,20 @@ public class MapUi extends Application {
             mapCreator.assignTerrain();
             String newRainfallString = mapCreator.getRainfallString();
             rainfallLabel.setText(newRainfallString);
+            paintCanvas(map, terrainCanvas, squareSize, "terrain");
+        });
+        dryButton.setOnAction((event5) -> {
+            mapCreator.assignTerrain(false);
+            String newRainfallString = mapCreator.getRainfallString();
+            rainfallLabel.setText(newRainfallString);
+            paintCanvas(map, terrainCanvas, squareSize, "terrain");
+        });
 
-            // this is a repeptitive piece of code, maybe refactor
-            for (int i = 0; i < map.length; i++) {
-                for (int j = 0; j < map[i].length; j++) {
-                    String color = map[i][j].getTerrainColor();
-
-                    GraphicsContext gc = terrainCanvas.getGraphicsContext2D();
-
-                    gc.setFill(Paint.valueOf(color));
-                    gc.setLineWidth(0);
-
-                    gc.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
-                    gc.setLineWidth(1);
-                    gc.setStroke(Color.BLACK);
-
-                    // draw borders if there are any
-                    if (map[i][j].getTopBorder()) {
-                        gc.strokeLine(j * squareSize, i * squareSize, j * squareSize + squareSize, i * squareSize);
-                    }
-                    if (map[i][j].getLeftBorder()) {
-                        gc.strokeLine(j * squareSize, i * squareSize, j * squareSize, i * squareSize + squareSize);
-                    }
-                }
-            }
-
+        wetButton.setOnAction((event6) -> {
+            mapCreator.assignTerrain(true);
+            String newRainfallString = mapCreator.getRainfallString();
+            rainfallLabel.setText(newRainfallString);
+            paintCanvas(map, terrainCanvas, squareSize, "terrain");
         });
 
         altitudeButton.setOnAction((event) -> {

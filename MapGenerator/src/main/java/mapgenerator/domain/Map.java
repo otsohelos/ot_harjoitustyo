@@ -177,9 +177,7 @@ public class Map {
                 // continue growing from neighbor if random number is over 0
                 if (neighborsWithRandomness[k][0] > 0) {
                     try {
-                        randomizeRecursively(neighborsWithRandomness[k][1],
-                                neighborsWithRandomness[k][2],
-                                stopWhen);
+                        randomizeRecursively(neighborsWithRandomness[k][1], neighborsWithRandomness[k][2], stopWhen);
                         grown++;
                     } catch (StackOverflowError soe) {
                         // if stack overflows just mark that down
@@ -200,9 +198,6 @@ public class Map {
     }
 
     public void randomizeOne(int i, int j) {
-        if (i < 0 || j < 0 || i >= this.height || j >= this.width || isAssigned(i, j)) {
-            return;
-        }
         int newInt = 0;
 
         double avg = neighborsAverage(i, j);
@@ -383,7 +378,7 @@ public class Map {
     public void assignTerrain() {
         // assign base rainfall number between 3 and 9
         baseRainfall = islandTendency + 2 + rzr.randomize(5);
- 
+
         // addition to prevent inland maps from being super dry
         if (islandTendency == 1) {
             baseRainfall++;

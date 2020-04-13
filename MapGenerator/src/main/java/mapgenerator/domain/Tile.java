@@ -109,12 +109,12 @@ public class Tile {
         if (elevation < cutUnit * 3) {
             // it's water
             terrain = 1;
-        } else // very high or dry squares are always desert
-        if (elevation > cutUnit * 12.5 || rainfall < 5) {
+        } else if (elevation > cutUnit * 12.5 || rainfall < 5) {
+            // very high or dry squares are always desert
             terrain = 4;
         } else if (elevation < cutUnit * 7) {
             // lowland
-            if (rainfall > 8) {
+            if (rainfall > 9) {
                 // wetlands
                 terrain = 2;
             } else {
@@ -139,6 +139,7 @@ public class Tile {
                 // grassland
                 terrain = 3;
             } else {
+                // desert
                 terrain = 4;
             }
         }

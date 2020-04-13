@@ -59,7 +59,7 @@ After the basic version is functional, it will be complemented by the following 
 
 - Contiguity of terrain types setting: how likely adjacent squares are to have the same type of terrain
 - Addition of Legend (DONE for Terrain view), legend inclusion in save files, and customisable map name
-- Rainy / dry setting
+- DONE: Rainy / dry setting
 - DONE: Option to re-randomize terrain
 - Addition of cities
 - Addition of roads
