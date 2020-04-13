@@ -36,18 +36,17 @@ public class Map {
 
     public void assignTiles() {
         // if no parametres, then variability = 3 and coastal = true
-        this.assignTiles(3, true);
+        this.assignTiles(false, true);
     }
 
-    public void assignTiles(int variabilityValue, boolean coastal) {
+    public void assignTiles(boolean highVariability, boolean coastal) {
         if (!coastal) {
             this.islandTendency = 1;
         }
         // set variability: 3 or 5
-        this.variability = variabilityValue;
-        if (variability % 2 == 0) {
-            // warn for even variabilities
-            System.out.println("Warning: variability should optimally be an odd number. Variability is " + variability);
+        this.variability = 3;
+        if (highVariability) {
+            variability = 5;
         }
 
         this.startRecursively();
@@ -331,12 +330,11 @@ public class Map {
     }
 
     public Tile[][] getTileArray() {
-
         return tileArray;
     }
 
     public void setInt(int i, int j, int value) {
-        System.out.println("Warning: the setInt method should only be used for testing purposes");
+        System.out.println("Note: the setInt method should only be used for testing purposes");
         intArray[i][j] = value;
     }
 
@@ -385,6 +383,33 @@ public class Map {
     public void assignTerrain() {
         // assign base rainfall number between 3 and 9
         baseRainfall = islandTendency + 2 + rzr.randomize(5);
+ 
+        // addition to prevent inland maps from being super dry
+        if (islandTendency == 1) {
+            baseRainfall++;
+        }
+        System.out.println("baserainfall: " + baseRainfall);
+
+        // go through map in 3x3 areas
+        int multiplier = 3;
+        for (int i = 0; i < height; i = i + multiplier) {
+            for (int j = 0; j < width; j = j + multiplier) {
+                // check how many water squares in this area
+                int howManyWaters = howManyWaters(i, j, multiplier);
+
+                assignTerrainSquares(i, j, howManyWaters, multiplier, baseRainfall);
+            }
+        }
+    }
+
+    public void assignTerrain(boolean rainy) {
+        if (rainy) {
+            // assign base rainfall number: coastal 7-9, inland 5-7
+            baseRainfall = islandTendency + 4 + rzr.randomize(3);
+        } else {
+            // assign base rainfall number: coastal 4-6, inland 2-4
+            baseRainfall = islandTendency + 1 + rzr.randomize(3);
+        }
 
         // addition to prevent inland maps from being super dry
         if (islandTendency == 1) {
@@ -403,10 +428,6 @@ public class Map {
 
             }
         }
-
-        //printRainArray();
-        //printTerrainArray();
-        //printIntArray();
     }
 
     public int howManyWaters(int i, int j, int multiplier) {

@@ -48,6 +48,12 @@ mvn package
 
 Runnable jar file _MapGenerator-1.0-SNAPSHOT.jar_ can be found in _target_
 
+Command to run jar file:
+
+```
+ java -jar MapGenerator-1.0-SNAPSHOT.jar
+```
+
 ### JavaDoc
 
 Generate JavaDoc:

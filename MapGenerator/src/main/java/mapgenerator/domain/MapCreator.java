@@ -14,41 +14,38 @@ public class MapCreator {
     private int height;
     private int width;
     private Map map;
-    private boolean terrainAssigned;
+    //private boolean terrainAssigned;
 
     public MapCreator(int height, int width) {
         this.height = height;
         this.width = width;
-        this.terrainAssigned = false;
+        //this.terrainAssigned = false;
     }
 
-    public Tile[][] showMap() {
+    /*public Tile[][] showMap() {
         this.map = new Map(height, width);
         map.assignTiles();
         return map.getTileArray();
-    }
-
-    public Tile[][] showMap(int variability, boolean coastal) {
+    }*/
+    public Tile[][] showMap(boolean highVariability, boolean coastal) {
         this.map = new Map(height, width);
-        map.assignTiles(variability, coastal);
+        map.assignTiles(highVariability, coastal);
         return map.getTileArray();
     }
 
-    public boolean checkDimensions(int height, int width) {
+    public boolean checkDimensions() {
         if (height < 40 || width < 40 || height > 260 || width > 260) {
             return false;
         }
         return true;
     }
 
-    public boolean assignTerrain() {
-
-            map.assignTerrain();
-            return false;
+    public void assignTerrain() {
+        map.assignTerrain();
     }
 
-    public boolean terrainIsAssigned() {
-        return this.terrainAssigned;
+    public void assignTerrain(boolean rainy) {
+        map.assignTerrain(rainy);
     }
 
     public String getRainfallString() {

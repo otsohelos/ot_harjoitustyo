@@ -48,40 +48,45 @@ public class MapUi extends Application {
 
     public void viewSettings(Stage stage) {
         stage.setTitle("MapGenerator");
+
+        // main box
         VBox settings = new VBox();
         settings.setSpacing(10);
         settings.setPadding(new Insets(10, 10, 10, 10));
+
         Label headerLabel = new Label("MapGenerator settings");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 15));
-
         settings.getChildren().add(headerLabel);
 
+        // dimensions box
         FieldBox fieldBox = new FieldBox();
-
         settings.getChildren().add(fieldBox.getBox());
 
-        // set variability of elevation
+        // variability of elevation box
         Switch varSwitch = new Switch("Variability of elevation", "Low", "High", "How quickly the elevation changes");
         settings.getChildren().add(varSwitch.getBox());
 
-        // set tendency towards coast or inland
+        // coast or inland box
         Switch coastalSwitch = new Switch("Land type", "Coastal", "Inland",
                 "\"Coastal\" is more likely to have large areas of water on the map than \"Inland\".");
-
         settings.getChildren().add(coastalSwitch.getBox());
 
-        // Generate button
-        Button generateButton = new Button("Generate");
-
+        // Generate button and its box
         HBox generateBox = new HBox();
+        Button generateButton = new Button("Generate");
         generateBox.getChildren().add(generateButton);
         settings.getChildren().add(generateBox);
+
+        // alert for wrong dimensions
         Alert dimensionsAlert = new Alert(AlertType.ERROR);
 
+        // event to move to map view
         EventHandler<ActionEvent> moveToMapView = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
                 int width = -1;
                 int height = -1;
+
+                // the following should probably be done in MapCreator
                 try {
                     height = Integer.valueOf(fieldBox.getHeight());
                     width = Integer.valueOf(fieldBox.getWidth());
@@ -90,12 +95,13 @@ public class MapUi extends Application {
                     dimensionsAlert.show();
                     return;
                 }
+
                 int selectedVariability = varSwitch.getSelected();
 
-                int variability = 3;
+                boolean highVariability = false;
 
                 if (selectedVariability == 2) {
-                    variability = 5;
+                    highVariability = true;
                 }
 
                 boolean coastal = true;
@@ -107,11 +113,11 @@ public class MapUi extends Application {
 
                 MapCreator mapCreator = new MapCreator(height, width);
 
-                if (mapCreator.checkDimensions(height, width)) {
+                if (mapCreator.checkDimensions()) {
 
-                    Tile[][] map = mapCreator.showMap(variability, coastal);
+                    Tile[][] map = mapCreator.showMap(highVariability, coastal);
 
-                    viewAltitudeCanvas(stage, height, width, variability, coastal, map, mapCreator);
+                    viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator);
                 } else {
                     dimensionsAlert.setContentText("Height and width should be between 40 and 260.");
                     dimensionsAlert.show();
@@ -126,15 +132,20 @@ public class MapUi extends Application {
         stage.show();
     }
 
-    public void viewAltitudeCanvas(Stage stage, int height, int width, int variability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
+    public void viewAltitudeCanvas(Stage stage, int height, int width, boolean highVariability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
+        // base variables
         int squareSize = 4;
         int canvasWidth = width * squareSize;
         int canvasHeight = height * squareSize;
+
+        // main box
+        VBox altitudeBox = new VBox();
+
+        // Canvas
         Canvas altitudeCanvas = new Canvas(canvasWidth, canvasHeight);
 
+        // paint canvas
         for (int i = 0; i < map.length; i++) {
-            //System.out.println("");
-
             for (int j = 0; j < map[i].length; j++) {
                 String color = map[i][j].getColor();
 
@@ -157,69 +168,98 @@ public class MapUi extends Application {
                 }
             }
         }
-        //FlowPane mapPane = new FlowPane();
-        VBox altitudeBox = new VBox();
-        altitudeBox.getChildren().add(altitudeCanvas);
-        HBox altitudeButtonBox = new HBox();
-        Button redoButton = new Button("Redo");
-        altitudeButtonBox.getChildren().add(redoButton);
-        redoButton.setOnAction((event) -> {
-            Tile[][] newMap = mapCreator.showMap(variability, coastal);
-            viewAltitudeCanvas(stage, height, width, variability, coastal, newMap, mapCreator);
-        });
 
+        // sub-boxes
+        HBox altitudeButtonBox = new HBox();
+
+        // buttons and labels
+        Button redoButton = new Button("Redo");
         Button backButton = new Button("Back");
-        altitudeButtonBox.getChildren().add(backButton);
 
         Button saveAltitudeButton = new Button("Save...");
 
+        Button terrainButton = new Button("Terrain");
+
+        // set everything in the right place
+        altitudeButtonBox.getChildren().add(backButton);
+        altitudeButtonBox.getChildren().add(redoButton);
+        altitudeButtonBox.getChildren().add(saveAltitudeButton);
+        altitudeButtonBox.getChildren().add(terrainButton);
+        altitudeBox.getChildren().add(altitudeCanvas);
+        altitudeBox.getChildren().add(altitudeButtonBox);
+
+        // button actions
+        terrainButton.setOnAction((event3) -> {
+            viewTerrainCanvas(stage, height, width, highVariability, coastal, map, mapCreator);
+        });
         saveAltitudeButton.setOnAction((event2) -> {
             saveThisView(stage, width * squareSize, height * squareSize, altitudeCanvas);
         });
-
-        Button terrainButton = new Button("Terrain");
-
-        terrainButton.setOnAction((event3) -> {
-            //mapCreator.assignTerrain();
-            viewTerrainCanvas(stage, height, width, variability, coastal, map, mapCreator);
-
-        });
-
-        altitudeButtonBox.getChildren().add(saveAltitudeButton);
-        altitudeButtonBox.getChildren().add(terrainButton);
-
-        altitudeBox.getChildren().add(altitudeButtonBox);
-
         backButton.setOnAction((event) -> {
             viewSettings(stage);
         });
+        redoButton.setOnAction((event) -> {
+            Tile[][] newMap = mapCreator.showMap(highVariability, coastal);
+            viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator);
+        });
 
         Scene altitudeView = new Scene(altitudeBox);
-        altitudeView.getStylesheets().add("mapstyle.css");
-
         stage.setScene(altitudeView);
     }
 
-    public void viewTerrainCanvas(Stage stage, int height, int width, int variability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
-
+    public void viewTerrainCanvas(Stage stage, int height, int width, boolean highVariability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
+        // vase variables
         int squareSize = 4;
         int canvasWidth = width * squareSize;
         int canvasHeight = height * squareSize;
-        Canvas terrainCanvas = new Canvas(canvasWidth, canvasHeight);
-        Button saveTerrainButton = new Button("Save...");
 
-        saveTerrainButton.setOnAction((event2) -> {
-            saveThisView(stage, width * squareSize, height * squareSize, terrainCanvas);
-        });
+        // main box        
         VBox terrainBox = new VBox();
+
+        // sub-boxes
         HBox terrainCanvasBox = new HBox();
+        HBox terrainButtonBox = new HBox();
+        VBox legendBox = new VBox();
+        HBox rainyDryBox = new HBox();
+
+        // Canvas
+        Canvas terrainCanvas = new Canvas(canvasWidth, canvasHeight);
+
+        // buttons & labels
+        Button saveTerrainButton = new Button("Save...");
+        Button altitudeButton = new Button("Altitude");
+        String rainfallString = mapCreator.getRainfallString();
+        Label rainfallLabel = new Label(rainfallString);
+        Label redoTerrainLabel = new Label("Redo rainfall and terrain randomly:");
+        Button redoTerrainButton = new Button("Redo");
+        Label redoTerrainControlledLabel = new Label("Redo rainfall and terrain to be rainy or dry:");
+        Button dryButton = new Button("Dry");
+        Button wetButton = new Button("Rainy");
+
+        // images
+        Image legend = new Image("legend.jpg");
+        ImageView legendView = new ImageView(legend);
+
+        // set everything in the right place
         terrainCanvasBox.getChildren().add(terrainCanvas);
         terrainBox.getChildren().add(terrainCanvasBox);
-        HBox terrainButtonBox = new HBox();
-        Scene terrainView = new Scene(terrainBox);
+        legendBox.getChildren().add(rainfallLabel);
+        legendBox.getChildren().add(legendView);
+        legendBox.getChildren().add(redoTerrainLabel);
+        legendBox.getChildren().add(redoTerrainButton);
+        rainyDryBox.getChildren().add(wetButton);
+        rainyDryBox.getChildren().add(dryButton);
+        legendBox.getChildren().add(redoTerrainControlledLabel);
+        legendBox.getChildren().add(rainyDryBox);
+        terrainCanvasBox.getChildren().add(legendBox);
+        terrainBox.getChildren().add(terrainButtonBox);
+        terrainButtonBox.getChildren().add(altitudeButton);
+        terrainButtonBox.getChildren().add(saveTerrainButton);
 
-        Button altitudeButton = new Button("Altitude");
-        for (int i = 0; i < map.length; i++) {
+        // paint canvas
+        
+        paintCanvas(map, terrainCanvas, squareSize, "terrain");
+ /*       for (int i = 0; i < map.length; i++) {
             //System.out.println("");
 
             for (int j = 0; j < map[i].length; j++) {
@@ -241,30 +281,19 @@ public class MapUi extends Application {
                     gc.strokeLine(j * squareSize, i * squareSize, j * squareSize, i * squareSize + squareSize);
                 }
             }
-        }
-        String rainfallString = mapCreator.getRainfallString();
-        Label rainfallLabel = new Label(rainfallString);
+        }*/
 
-        Image legend = new Image("legend.jpg");
-        ImageView legendView = new ImageView(legend);
-
-        VBox legendBox = new VBox();
-        legendBox.getChildren().add(rainfallLabel);
-        legendBox.getChildren().add(legendView);
-
-        Label redoTerrainLabel = new Label("Redo rainfall and terrain:");
-        Button redoTerrainButton = new Button("Redo");
-        legendBox.getChildren().add(redoTerrainLabel);
-        legendBox.getChildren().add(redoTerrainButton);
-
+        // button actions
+        saveTerrainButton.setOnAction((event2) -> {
+            saveThisView(stage, width * squareSize, height * squareSize, terrainCanvas);
+        });
         redoTerrainButton.setOnAction((event4) -> {
             mapCreator.assignTerrain();
             String newRainfallString = mapCreator.getRainfallString();
             rainfallLabel.setText(newRainfallString);
-            for (int i = 0; i < map.length; i++) {
-                //System.out.println("");
 
-                // this is a repeptitive piece of code, maybe refactor
+            // this is a repeptitive piece of code, maybe refactor
+            for (int i = 0; i < map.length; i++) {
                 for (int j = 0; j < map[i].length; j++) {
                     String color = map[i][j].getTerrainColor();
 
@@ -276,6 +305,7 @@ public class MapUi extends Application {
                     gc.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
                     gc.setLineWidth(1);
                     gc.setStroke(Color.BLACK);
+
                     // draw borders if there are any
                     if (map[i][j].getTopBorder()) {
                         gc.strokeLine(j * squareSize, i * squareSize, j * squareSize + squareSize, i * squareSize);
@@ -288,15 +318,11 @@ public class MapUi extends Application {
 
         });
 
-        terrainCanvasBox.getChildren().add(legendBox);
-
-        terrainBox.getChildren().add(terrainButtonBox);
-
-        terrainButtonBox.getChildren().add(altitudeButton);
-        terrainButtonBox.getChildren().add(saveTerrainButton);
         altitudeButton.setOnAction((event) -> {
-            viewAltitudeCanvas(stage, height, width, variability, coastal, map, mapCreator);
+            viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator);
         });
+
+        Scene terrainView = new Scene(terrainBox);
         stage.setScene(terrainView);
     }
 
@@ -316,6 +342,37 @@ public class MapUi extends Application {
                 ImageIO.write(renderedImage, "png", file);
             } catch (IOException e) {
                 System.out.println("Error!");
+            }
+        }
+    }
+
+    public void paintCanvas(Tile[][] map, Canvas canvas, int squareSize, String mode) {
+        for (int i = 0; i < map.length; i++) {
+            //System.out.println("");
+
+            for (int j = 0; j < map[i].length; j++) {
+                String color = "";
+                if (mode.equals("terrain")) {
+                    color = map[i][j].getTerrainColor();
+                } else if (mode.equals("altitude")) {
+                    color = map[i][j].getColor();
+                }
+
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+
+                gc.setFill(Paint.valueOf(color));
+                gc.setLineWidth(0);
+
+                gc.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+                gc.setLineWidth(1);
+                gc.setStroke(Color.BLACK);
+                // draw borders if there are any
+                if (map[i][j].getTopBorder()) {
+                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize + squareSize, i * squareSize);
+                }
+                if (map[i][j].getLeftBorder()) {
+                    gc.strokeLine(j * squareSize, i * squareSize, j * squareSize, i * squareSize + squareSize);
+                }
             }
         }
     }

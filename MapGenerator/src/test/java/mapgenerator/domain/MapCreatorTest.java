@@ -5,10 +5,7 @@
  */
 package mapgenerator.domain;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -24,7 +21,7 @@ public class MapCreatorTest {
     @Before
     public void setUp() {
         this.mapCreator = new MapCreator(50, 60);
-        this.tileMap = mapCreator.showMap(3, true);
+        this.tileMap = mapCreator.showMap(false, true);
     }
 
     @Test
@@ -33,7 +30,7 @@ public class MapCreatorTest {
         int elev2 = tileMap[20][25].getElevation();
         int elev3 = tileMap[10][45].getElevation();
 
-        // since one of these may be unassigned
+        // since any one of these may be unassigned
         // but it's extremely unlilkely that all of them are
         // let's check that at least one is assigned
         boolean someAssigned = false;
@@ -43,7 +40,7 @@ public class MapCreatorTest {
 
         // let's do it again if we still get false
         if (someAssigned == false) {
-            tileMap = mapCreator.showMap(3, true);
+            tileMap = mapCreator.showMap(false, true);
             elev1 = tileMap[30][30].getElevation();
             elev2 = tileMap[20][25].getElevation();
             elev3 = tileMap[10][45].getElevation();
@@ -52,6 +49,48 @@ public class MapCreatorTest {
             }
         }
         assertTrue(someAssigned);
+    }
+
+    @Test
+    public void wrongDimensionsDontWork() {
+        MapCreator tooWide = new MapCreator(100, 400);
+        MapCreator tooHigh = new MapCreator(400, 100);
+        MapCreator tooNarrow = new MapCreator(100, 10);
+        MapCreator tooLow = new MapCreator(10, 100);
+
+        assertFalse(tooWide.checkDimensions());
+        assertFalse(tooHigh.checkDimensions());
+        assertFalse(tooNarrow.checkDimensions());
+        assertFalse(tooLow.checkDimensions());
+    }
+
+    @Test
+    public void goodDimensionsWork() {
+        MapCreator good1 = new MapCreator(40, 100);
+        MapCreator good2 = new MapCreator(100, 260);
+
+        assertTrue(good1.checkDimensions());
+        assertTrue(good2.checkDimensions());
+    }
+
+    @Test
+    public void assignTerrainAssignsTerrain() {
+        mapCreator.assignTerrain();
+
+        // tile terrain color is not black
+        assertFalse(tileMap[25][30].getTerrainColor().equals("rgb(0,0,0)"));
+
+        // tile has rgb terrain color
+        assertEquals("rgb(", tileMap[25][30].getTerrainColor().substring(0, 4));
+    }
+    
+    @Test
+    public void rainfallStringReturnsGoodValues(){
+        String rain1 = mapCreator.getRainfallString();
+        assertTrue(rain1.matches("This area is (wet|dry).\nAverage rainfall [0-6] out of 6."));
+        mapCreator.assignTerrain();
+        String rain2 = mapCreator.getRainfallString();
+        assertTrue(rain2.matches("This area is (wet|dry).\nAverage rainfall [0-6] out of 6."));
     }
 
 }

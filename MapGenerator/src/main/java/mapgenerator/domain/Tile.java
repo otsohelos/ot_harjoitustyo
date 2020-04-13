@@ -71,9 +71,13 @@ public class Tile {
         } else if (terrain == 4) {
             // desert
             return "rgb(242,183,42)";
-        } else {
+        } else if (terrain == 5) {
             // forest
             return "rgb(80,168,0)";
+        } else {
+            // unassigned terrain is black
+            // this should never happen except in testing
+            return "rgb(0,0,0)";
         }
     }
 

@@ -116,7 +116,6 @@ public class MapTest {
 
     @Test
     public void randomizeOneReturnsValuesInRange() {
-
         //tinyMap.setInt(0, 0, 0);
         tinyMap.randomizeOne(0, 0);
         //System.out.println("randomized nr is " + tinyMap.getIntArray()[0][0]);
