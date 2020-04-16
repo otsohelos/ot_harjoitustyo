@@ -11,6 +11,6 @@
 | 2 Apr | 3 | More tests; prettier Settings view; architecture diagram; Tip class |
 | 6 Apr | 7 | Tests reworked; square size smaller; save button functionality; Terrain view added |
 | 9 Apr | 4 | Made Terrain algorithm better; added legend; test tweaking |
-| 13 Apr | 7 | Tweaks in algorithm and Readme; jar packaging configuration; more tests |
+| 13 Apr | 7 | Tweaks in algorithm and Readme; jar packaging configuration; more tests; ui class cleanup |
 
 **Total hours** 49
