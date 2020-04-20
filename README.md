@@ -9,7 +9,12 @@ By [Otso Helos](https://github.com/otsohelos)
 
 MapGenerator is a desktop app that generates random maps. It's intended for RPG players, creative writers, and anyone who enjoys nice maps of imaginary places.
 
-MapGenerator is done with Java 11. A working version will be finished during April 2020.
+MapGenerator is done with Java 11 and JavaFX. A working version will be finished during April 2020.
+
+
+## Releases
+
+[Week 5](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.0)
 
 
 ## Documentation
