@@ -1,6 +1,14 @@
 # MapGenerator Software Architecture
 
-## Domain layer:
+## Overall architecture
+
+MapGenerator has a simple two-layered architecture consisting of the UI and Domain layers. There is no third layer, as MapGenerator doesn't store information between uses.
+
+![Application layers](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/layers.png)
+
+## Domain layer
+
+
 
 ![Application architecture](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/architecture.jpg)
 

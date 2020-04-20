@@ -12,5 +12,6 @@
 | 6 Apr | 7 | Tests reworked; square size smaller; save button functionality; Terrain view added |
 | 9 Apr | 4 | Made Terrain algorithm better; added legend; test tweaking |
 | 13 Apr | 7 | Tweaks in algorithm and Readme; jar packaging configuration; more tests; ui class cleanup |
+| 20 Apr | 4 | Architecture updated; started building river generator |
 
-**Total hours** 49
+**Total hours** 53
