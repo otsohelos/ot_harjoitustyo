@@ -15,10 +15,11 @@ MapGenerator has a simple two-layered architecture consisting of the UI and Doma
 
 ## Sequence diagram
 Example case of MapUI calling the creation of a new map, with user-chosen variables:
-height 120
-width 150
-highVariability false
-coastal true
+
+* height 120
+* width 150
+* highVariability false
+* coastal true
 
 Randomized integer variables are represented as (int)
 Case-dependent variables are represented as their names (i, j, stopWhen, elevation etc.)
