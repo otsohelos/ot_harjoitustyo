@@ -5,7 +5,7 @@
 ![Application architecture](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/architecture.jpg)
 
 
-##Sequence diagram
+## Sequence diagram
 Example case of MapUI calling the creation of a new map, with user-chosen variables:
 height 120
 width 150
