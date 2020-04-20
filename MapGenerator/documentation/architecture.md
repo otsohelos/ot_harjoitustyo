@@ -21,8 +21,7 @@ Example case of MapUI calling the creation of a new map, with user-chosen variab
 * highVariability false
 * coastal true
 
-Randomized integer variables are represented as (int)
-Case-dependent variables are represented as their names (i, j, stopWhen, elevation etc.)
+Randomized integer variables are represented as (int). Case-dependent variables are represented as their names (i, j, stopWhen, elevation etc.)
 
 Slightly simplified sequence diagram:
 
