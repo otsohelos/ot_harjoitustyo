@@ -21,7 +21,7 @@ public class MapCreatorTest {
     @Before
     public void setUp() {
         this.mapCreator = new MapCreator(50, 60);
-        this.tileMap = mapCreator.showMap(false, true);
+        this.tileMap = mapCreator.makeMap(false, true);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class MapCreatorTest {
 
         // let's do it again if we still get false
         if (someAssigned == false) {
-            tileMap = mapCreator.showMap(false, true);
+            tileMap = mapCreator.makeMap(false, true);
             elev1 = tileMap[30][30].getElevation();
             elev2 = tileMap[20][25].getElevation();
             elev3 = tileMap[10][45].getElevation();

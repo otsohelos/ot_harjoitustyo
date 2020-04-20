@@ -22,12 +22,7 @@ public class MapCreator {
         //this.terrainAssigned = false;
     }
 
-    /*public Tile[][] showMap() {
-        this.map = new Map(height, width);
-        map.assignTiles();
-        return map.getTileArray();
-    }*/
-    public Tile[][] showMap(boolean highVariability, boolean coastal) {
+    public Tile[][] makeMap(boolean highVariability, boolean coastal) {
         this.map = new Map(height, width);
         map.assignTiles(highVariability, coastal);
         return map.getTileArray();

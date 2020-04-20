@@ -62,22 +62,22 @@ public class Map {
         Tile tile = new Tile(elevation);
         if (i != 0 || j != 0) {
             //check if above and left tiles have water
-            boolean aboveIsWater = false;
-            boolean leftIsWater = false;
+            // if water changes to land or vice versa, make border
+
+            ;
             if (i != 0) {
-                aboveIsWater = tileArray[i - 1][j].isWater();
+                boolean aboveIsWater = tileArray[i - 1][j].isWater();
+                if (aboveIsWater != tile.isWater()) {
+                    tile.setTopBorder();
+                }
             }
             if (j != 0) {
-                leftIsWater = tileArray[i][j - 1].isWater();
+                boolean leftIsWater = tileArray[i][j - 1].isWater();
+                if (leftIsWater != tile.isWater() && i != 0) {
+                    tile.setLeftBorder();
+                }
             }
 
-            // if water changes to land or vice versa, make border
-            if (leftIsWater != tile.isWater()) {
-                tile.setLeftBorder();
-            }
-            if (aboveIsWater != tile.isWater()) {
-                tile.setTopBorder();
-            }
         }
         tileArray[i][j] = tile;
     }
@@ -108,7 +108,7 @@ public class Map {
         }
         fillTheRest();
         fillTheRest();
-        System.out.println("made smaller " + madeSmaller + " times");
+        //System.out.println("made smaller " + madeSmaller + " times");
     }
 
     public void makeAnotherPoint(int i, int j) {

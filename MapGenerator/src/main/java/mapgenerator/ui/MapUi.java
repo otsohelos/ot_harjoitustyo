@@ -115,9 +115,9 @@ public class MapUi extends Application {
 
                 if (mapCreator.checkDimensions()) {
 
-                    Tile[][] map = mapCreator.showMap(highVariability, coastal);
+                    Tile[][] tileMap = mapCreator.makeMap(highVariability, coastal);
 
-                    viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator);
+                    viewAltitudeCanvas(stage, height, width, highVariability, coastal, tileMap, mapCreator);
                 } else {
                     dimensionsAlert.setContentText("Height and width should be between 40 and 260.");
                     dimensionsAlert.show();
@@ -177,7 +177,7 @@ public class MapUi extends Application {
             viewSettings(stage);
         });
         redoButton.setOnAction((event) -> {
-            Tile[][] newMap = mapCreator.showMap(highVariability, coastal);
+            Tile[][] newMap = mapCreator.makeMap(highVariability, coastal);
             viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator);
         });
 
