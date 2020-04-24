@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mapgenerator.ui;
+package com.github.otsohelos.mapgenerator.ui;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;

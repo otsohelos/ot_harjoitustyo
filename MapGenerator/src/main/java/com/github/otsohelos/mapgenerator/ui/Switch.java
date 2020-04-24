@@ -1,4 +1,4 @@
-package mapgenerator.ui;
+package com.github.otsohelos.mapgenerator.ui;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;

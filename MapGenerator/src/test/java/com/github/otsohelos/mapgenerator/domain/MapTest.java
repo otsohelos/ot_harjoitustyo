@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mapgenerator.domain;
+package com.github.otsohelos.mapgenerator.domain;
 
+import com.github.otsohelos.mapgenerator.domain.Tile;
+import com.github.otsohelos.mapgenerator.domain.Map;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -137,9 +139,9 @@ public class MapTest {
     @Test
     public void assignTilesAssignsTiles() {
         map.assignTiles();
-        int elev1 = map.getTile(5, 5).getElevation();
-        int elev2 = map.getTile(8, 10).getElevation();
-        int elev3 = map.getTile(3, 12).getElevation();
+        int elev1 = map.getTileArray()[5][5].getElevation();
+        int elev2 = map.getTileArray()[8][ 10].getElevation();
+        int elev3 = map.getTileArray()[3][12].getElevation();
 
         // since some tiles may be left unassigned
         // but it's extremely unlikely all three will be unassigned

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mapgenerator.domain;
+package com.github.otsohelos.mapgenerator.domain;
 
+import com.github.otsohelos.mapgenerator.domain.Tile;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

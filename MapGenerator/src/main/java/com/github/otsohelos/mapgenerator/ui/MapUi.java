@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mapgenerator.ui;
+package com.github.otsohelos.mapgenerator.ui;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -13,7 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
-import mapgenerator.domain.MapCreator;
+import com.github.otsohelos.mapgenerator.domain.MapCreator;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,7 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
-import mapgenerator.domain.Tile;
+import com.github.otsohelos.mapgenerator.domain.Tile;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -117,7 +117,7 @@ public class MapUi extends Application {
 
                     Tile[][] tileMap = mapCreator.makeMap(highVariability, coastal);
 
-                    viewAltitudeCanvas(stage, height, width, highVariability, coastal, tileMap, mapCreator);
+                    viewAltitudeCanvas(stage, height, width, highVariability, coastal, tileMap, mapCreator, false);
                 } else {
                     dimensionsAlert.setContentText("Height and width should be between 40 and 260.");
                     dimensionsAlert.show();
@@ -132,7 +132,7 @@ public class MapUi extends Application {
         stage.show();
     }
 
-    public void viewAltitudeCanvas(Stage stage, int height, int width, boolean highVariability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
+    public void viewAltitudeCanvas(Stage stage, int height, int width, boolean highVariability, boolean coastal, Tile[][] map, MapCreator mapCreator, boolean rivers) {
         // base variables
         int squareSize = 4;
         int canvasWidth = width * squareSize;
@@ -145,8 +145,12 @@ public class MapUi extends Application {
         Canvas altitudeCanvas = new Canvas(canvasWidth, canvasHeight);
 
         // paint canvas
-        paintCanvas(map, altitudeCanvas, squareSize, "altitude");
+        if (rivers) {
+            paintCanvas(map, altitudeCanvas, squareSize, "rivers");
+        } else {
 
+            paintCanvas(map, altitudeCanvas, squareSize, "altitude");
+        }
         // sub-boxes
         HBox altitudeButtonBox = new HBox();
 
@@ -155,13 +159,14 @@ public class MapUi extends Application {
         Button backButton = new Button("Back");
 
         Button saveAltitudeButton = new Button("Save...");
-
+        Button riversButton = new Button("Rivers");
         Button terrainButton = new Button("Terrain");
 
         // set everything in the right place
         altitudeButtonBox.getChildren().add(backButton);
         altitudeButtonBox.getChildren().add(redoButton);
         altitudeButtonBox.getChildren().add(saveAltitudeButton);
+        //altitudeButtonBox.getChildren().add(riversButton);
         altitudeButtonBox.getChildren().add(terrainButton);
         altitudeBox.getChildren().add(altitudeCanvas);
         altitudeBox.getChildren().add(altitudeButtonBox);
@@ -178,7 +183,11 @@ public class MapUi extends Application {
         });
         redoButton.setOnAction((event) -> {
             Tile[][] newMap = mapCreator.makeMap(highVariability, coastal);
-            viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator);
+            viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, false);
+        });
+
+        riversButton.setOnAction((event) -> {
+            viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
         });
 
         Scene altitudeView = new Scene(altitudeBox);
@@ -186,7 +195,7 @@ public class MapUi extends Application {
     }
 
     public void viewTerrainCanvas(Stage stage, int height, int width, boolean highVariability, boolean coastal, Tile[][] map, MapCreator mapCreator) {
-        // vase variables
+        // base variables
         int squareSize = 4;
         int canvasWidth = width * squareSize;
         int canvasHeight = height * squareSize;
@@ -262,7 +271,7 @@ public class MapUi extends Application {
         });
 
         altitudeButton.setOnAction((event) -> {
-            viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator);
+            viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, false);
         });
 
         Scene terrainView = new Scene(terrainBox);
@@ -299,6 +308,12 @@ public class MapUi extends Application {
                     color = map[i][j].getTerrainColor();
                 } else if (mode.equals("altitude")) {
                     color = map[i][j].getColor();
+                } else if (mode.equals("rivers")) {
+                    if (map[i][j].isRiver()) {
+                        color = "rgb(0,0,0)";
+                    } else {
+                        color = map[i][j].getColor();
+                    }
                 }
 
                 GraphicsContext gc = canvas.getGraphicsContext2D();

@@ -1,21 +1,23 @@
-package mapgenerator.domain;
+package com.github.otsohelos.mapgenerator.domain;
 
 public class Tile {
 
-    private int elevation;
+    private final int elevation;
     private boolean topBorder;
     private boolean leftBorder;
     private int terrain;
-    private int cutUnit;
+    private final int multiplier;
     private int rainfall;
+    private boolean isRiver;
 
     public Tile(int elevation) {
         this.elevation = elevation;
         this.topBorder = false;
         this.leftBorder = false;
         this.terrain = 0;
-        this.cutUnit = 3;
+        this.multiplier = 3;
         this.rainfall = 0;
+        this.isRiver = false;
     }
 
     public int getTerrain() {
@@ -27,7 +29,7 @@ public class Tile {
     }
 
     boolean isWater() {
-        if (elevation < cutUnit * 3) {
+        if (elevation < multiplier * 3) {
             return true;
         }
         return false;
@@ -35,21 +37,21 @@ public class Tile {
 
     public String getColor() {
         // deep water:
-        if (elevation < cutUnit) {
+        if (elevation < multiplier) {
             return "rgb(0,115,196)";
-        } else if (elevation < cutUnit * 2) {
+        } else if (elevation < multiplier * 2) {
             // mid-depth water
             return "rgb(42,149,244)";
-        } else if (elevation < cutUnit * 3) {
+        } else if (elevation < multiplier * 3) {
             // shallow water
             return "rgb(149,205,255)";
-        } else if (elevation < cutUnit * 7) {
+        } else if (elevation < multiplier * 7) {
             // lowland
             return "rgb(155,210,75)";
-        } else if (elevation < cutUnit * 9) {
+        } else if (elevation < multiplier * 9) {
             // low-mid land
             return "rgb(254,255,129)";
-        } else if (elevation < cutUnit * 11) {
+        } else if (elevation < multiplier * 11) {
             // high-mid land
             return "rgb(242,183,43)";
         } else {
@@ -59,25 +61,26 @@ public class Tile {
     }
 
     public String getTerrainColor() {
-        if (terrain == 1) {
-            // water
-            return "rgb(42,149,244)";
-        } else if (terrain == 2) {
-            // wetland
-            return "rgb(210,220,229)";
-        } else if (terrain == 3) {
-            // grassland
-            return "rgb(155,210,75)";
-        } else if (terrain == 4) {
-            // desert
-            return "rgb(242,183,42)";
-        } else if (terrain == 5) {
-            // forest
-            return "rgb(80,168,0)";
-        } else {
-            // unassigned terrain is black
-            // this should never happen except in testing
-            return "rgb(0,0,0)";
+        switch (terrain) {
+            case 1:
+                // water
+                return "rgb(42,149,244)";
+            case 2:
+                // wetland
+                return "rgb(210,220,229)";
+            case 3:
+                // grassland
+                return "rgb(155,210,75)";
+            case 4:
+                // desert
+                return "rgb(242,183,42)";
+            case 5:
+                // forest
+                return "rgb(80,168,0)";
+            default:
+                // unassigned terrain is black
+                // this should never happen except in testing
+                return "rgb(0,0,0)";
         }
     }
 
@@ -106,13 +109,13 @@ public class Tile {
     }
 
     public void assignTerrain() {
-        if (elevation < cutUnit * 3) {
+        if (elevation < multiplier * 3) {
             // it's water
             terrain = 1;
-        } else if (elevation > cutUnit * 12.5 || rainfall < 5) {
+        } else if (elevation > multiplier * 12.5 || rainfall < 5) {
             // very high or dry squares are always desert
             terrain = 4;
-        } else if (elevation < cutUnit * 7) {
+        } else if (elevation < multiplier * 7) {
             // lowland
             if (rainfall > 9) {
                 // wetlands
@@ -121,7 +124,7 @@ public class Tile {
                 // grassland
                 terrain = 3;
             }
-        } else if (elevation < cutUnit * 11) {
+        } else if (elevation < multiplier * 11) {
             // mid land
             if (rainfall < 7) {
                 // grassland
@@ -143,6 +146,14 @@ public class Tile {
                 terrain = 4;
             }
         }
+    }
+
+    public void setRiver() {
+        isRiver = true;
+    }
+
+    public boolean isRiver() {
+        return this.isRiver;
     }
 
 }
