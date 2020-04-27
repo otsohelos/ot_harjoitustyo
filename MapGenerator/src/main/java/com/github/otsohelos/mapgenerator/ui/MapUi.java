@@ -31,8 +31,10 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /**
@@ -40,6 +42,8 @@ import javafx.scene.paint.Color;
  * @author otsohelos
  */
 public class MapUi extends Application {
+
+    private boolean riversVisible = false;
 
     @Override
     public void start(Stage stage) {
@@ -160,16 +164,27 @@ public class MapUi extends Application {
 
         Button saveAltitudeButton = new Button("Save...");
         Button riversButton = new Button("Rivers");
+        if (riversVisible) {
+            riversButton.setText("Hide rivers");
+        }
         Button terrainButton = new Button("Terrain");
+        Pane spacer = new Pane();
+        
 
         // set everything in the right place
         altitudeButtonBox.getChildren().add(backButton);
         altitudeButtonBox.getChildren().add(redoButton);
-        altitudeButtonBox.getChildren().add(saveAltitudeButton);
-        //altitudeButtonBox.getChildren().add(riversButton);
+        altitudeButtonBox.getChildren().add(riversButton);
         altitudeButtonBox.getChildren().add(terrainButton);
+        spacer.setMinWidth(40);
+        altitudeButtonBox.getChildren().add(spacer);
+        altitudeButtonBox.getChildren().add(saveAltitudeButton);
         altitudeBox.getChildren().add(altitudeCanvas);
         altitudeBox.getChildren().add(altitudeButtonBox);
+
+        // alert of no rivers
+        Alert noRiversAlert = new Alert(AlertType.INFORMATION);
+        noRiversAlert.setContentText("There are no rivers in this area.");
 
         // button actions
         terrainButton.setOnAction((event3) -> {
@@ -182,12 +197,23 @@ public class MapUi extends Application {
             viewSettings(stage);
         });
         redoButton.setOnAction((event) -> {
+            riversVisible = false;
             Tile[][] newMap = mapCreator.makeMap(highVariability, coastal);
             viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, false);
         });
 
         riversButton.setOnAction((event) -> {
-            viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
+            if (!riversVisible) {
+                if (!mapCreator.checkRivers()) {
+                    noRiversAlert.show();
+                } else {
+                    riversVisible = true;
+                    viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
+                }
+            } else {
+                riversVisible = false;
+                viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
+            }
         });
 
         Scene altitudeView = new Scene(altitudeBox);
@@ -214,6 +240,8 @@ public class MapUi extends Application {
 
         // buttons & labels
         Button saveTerrainButton = new Button("Save...");
+        saveTerrainButton.setAlignment(Pos.CENTER_RIGHT);
+
         Button altitudeButton = new Button("Altitude");
         String rainfallString = mapCreator.getRainfallString();
         Label rainfallLabel = new Label(rainfallString);
@@ -222,7 +250,8 @@ public class MapUi extends Application {
         Label redoTerrainControlledLabel = new Label("Redo rainfall and terrain to be rainy or dry:");
         Button dryButton = new Button("Dry");
         Button wetButton = new Button("Rainy");
-
+        Pane spacer = new Pane();
+        
         // images
         Image legend = new Image("legend.jpg");
         ImageView legendView = new ImageView(legend);
@@ -241,6 +270,8 @@ public class MapUi extends Application {
         terrainCanvasBox.getChildren().add(legendBox);
         terrainBox.getChildren().add(terrainButtonBox);
         terrainButtonBox.getChildren().add(altitudeButton);
+                spacer.setMinWidth(40);
+        terrainButtonBox.getChildren().add(spacer);
         terrainButtonBox.getChildren().add(saveTerrainButton);
 
         // paint canvas    
@@ -310,7 +341,7 @@ public class MapUi extends Application {
                     color = map[i][j].getColor();
                 } else if (mode.equals("rivers")) {
                     if (map[i][j].isRiver()) {
-                        color = "rgb(0,0,0)";
+                        color = "rgb(0,95,136)";
                     } else {
                         color = map[i][j].getColor();
                     }

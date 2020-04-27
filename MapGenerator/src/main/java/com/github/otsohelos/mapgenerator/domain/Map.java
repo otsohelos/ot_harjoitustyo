@@ -293,8 +293,7 @@ public class Map {
         } else {
             // convert average to int, rounding either up or down
             int intAvg = (int) Math.round(avg);
-            // tend toward downhill slopes repending on island tendency
-            // this gets stronger closer to edges
+            // tend toward downhill slopes repending on island tendency and proximity to map edges
             int lowerer = 30;
             if (height - i < height / 10 || height - i > 9 * height / 10 || width - j < width / 10 || width - i > 9 * width / 10) {
                 lowerer = 12;

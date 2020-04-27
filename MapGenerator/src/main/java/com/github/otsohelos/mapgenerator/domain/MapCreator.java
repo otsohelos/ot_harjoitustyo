@@ -39,7 +39,7 @@ public class MapCreator {
         Tile[][] tileArray = map.getTileArray();
         int[][] intArray = map.getIntArray();
         Tile[][] tileArrayWithRivers = assignRivers(intArray, tileArray);
-        return map.getTileArray();
+        return tileArrayWithRivers; 
     }
 
     /**
@@ -52,6 +52,10 @@ public class MapCreator {
             return false;
         }
         return true;
+    }
+    
+    public boolean checkRivers() {
+        return riverMaker.hasRivers();
     }
 
     /**
