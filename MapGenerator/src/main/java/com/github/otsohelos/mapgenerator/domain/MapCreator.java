@@ -9,15 +9,20 @@ public class MapCreator {
     private int height;
     private int width;
     private Map map;
+    private RiverMaker riverMaker;
 
     public MapCreator(int height, int width) {
         this.height = height;
         this.width = width;
     }
-    //future feature: rivers
-//    public void assignRivers() {
-//        map.assignRivers();
-//    }
+
+    public Tile[][] assignRivers(int[][] intArray, Tile[][] tileArray) {
+
+        this.riverMaker = new RiverMaker(intArray, tileArray);
+        riverMaker.makeRivers();
+        Tile[][] newTileArray = riverMaker.getTileArray();
+        return newTileArray;
+    }
 
     /**
      * Initializes Map, calls it to make a complete Tile array, gets and returns
@@ -31,7 +36,9 @@ public class MapCreator {
     public Tile[][] makeMap(boolean highVariability, boolean coastal) {
         this.map = new Map(height, width);
         map.assignTiles(highVariability, coastal);
-        //assignRivers();
+        Tile[][] tileArray = map.getTileArray();
+        int[][] intArray = map.getIntArray();
+        Tile[][] tileArrayWithRivers = assignRivers(intArray, tileArray);
         return map.getTileArray();
     }
 

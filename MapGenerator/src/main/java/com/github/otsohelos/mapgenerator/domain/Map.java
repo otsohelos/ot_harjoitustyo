@@ -13,7 +13,6 @@ public class Map {
     //private int madeSmaller;
     private int baseRainfall;
     private int otherPoints;
-    //private RiverMap riverMap;
 
     public Map(int height, int width) {
         this.height = height;
@@ -295,7 +294,14 @@ public class Map {
             // convert average to int, rounding either up or down
             int intAvg = (int) Math.round(avg);
             // tend toward downhill slopes repending on island tendency
-            if (rzr.isSmaller(26, (islandTendency * islandTendency))) {
+            // this gets stronger closer to edges
+            int lowerer = 30;
+            if (height - i < height / 10 || height - i > 9 * height / 10 || width - j < width / 10 || width - i > 9 * width / 10) {
+                lowerer = 12;
+            } else if (height - i < height / 6 || height - i > 5 * height / 6 || width - j < width / 6 || width - i > 5 * width / 6) {
+                lowerer = 18;
+            }
+            if (rzr.isSmaller(lowerer, (islandTendency * islandTendency))) {
                 //madeSmaller++;
                 intAvg--;
             }
@@ -490,10 +496,5 @@ public class Map {
         }
         System.out.println("");
     }
-    // future feature: add rivers
-//    public void assignRivers(){
-//        this.riverMap = new RiverMap(intArray, tileArray);
-//        riverMap.makeRivers();
-//        this.tileArray = riverMap.getTileArray();
-//    }
+
 }
