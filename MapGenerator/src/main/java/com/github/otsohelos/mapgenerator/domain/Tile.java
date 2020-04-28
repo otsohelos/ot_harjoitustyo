@@ -149,7 +149,9 @@ public class Tile {
     }
 
     public void setRiver() {
-        isRiver = true;
+        if (!isWater()) {
+            isRiver = true;
+        }
     }
 
     public boolean isRiver() {

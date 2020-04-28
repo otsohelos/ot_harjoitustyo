@@ -14,5 +14,6 @@
 | 13 Apr | 7 | Tweaks in algorithm and Readme; jar packaging configuration; more tests; ui class cleanup |
 | 20 Apr | 4 | Architecture updated; started building river generator |
 | 24 Apr | 2 | Cleanup and commenting |
+| 27 Apr | 7 | Building river generator; some cleanup; coastal map edge definition |
 
-**Total hours** 55
+**Total hours** 62

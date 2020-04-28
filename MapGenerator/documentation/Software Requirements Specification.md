@@ -57,12 +57,13 @@ Map view has elevation indicated by color darkness.
 
 After the basic version is functional, it will be complemented by the following functionalities, time permitting:
 
-- Contiguity of terrain types setting: how likely adjacent squares are to have the same type of terrain
-- Addition of Legend (DONE for Terrain view), legend inclusion in save files
+- (Unlikely to happen) Contiguity of terrain types setting: how likely adjacent squares are to have the same type of terrain
+- Addition of Legend (DONE for Terrain view)
+- Legend inclusion in save files
 - Customisable map name
 - DONE: Rainy / dry setting
 - DONE: Option to re-randomize terrain
 - Addition of cities
 - Addition of roads
-- Addition of rivers
+- DONE: Addition of rivers
 - Possibility to go back a couple of maps if user clicked Redo by accident
