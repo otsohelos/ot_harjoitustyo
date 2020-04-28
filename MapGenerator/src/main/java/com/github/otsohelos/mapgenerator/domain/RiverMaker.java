@@ -18,8 +18,7 @@ public class RiverMaker {
     private final int width;
     private final Randomizer rzr;
     private final int[][] localHeights;
-    private boolean[][] riverArrayLarge;
-    private int[][] routesReady;
+    private final int[][] routesReady;
     private boolean hasRivers;
     private final int howManyStarts;
     private ArrayList<int[][]> routes;
@@ -32,7 +31,6 @@ public class RiverMaker {
         this.riverArray = new boolean[height][width];
         this.tileArray = tileArray;
         this.localHeights = new int[height / 4][width / 4];
-        this.riverArrayLarge = new boolean[height / 4][width / 4];
         this.hasRivers = false;
         this.howManyStarts = 1;
         this.routesReady = new int[howManyStarts][2];
@@ -116,7 +114,7 @@ public class RiverMaker {
      * @return howManyStarts x 3 array that has i and j coordinate and sum of
      * elevations for each square.
      */
-    private int[][] findHighest() {
+    public int[][] findHighest() {
         int[][] highestSquares = new int[howManyStarts][3];
 
         // divide intArray to 24 * 24 squares and find highest ones
@@ -195,15 +193,15 @@ public class RiverMaker {
         return sum;
     }
 
-    public void makeRoute(int i, int j, int[][] initRoute, int routeIndex, boolean[][] riverProgression) {
+    private void makeRoute(int i, int j, int[][] initRoute, int routeIndex, boolean[][] riverProgression) {
         int startPoint = initRoute[0][2];
+        int[][] deepCopiedRoute = deepCopy(initRoute);
         int index = routeIndex;
         // make a maximum of 2 rivers from each starting point
         if (routesReady[startPoint][0] > 2) {
             return;
         }
-        int[][] newRoute = initRoute.clone();
-        boolean[][] newRiverProgression = riverProgression.clone();
+        boolean[][] newRiverProgression = deepCopy(riverProgression);
 
         // set growth direction
         int dir = rzr.randomize(4);
@@ -223,27 +221,27 @@ public class RiverMaker {
                     if (!(k == 0 || l == 0 || k == height / 4 - 1 || l == width / 4 - 1) && index < 49 && !(tileArray[k * 4 + 1][l * 4].isWater() && tileArray[k * 4 + 3][l * 4 + 2].isWater())) {
                         System.out.println("growing from " + i + ", " + j + " to " + k + ", " + l + ", index " + (index + 1));
                         // add this point to newRoute
-                        newRoute[index + 1][0] = k;
-                        newRoute[index + 1][1] = l;
+                        deepCopiedRoute[index + 1][0] = k;
+                        deepCopiedRoute[index + 1][1] = l;
 
                         // mark this square as done so can't return to it
                         newRiverProgression[k][l] = true;
-                        makeRoute(k, l, newRoute, index + 1, newRiverProgression);
+                        makeRoute(k, l, deepCopiedRoute, index + 1, newRiverProgression);
                     } else if (index > 3) {
                         // if can't advance and newRoute is longer than 3
                         if (index + 1 > routesReady[startPoint][1]) {
-                            newRoute[index + 1][0] = k;
-                            newRoute[index + 1][1] = l;
+                            deepCopiedRoute[index + 1][0] = k;
+                            deepCopiedRoute[index + 1][1] = l;
                             routesReady[startPoint][0]++;
                             routesReady[startPoint][1] = index + 1;
 
-                            newRoute[0][2] = startPoint;
-                            newRoute[1][2] = index + 1;
+                            deepCopiedRoute[0][2] = startPoint;
+                            deepCopiedRoute[1][2] = index + 1;
                             System.out.println("adding route from startpoint " + startPoint + ", length " + (index + 1));
-                            routes.add(newRoute);
+                            routes.add(deepCopiedRoute);
                             System.out.println("added route:");
-                            for (int p = 0; p < newRoute.length; p++) {
-                                System.out.println(newRoute[p][0] + ", " + newRoute[p][1]);
+                            for (int p = 0; p < deepCopiedRoute.length; p++) {
+                                System.out.println(deepCopiedRoute[p][0] + ", " + deepCopiedRoute[p][1]);
                             }
                             //System.out.println("we now have " + routes.size() + " routes.");
                         }
@@ -256,6 +254,11 @@ public class RiverMaker {
 
     public void makeRiver(int[][] route, int routeIndex) {
         String[] directions = makeDirections(route, routeIndex);
+        System.out.println("route to handle:");
+        for (int k = 0; k < directions.length; k++) {
+            System.out.println(route[k][0] + ", " + route[k][1]);
+        }
+
         int i = 0;
         int j = 0;
         for (int k = 0; k < directions.length; k++) {
@@ -275,6 +278,7 @@ public class RiverMaker {
                     goEast(i, j);
                     break;
             }
+            System.out.println("going " + directions[k] + " from " + i + ", " + j);
         }
 
     }
@@ -288,7 +292,7 @@ public class RiverMaker {
     }
 
     public void goNorth(int i, int j) {
-        goSouth(i - 1, j);
+        goSouth(i + 1, j);
     }
 
     public void goWest(int i, int j) {
@@ -300,7 +304,7 @@ public class RiverMaker {
     }
 
     public void goEast(int i, int j) {
-        goWest(i, j - 1);
+        goWest(i, j + 1);
     }
 
     public boolean setRiver(int i, int j) {
@@ -342,5 +346,27 @@ public class RiverMaker {
 
     public boolean hasRivers() {
         return this.hasRivers;
+    }
+
+    public int[][] deepCopy(int[][] original) {
+        int[][] copy = new int[original.length][original[0].length];
+        for (int i = 0; i < original.length; i++) {
+            for (int j = 0; j < original[0].length; j++) {
+                copy[i][j] = original[i][j];
+            }
+
+        }
+        return copy;
+    }
+
+    public boolean[][] deepCopy(boolean[][] original) {
+        boolean[][] copy = new boolean[original.length][original[0].length];
+        for (int i = 0; i < original.length; i++) {
+            for (int j = 0; j < original[0].length; j++) {
+                copy[i][j] = original[i][j];
+            }
+
+        }
+        return copy;
     }
 }

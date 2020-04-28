@@ -17,29 +17,39 @@ import static org.junit.Assert.*;
  * @author otsohelos
  */
 public class RiverMakerTest {
-    
-    public RiverMakerTest() {
-    }
-    
+
+    //RiverMaker riverMaker;
+    //RiverMaker tinyRiverMaker;
+    Map map;
+    Map tinyMap;
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
+        this.map = new Map(80, 100);
+        this.tinyMap = new Map(10, 10);
+        //this.riverMaker = new RiverMaker(map.getIntArray(), map.getTileArray());
+        //this.tinyRiverMaker = new RiverMaker(tinyMap.getIntArray(), tinyMap.getTileArray());
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
+    @Test
+    public void findHighestWorks() {
+        for (int i = 0; i < 24; i++) {
+            for (int j = 0; j < 24; j++) {
+                map.setInt(i, j, 1);
+            }
+        }
+        RiverMaker newRiverMaker = new RiverMaker(map.getIntArray(), map.getTileArray());
+        int[][] highest = newRiverMaker.findHighest();
+        assertEquals(0, highest[highest.length - 1][0]);
+        assertEquals(0, highest[highest.length - 1][1]);
+    }
+
 }

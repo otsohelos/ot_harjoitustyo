@@ -43,7 +43,6 @@ import javafx.scene.paint.Color;
  */
 public class MapUi extends Application {
 
-    private boolean riversVisible = false;
 
     @Override
     public void start(Stage stage) {
@@ -152,7 +151,6 @@ public class MapUi extends Application {
         if (rivers) {
             paintCanvas(map, altitudeCanvas, squareSize, "rivers");
         } else {
-
             paintCanvas(map, altitudeCanvas, squareSize, "altitude");
         }
         // sub-boxes
@@ -164,7 +162,7 @@ public class MapUi extends Application {
 
         Button saveAltitudeButton = new Button("Save...");
         Button riversButton = new Button("Rivers");
-        if (riversVisible) {
+        if (rivers) {
             riversButton.setText("Hide rivers");
         }
         Button terrainButton = new Button("Terrain");
@@ -197,22 +195,19 @@ public class MapUi extends Application {
             viewSettings(stage);
         });
         redoButton.setOnAction((event) -> {
-            riversVisible = false;
             Tile[][] newMap = mapCreator.makeMap(highVariability, coastal);
             viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, false);
         });
 
         riversButton.setOnAction((event) -> {
-            if (!riversVisible) {
+            if (!rivers) {
                 if (!mapCreator.checkRivers()) {
                     noRiversAlert.show();
                 } else {
-                    riversVisible = true;
                     viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
                 }
             } else {
-                riversVisible = false;
-                viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
+                viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, false);
             }
         });
 
