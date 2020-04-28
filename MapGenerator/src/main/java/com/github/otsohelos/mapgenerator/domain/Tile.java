@@ -1,5 +1,11 @@
 package com.github.otsohelos.mapgenerator.domain;
 
+/**
+ * Basic unit on a Map; holds information about terrain, elevation, and whether
+ * it is a river.
+ *
+ * @author otsohelos
+ */
 public class Tile {
 
     private final int elevation;
@@ -35,6 +41,11 @@ public class Tile {
         return false;
     }
 
+    /**
+     * Returns basic elevation color.
+     *
+     * @return RGB color string
+     */
     public String getColor() {
         // deep water:
         if (elevation < multiplier) {
@@ -60,6 +71,11 @@ public class Tile {
         }
     }
 
+    /**
+     * Returns color string for terrain.
+     *
+     * @return RGB color string
+     */
     public String getTerrainColor() {
         switch (terrain) {
             case 1:
@@ -108,6 +124,9 @@ public class Tile {
         return this.rainfall;
     }
 
+    /**
+     * Determines the terrain of this tile based on elevation and rainfall.
+     */
     public void assignTerrain() {
         if (elevation < multiplier * 3) {
             // it's water

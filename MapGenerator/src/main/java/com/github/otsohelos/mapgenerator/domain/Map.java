@@ -1,5 +1,10 @@
 package com.github.otsohelos.mapgenerator.domain;
 
+/**
+ * Creates int and Tile maps of region and assigns variables to it.
+ *
+ * @author otsohelos
+ */
 public class Map {
 
     private final int height;
@@ -283,6 +288,9 @@ public class Map {
 
     /**
      * Randomizes and assigns the elevation of one location.
+     *
+     * @param i
+     * @param j
      */
     public void randomizeOne(int i, int j) {
         int newInt = 0;
@@ -381,11 +389,14 @@ public class Map {
 
     /**
      * Calculates the sum of the elevations of neighboring squares.
+     *
+     * @param i Coordinate
+     * @param j Coordinate
+     * @return Sum
      */
     public int neighborsSum(int i, int j) {
         int sumOfNeighbors = 0;
         int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j - 1}};
-
         for (int k = 0; k < neighborCoordinates.length; k++) {
             if (isAssigned(neighborCoordinates[k][0], neighborCoordinates[k][1])) {
                 sumOfNeighbors = sumOfNeighbors + intArray[neighborCoordinates[k][0]][neighborCoordinates[k][1]];
@@ -397,6 +408,8 @@ public class Map {
     /**
      * Calculates how many water squares there are in a larger square.
      *
+     * @param i Coordinate
+     * @param j Coordinate
      * @param multiplier Size of this square is multiplier * multiplier
      * @return the number of water tiles
      */
@@ -416,6 +429,8 @@ public class Map {
     /**
      * Checks if location already has an elevation assigned.
      *
+     * @param i Coordinate
+     * @param j Coordinate
      * @return true or false
      */
     public boolean isAssigned(int i, int j) {
@@ -429,30 +444,18 @@ public class Map {
         return false;
     }
 
-    /**
-     * Returns the TileArray.
-     */
     public Tile[][] getTileArray() {
         return tileArray;
     }
 
-    /**
-     * Returns the int array; used for testing purposes.
-     */
     public int[][] getIntArray() {
         return intArray;
     }
 
-    /**
-     * Returns maximum elevation of this Map.
-     */
     public int getMaxElevation() {
         return this.maxElevation;
     }
 
-    /**
-     * Returns String that informs user of the raininess of this Map.
-     */
     public String getRainFallString() {
         String wetOrDry = "dry";
         if (baseRainfall > 6) {
@@ -462,15 +465,11 @@ public class Map {
     }
 
     //Setter
-    /**
-     * Sets the elevation of a square and prints warning.
-     */
     public void setInt(int i, int j, int value) {
         System.out.println("Note: the setInt method should only be used for testing purposes");
         intArray[i][j] = value;
     }
 
-    // Print methods for development purposes:
     /**
      * Prints the int elevation array for this Map.
      */
@@ -495,5 +494,4 @@ public class Map {
         }
         System.out.println("");
     }
-
 }

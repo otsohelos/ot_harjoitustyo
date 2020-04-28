@@ -1,6 +1,7 @@
 package com.github.otsohelos.mapgenerator.domain;
 
 /**
+ * Creates a Map and a RiverMaker; acts as intermediary between those and UI.
  *
  * @author otsohelos
  */
@@ -16,8 +17,14 @@ public class MapCreator {
         this.width = width;
     }
 
+    /**
+     * Assigns RiverMaker and calls it to make the rivers.
+     *
+     * @param intArray
+     * @param tileArray
+     * @return
+     */
     public Tile[][] assignRivers(int[][] intArray, Tile[][] tileArray) {
-
         this.riverMaker = new RiverMaker(intArray, tileArray);
         riverMaker.makeRivers();
         Tile[][] newTileArray = riverMaker.getTileArray();
@@ -39,7 +46,7 @@ public class MapCreator {
         Tile[][] tileArray = map.getTileArray();
         int[][] intArray = map.getIntArray();
         Tile[][] tileArrayWithRivers = assignRivers(intArray, tileArray);
-        return tileArrayWithRivers; 
+        return tileArrayWithRivers;
     }
 
     /**
@@ -53,7 +60,12 @@ public class MapCreator {
         }
         return true;
     }
-    
+
+    /**
+     * Checks if there are any rivers.
+     *
+     * @return
+     */
     public boolean checkRivers() {
         return riverMaker.hasRivers();
     }

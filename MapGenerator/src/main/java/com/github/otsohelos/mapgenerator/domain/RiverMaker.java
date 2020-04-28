@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
+ * Determines location of any rivers and places them on the map.
  *
  * @author otsohelos
  */
@@ -32,7 +33,7 @@ public class RiverMaker {
         this.tileArray = tileArray;
         this.localHeights = new int[height / 4][width / 4];
         this.hasRivers = false;
-        this.howManyStarts = 1;
+        this.howManyStarts = 3;
         this.routesReady = new int[howManyStarts][2];
         this.routes = new ArrayList<>();
 
@@ -55,13 +56,29 @@ public class RiverMaker {
         // get array of coordinates and heights for highest large quares: i, j, height
         int[][] highestLarge = findHighest();
 
-        System.out.println("highest peaks are:");
-        for (int i = 0; i < howManyStarts; i++) {
-            System.out.println(highestLarge[i][2] + " at " + highestLarge[i][0] + ", " + highestLarge[i][1]);
-        }
         // find highest 4x4 square inside each highest 24x24 square
         int[][] highestSmall = findHighestFromArray(highestLarge);
 
+        makeRoutes(highestSmall);
+
+        boolean[][] riverProgression2 = new boolean[height / 4][width / 4];
+        // find longest river routes and make rivers
+        for (int[][] r : routes) {
+            if (r[1][2] == routesReady[r[0][2]][1]) {
+                if (riverProgression2[r[0][0]][r[0][1]] == false) {
+                    makeRiver(r, r[1][2]);
+                }
+                riverProgression2[r[0][0]][r[0][1]] = true;
+            }
+        }
+    }
+
+    /**
+     * Starts recursive making of routes from each starting point.
+     *
+     * @param highestSmall Array of 4x4 squares with highest altitudes
+     */
+    public void makeRoutes(int[][] highestSmall) {
         // go through each highest 4x4 square and make river from them
         for (int i = 0; i < howManyStarts; i++) {
             if (highestSmall[i][2] != 0) {
@@ -72,30 +89,15 @@ public class RiverMaker {
                 // store start point index in position 0, 2
                 route[0][2] = i;
                 riverProgression[route[0][0]][route[0][1]] = true;
-                //System.out.println("making newRoute from " + highestSmall[i][0] + ", " + highestSmall[i][1]);
-                int index = 0;
-                //System.out.println("index is " + index);
-                makeRoute(highestSmall[i][0], highestSmall[i][1], route, index, riverProgression);
+                advanceRoute(highestSmall[i][0], highestSmall[i][1], route, 0, riverProgression);
             }
         }
-        System.out.println("Routes ready:");
-        for (int i = 0; i < howManyStarts; i++) {
-            System.out.println("startpoint " + i + ", " + routesReady[i][0] + " rivers, largest index " + routesReady[i][1]);
-        }
-        boolean[][] riverProgression2 = new boolean[height / 4][width / 4];
-        // find longest river routes and make rivers
-        System.out.println("Checking routes: ");
-        for (int[][] r : routes) {
-            System.out.println("startpoint " + r[0][2] + ", length " + r[1][2]);
-            if (r[1][2] == routesReady[r[0][2]][1]) {
-                System.out.println("Making route: ");
-                System.out.println("startpoint " + r[0][2] + ", length " + r[1][2]);
-                if (riverProgression2[r[0][0]][r[0][1]] == false) {
-                    makeRiver(r, r[1][2]);
-                }
-                riverProgression2[r[0][0]][r[0][1]] = true;
-            }
-        }
+    }
+
+    /**
+     * Prints map of rivers in console; only for development purposes.
+     */
+    public void printRiverArray() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (riverArray[i][j] == false) {
@@ -171,7 +173,6 @@ public class RiverMaker {
 //            System.out.println(highestSmall[i][2] + " at " + highestSmall[i][0] + ", " + highestSmall[i][1]);
 //        }
         return highestSmall;
-
     }
 
     /**
@@ -193,7 +194,17 @@ public class RiverMaker {
         return sum;
     }
 
-    private void makeRoute(int i, int j, int[][] initRoute, int routeIndex, boolean[][] riverProgression) {
+    /**
+     * Recursively next 4x4 square in route, and when last one is found, adds
+     * the route to ArrayList routes.
+     *
+     * @param i Coordinate
+     * @param j Coordinate
+     * @param initRoute Route already made
+     * @param routeIndex Index of last placed tile in the route
+     * @param riverProgression Array of squares already in this route
+     */
+    private void advanceRoute(int i, int j, int[][] initRoute, int routeIndex, boolean[][] riverProgression) {
         int startPoint = initRoute[0][2];
         int[][] deepCopiedRoute = deepCopy(initRoute);
         int index = routeIndex;
@@ -215,74 +226,76 @@ public class RiverMaker {
                 dir = 0;
             }
             // grow dowstream-ish, only to squares within bounds
-            if (k >= 0 && l >= 0 && k < height / 4 && l < width / 4 && newRiverProgression[k][l] == false) {
-                if (localHeights[i][j] > localHeights[k][l] - 10) {
-                    // if we're not in water or on map edge, grow route
-                    if (!(k == 0 || l == 0 || k == height / 4 - 1 || l == width / 4 - 1) && index < 49 && !(tileArray[k * 4 + 1][l * 4].isWater() && tileArray[k * 4 + 3][l * 4 + 2].isWater())) {
-                        System.out.println("growing from " + i + ", " + j + " to " + k + ", " + l + ", index " + (index + 1));
-                        // add this point to newRoute
+            if (k < 0 || l < 0 || k >= height / 4 || l >= width / 4 || newRiverProgression[k][l] == true) {
+                return;
+            } else if (localHeights[i][j] > localHeights[k][l] - 20) {
+                // if we're not in water or on map edge, grow route
+                if (!(k == 0 || l == 0 || k == height / 4 - 1 || l == width / 4 - 1) && index < 49 && !(tileArray[k * 4 + 1][l * 4].isWater() && tileArray[k * 4 + 3][l * 4 + 2].isWater())) {
+                    //System.out.println("growing from " + i + ", " + j + " to " + k + ", " + l + ", index " + (index + 1));
+                    // add this point to newRoute
+                    deepCopiedRoute[index + 1][0] = k;
+                    deepCopiedRoute[index + 1][1] = l;
+
+                    // mark this square as done so can't return to it
+                    newRiverProgression[k][l] = true;
+                    advanceRoute(k, l, deepCopiedRoute, index + 1, newRiverProgression);
+                } else if (index > 4) {
+                    // if can't advance and newRoute is longer than 3
+                    if (index + 1 > routesReady[startPoint][1]) {
                         deepCopiedRoute[index + 1][0] = k;
                         deepCopiedRoute[index + 1][1] = l;
+                        routesReady[startPoint][0]++;
+                        routesReady[startPoint][1] = index + 1;
 
-                        // mark this square as done so can't return to it
-                        newRiverProgression[k][l] = true;
-                        makeRoute(k, l, deepCopiedRoute, index + 1, newRiverProgression);
-                    } else if (index > 3) {
-                        // if can't advance and newRoute is longer than 3
-                        if (index + 1 > routesReady[startPoint][1]) {
-                            deepCopiedRoute[index + 1][0] = k;
-                            deepCopiedRoute[index + 1][1] = l;
-                            routesReady[startPoint][0]++;
-                            routesReady[startPoint][1] = index + 1;
-
-                            deepCopiedRoute[0][2] = startPoint;
-                            deepCopiedRoute[1][2] = index + 1;
-                            System.out.println("adding route from startpoint " + startPoint + ", length " + (index + 1));
-                            routes.add(deepCopiedRoute);
-                            System.out.println("added route:");
-                            for (int p = 0; p < deepCopiedRoute.length; p++) {
-                                System.out.println(deepCopiedRoute[p][0] + ", " + deepCopiedRoute[p][1]);
-                            }
-                            //System.out.println("we now have " + routes.size() + " routes.");
-                        }
-                        //makeRiver(newRoute, routeIndex + 1);
+                        deepCopiedRoute[0][2] = startPoint;
+                        deepCopiedRoute[1][2] = index + 1;
+                        System.out.println("adding route from startpoint " + startPoint + ", length " + (index + 1));
+                        routes.add(deepCopiedRoute);
+                        /*System.out.println("added route:");
+                        for (int p = 0; p < deepCopiedRoute.length; p++) {
+                            System.out.println(deepCopiedRoute[p][0] + ", " + deepCopiedRoute[p][1]);
+                        }*/
+                        //System.out.println("we now have " + routes.size() + " routes.");
                     }
+                    //makeRiver(newRoute, routeIndex + 1);
                 }
             }
         }
     }
 
+    /**
+     * Takes route and sets appropriate tiles to river in both tileArray and
+     * riverArray.
+     *
+     * @param route List of coordinates
+     * @param routeIndex Length of route
+     */
     public void makeRiver(int[][] route, int routeIndex) {
         String[] directions = makeDirections(route, routeIndex);
-        System.out.println("route to handle:");
-        for (int k = 0; k < directions.length; k++) {
-            System.out.println(route[k][0] + ", " + route[k][1]);
-        }
 
-        int i = 0;
-        int j = 0;
         for (int k = 0; k < directions.length; k++) {
-            i = route[k][0];
-            j = route[k][1];
-            switch (directions[k]) {
-                case "s":
-                    goSouth(i, j);
-                    break;
-                case "n":
-                    goNorth(i, j);
-                    break;
-                case "w":
-                    goWest(i, j);
-                    break;
-                case "e":
-                    goEast(i, j);
-                    break;
+            int i = route[k][0];
+            int j = route[k][1];
+            if (directions[k].equals("s")) {
+                goSouth(i, j);
+            } else if (directions[k].equals("n")) {
+                goNorth(i, j);
+            } else if (directions[k].equals("w")) {
+                goWest(i, j);
+            } else if (directions[k].equals("e")) {
+                goEast(i, j);
+
             }
             System.out.println("going " + directions[k] + " from " + i + ", " + j);
         }
-
     }
 
+    /**
+     * Changes tiles to river tiles; advances south.
+     *
+     * @param i
+     * @param j
+     */
     public void goSouth(int i, int j) {
         // start from below center
         setRiver(i * 4 + 2, j * 4 + 1);
@@ -291,10 +304,22 @@ public class RiverMaker {
         setRiver(i * 4 + 5, j * 4 + 1);
     }
 
+    /**
+     * Changes tiles to river tiles; advances north.
+     *
+     * @param i
+     * @param j
+     */
     public void goNorth(int i, int j) {
         goSouth(i + 1, j);
     }
 
+    /**
+     * Changes tiles to river tiles; advances west.
+     *
+     * @param i
+     * @param j
+     */
     public void goWest(int i, int j) {
         setRiver(i * 4 + 2, j * 4 + 1);
         setRiver(i * 4 + 2, j * 4);
@@ -303,10 +328,24 @@ public class RiverMaker {
         setRiver(i * 4 + 1, j * 4 - 3);
     }
 
+    /**
+     * Changes tiles to river tiles; advances east.
+     *
+     * @param i
+     * @param j
+     */
     public void goEast(int i, int j) {
         goWest(i, j + 1);
     }
 
+    /**
+     * Changes tile in both tileArray and riverArray to river tiles if tile is
+     * within bounds and not already water.
+     *
+     * @param i
+     * @param j
+     * @return
+     */
     public boolean setRiver(int i, int j) {
         if (i >= 0 && i < height && j >= 0 && j < width) {
             riverArray[i][j] = true;
@@ -317,8 +356,15 @@ public class RiverMaker {
         return false;
     }
 
+    /**
+     * Makes array of directions ("s", "n", "e" and "w") for river.
+     *
+     * @param route
+     * @param routeIndex
+     * @return array of directions
+     */
     public String[] makeDirections(int[][] route, int routeIndex) {
-        System.out.println("directions: ");
+        //System.out.println("directions: ");
         String[] directions = new String[routeIndex];
         for (int k = 0; k < routeIndex - 1; k++) {
             int iDir = route[k + 1][0] - route[k][0];
@@ -332,11 +378,11 @@ public class RiverMaker {
             } else {
                 directions[k] = "w";
             }
-            System.out.println(route[k][0] + ", " + route[k][1] + " -> " + route[k + 1][0] + ", " + route[k + 1][1]);
-            System.out.println(directions[k]);
+            //System.out.println(route[k][0] + ", " + route[k][1] + " -> " + route[k + 1][0] + ", " + route[k + 1][1]);
+            //System.out.println(directions[k]);
         }
         directions[directions.length - 1] = directions[directions.length - 2];
-        System.out.println(directions[directions.length - 1]);
+        //System.out.println(directions[directions.length - 1]);
         return directions;
     }
 
@@ -348,6 +394,12 @@ public class RiverMaker {
         return this.hasRivers;
     }
 
+    /**
+     * Makes a deep copy of a 2D int array.
+     *
+     * @param original
+     * @return
+     */
     public int[][] deepCopy(int[][] original) {
         int[][] copy = new int[original.length][original[0].length];
         for (int i = 0; i < original.length; i++) {
@@ -359,6 +411,12 @@ public class RiverMaker {
         return copy;
     }
 
+    /**
+     * Makes a deep copy of a 2D boolean array.
+     *
+     * @param original
+     * @return
+     */
     public boolean[][] deepCopy(boolean[][] original) {
         boolean[][] copy = new boolean[original.length][original[0].length];
         for (int i = 0; i < original.length; i++) {
