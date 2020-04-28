@@ -1,10 +1,10 @@
 # Instructions
 
-Download [MapGenrator](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.0)
+Download [MapGenerator](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.0)
 
 ## Startup
 
-Mapgenerator can be started with 
+MapGenerator can be started with 
 
 ```
  java -jar MapGenerator-1.0.jar
@@ -12,7 +12,7 @@ Mapgenerator can be started with
 
 ## Settings
 
-First you will be taken to a Settings wiew.
+First you will be taken to a Settings view.
 
 ### Dimensions
 
@@ -24,11 +24,11 @@ High variability means the elevation is likely to change more from square to squ
 
 ### Land type
 
-The Coastal setting gives you an achipelago with larger amounts of water. A Coastal map is likely to be surrounded by water on all edges. The Inland setting gives you more land and less water.
+The Coastal setting gives you an archipelago with larger amounts of water. A Coastal map is likely to be surrounded by water on all edges. The Inland setting gives you more land and less water.
 
 When you've chosen your settings, press Generate.
 
-## Evevation view
+## Elevation view
 
 Now you have a map. The first view you see is the Elevation view.
 
