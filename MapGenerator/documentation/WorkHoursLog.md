@@ -17,4 +17,4 @@
 | 27 Apr | 7 | Building river generator; some cleanup; coastal map edge definition |
 | 28 Apr | 6 | Building and testing river generator; JavaDoc and other documentation |
 
-**Total hours** 62
+**Total hours** 68

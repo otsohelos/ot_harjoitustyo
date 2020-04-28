@@ -23,6 +23,8 @@ MapGenerator is done with Java 11 and JavaFX. A working version will be finished
 
 [Software Architecture](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/architecture.md)
 
+[User Manual](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/User%20Manual.md)
+
 [Log of working hours](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/WorkHoursLog.md)
 
 ## Command Line Commands
