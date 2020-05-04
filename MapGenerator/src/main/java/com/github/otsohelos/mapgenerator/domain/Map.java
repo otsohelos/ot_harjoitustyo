@@ -72,7 +72,7 @@ public class Map {
         // randomize central-ish location for start point
         int firstI = rzr.randomizePlus((height / 3), (height / 3));
         int firstJ = rzr.randomizePlus((width / 3), (width / 3));
-        System.out.println("seed is " + firstI + ", " + firstJ);
+        //System.out.println("seed is " + firstI + ", " + firstJ);
 
         // start building map from that point
         int firstPoint = rzr.randomizePlus(maxElevation / 2, (maxElevation / 2 - 5 + variability));
@@ -113,7 +113,7 @@ public class Map {
                 if (!isAssigned(k, l)) {
                     anotherPointI = k;
                     anotherPointJ = l;
-                    System.out.println("other seed is " + anotherPointI + ", " + anotherPointJ);
+                    //System.out.println("other seed is " + anotherPointI + ", " + anotherPointJ);
                     break outerLoop;
                 }
             }
@@ -168,7 +168,7 @@ public class Map {
         if (islandTendency == 1) {
             baseRainfall++;
         }
-        System.out.println("baserainfall: " + baseRainfall);
+        //System.out.println("baserainfall: " + baseRainfall);
 
         // go through map in 3x3 areas
         int multiplier = 3;
@@ -303,9 +303,9 @@ public class Map {
             int intAvg = (int) Math.round(avg);
             // tend toward downhill slopes repending on island tendency and proximity to map edges
             int lowerer = 30;
-            if (height - i < height / 10 || height - i > 9 * height / 10 || width - j < width / 10 || width - i > 9 * width / 10) {
+            if (height - i < 15 || i < 15 || width - j < 15 || i < 15) {
                 lowerer = 12;
-            } else if (height - i < height / 6 || height - i > 5 * height / 6 || width - j < width / 6 || width - i > 5 * width / 6) {
+            } else if (height - i < 22 || i < 22 || width - j < 22 || i < 22) {
                 lowerer = 18;
             }
             if (rzr.isSmaller(lowerer, (islandTendency * islandTendency))) {

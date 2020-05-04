@@ -16,7 +16,6 @@ public class MapCreator {
         this.height = height;
         this.width = width;
         this.map = new Map(height, width);
-
     }
 
     /**
@@ -55,6 +54,7 @@ public class MapCreator {
      * @return tileArray
      */
     public Tile[][] makeMap(boolean highVariability, boolean coastal) {
+        this.map = new Map(height, width);
         map.assignTiles(highVariability, coastal);
         Tile[][] tileArray = map.getTileArray();
         int[][] intArray = map.getIntArray();

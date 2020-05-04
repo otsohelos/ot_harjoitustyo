@@ -131,7 +131,7 @@ public class Tile {
         if (elevation < multiplier * 3) {
             // it's water
             terrain = 1;
-        } else if (elevation > multiplier * 12.5 || rainfall < 5) {
+        } else if (elevation > multiplier * 12.5 || rainfall < 6) {
             // very high or dry squares are always desert
             terrain = 4;
         } else if (elevation < multiplier * 7) {

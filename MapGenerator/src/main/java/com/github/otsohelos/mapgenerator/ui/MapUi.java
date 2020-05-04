@@ -136,20 +136,22 @@ public class MapUi extends Application {
         stage.show();
     }
 
-    public void viewAltitudeCanvas(Stage stage, int height, int width, boolean highVariability, boolean coastal, Tile[][] map, MapCreator mapCreator, boolean rivers) {
+    public void viewAltitudeCanvas(Stage stage, int height, int width, boolean highVariability, boolean coastal, Tile[][] map, MapCreator mapCreator, boolean riversVisible) {
         // base variables
         int squareSize = 4;
         int canvasWidth = width * squareSize;
         int canvasHeight = height * squareSize;
 
         // main box
-        VBox altitudeBox = new VBox();
+        BorderPane altitudeBox = new BorderPane();
 
-        // Canvas
+        // Canvas and image
         Canvas altitudeCanvas = new Canvas(canvasWidth, canvasHeight);
+        Image legend = new Image("altitudelegend.jpg");
+        ImageView legendView = new ImageView(legend);
 
         // paint canvas
-        if (rivers) {
+        if (riversVisible) {
             paintCanvas(map, altitudeCanvas, squareSize, "rivers");
         } else {
             paintCanvas(map, altitudeCanvas, squareSize, "altitude");
@@ -157,52 +159,66 @@ public class MapUi extends Application {
         // sub-boxes
         BorderPane buttonPane = new BorderPane();
         HBox altitudeButtonBox = new HBox();
+        VBox legendBox = new VBox();
 
         // buttons and labels
         Button redoButton = new Button("Redo");
         Button backButton = new Button("Back");
 
         Button saveAltitudeButton = new Button("Save...");
-        Button riversButton = new Button("Rivers");
-        if (rivers) {
-            riversButton.setText("Hide rivers");
-        }
+        Button showRiversButton = new Button("Show rivers");
+        Button hideRiversButton = new Button("Hide rivers");
         Button redoRiversButton = new Button("Redo rivers");
-        Button terrainButton = new Button("Show terrain");
+        Button showTerrainButton = new Button("Show terrain");
         Pane spacer1 = new Pane();
         Pane spacer2 = new Pane();
 
         // set sizes and paddings
+        altitudeBox.setMinSize(250, 250);
         spacer1.setMinWidth(30);
-                spacer2.setMinWidth(30);
+        spacer2.setMinWidth(30);
 
-        altitudeButtonBox.setPadding(new Insets(20, 10, 10, 10));
+        altitudeButtonBox.setPadding(new Insets(0, 10, 10, 10));
+        legendBox.setPadding(new Insets(10, 10, 10, 10));
         buttonPane.setPadding(new Insets(10, 10, 0, 0));
-        redoButton.setPrefWidth(60);
-        backButton.setPrefWidth(60);
+        
+        // large button sizes
+        showRiversButton.setMinWidth(85);
+        hideRiversButton.setMinWidth(85);
+        redoRiversButton.setMinWidth(85);
+        showTerrainButton.setMinWidth(85);
+        
+        // small button sizes
+        redoButton.setMinWidth(55);
+        backButton.setMinWidth(55);
 
         // set everything in the right place
         altitudeButtonBox.getChildren().add(backButton);
         altitudeButtonBox.getChildren().add(redoButton);
         altitudeButtonBox.getChildren().add(spacer1);
-        altitudeButtonBox.getChildren().add(riversButton);
-        if (rivers) {
+        if (riversVisible) {
             altitudeButtonBox.getChildren().add(redoRiversButton);
+            altitudeButtonBox.getChildren().add(hideRiversButton);
+        } else {
+            altitudeButtonBox.getChildren().add(showRiversButton);
         }
         altitudeButtonBox.getChildren().add(spacer2);
-        altitudeButtonBox.getChildren().add(terrainButton);
+        altitudeButtonBox.getChildren().add(showTerrainButton);
         buttonPane.setLeft(altitudeButtonBox);
-
         buttonPane.setRight(saveAltitudeButton);
-        altitudeBox.getChildren().add(altitudeCanvas);
-        altitudeBox.getChildren().add(buttonPane);
 
-        // alert of no rivers
+        legendBox.getChildren().add(legendView);
+
+        altitudeBox.setCenter(altitudeCanvas);
+        altitudeBox.setBottom(buttonPane);
+        altitudeBox.setRight(legendBox);
+
+        // alert of no riversVisible
         Alert noRiversAlert = new Alert(AlertType.INFORMATION);
         noRiversAlert.setContentText("There are no rivers in this area.");
 
         // button actions
-        terrainButton.setOnAction((event3) -> {
+        showTerrainButton.setOnAction((event3) -> {
             viewTerrainCanvas(stage, height, width, highVariability, coastal, map, mapCreator);
         });
         saveAltitudeButton.setOnAction((event2) -> {
@@ -216,27 +232,35 @@ public class MapUi extends Application {
             viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, false);
         });
 
-        riversButton.setOnAction((event) -> {
-            if (!rivers) {
-                if (!mapCreator.checkRivers()) {
-                    altitudeButtonBox.getChildren().add(redoRiversButton);
-                    noRiversAlert.show();
-                } else {
-                    viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
-                }
+        showRiversButton.setOnAction((event) -> {
+            if (!mapCreator.checkRivers()) {
+                viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
+                noRiversAlert.show();
             } else {
-                viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, false);
+                viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
             }
         });
+
+        hideRiversButton.setOnAction((event) -> {
+            viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, false);
+        });
+
         redoRiversButton.setOnAction((event) -> {
             Tile[][] newMap = mapCreator.redoRivers();
             if (!mapCreator.checkRivers()) {
+                viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, true);
                 noRiversAlert.show();
+            } else {
+                viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, true);
             }
-            viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, true);
         });
+        
 
-        Scene altitudeView = new Scene(altitudeBox);
+        Scene altitudeView = new Scene(altitudeBox, Color.WHITE);
+        
+        // set focus on canvas so no buttons are focused
+        altitudeCanvas.requestFocus();
+
         stage.setScene(altitudeView);
     }
 
@@ -251,8 +275,8 @@ public class MapUi extends Application {
 
         // sub-boxes
         HBox terrainCanvasBox = new HBox();
-        HBox terrainButtonBox = new HBox();
-        VBox legendBox = new VBox();
+        BorderPane terrainButtonBox = new BorderPane();
+        VBox sideBox = new VBox();
         HBox rainyDryBox = new HBox();
 
         // Canvas
@@ -267,33 +291,43 @@ public class MapUi extends Application {
         Label rainfallLabel = new Label(rainfallString);
         Label redoTerrainLabel = new Label("Redo rainfall and terrain randomly:");
         Button redoTerrainButton = new Button("Redo");
-        Label redoTerrainControlledLabel = new Label("Redo rainfall and terrain to be rainy or dry:");
+        Label redoTerrainControlledLabel = new Label("Redo rainfall and terrain\nto be rainy or dry:");
         Button dryButton = new Button("Dry");
-        Button wetButton = new Button("Rainy");
-        Pane spacer = new Pane();
+        Button rainyButton = new Button("Rainy");
 
         // images
         Image legend = new Image("legend.jpg");
         ImageView legendView = new ImageView(legend);
-
+        
+        // set sizes and paddings
+        terrainBox.setMinSize(250, 250);
+        terrainButtonBox.setPadding(new Insets(0, 10, 10, 10));
+        sideBox.setPadding(new Insets(0, 10, 10, 10));
+        sideBox.setSpacing(10);
+        rainyDryBox.setSpacing(10);
+        
+        // small button sizes
+        redoTerrainButton.setMinWidth(55);
+        dryButton.setMinWidth(55);
+        rainyButton.setMinWidth(55);
+        altitudeButton.setMinWidth(55);
+        saveTerrainButton.setMinWidth(55);
+        
         // set everything in the right place
-        spacer.setMinWidth(30);
-
         terrainCanvasBox.getChildren().add(terrainCanvas);
         terrainBox.getChildren().add(terrainCanvasBox);
-        legendBox.getChildren().add(rainfallLabel);
-        legendBox.getChildren().add(legendView);
-        legendBox.getChildren().add(redoTerrainLabel);
-        legendBox.getChildren().add(redoTerrainButton);
-        rainyDryBox.getChildren().add(wetButton);
+        sideBox.getChildren().add(rainfallLabel);
+        sideBox.getChildren().add(legendView);
+        sideBox.getChildren().add(redoTerrainLabel);
+        sideBox.getChildren().add(redoTerrainButton);
+        rainyDryBox.getChildren().add(rainyButton);
         rainyDryBox.getChildren().add(dryButton);
-        legendBox.getChildren().add(redoTerrainControlledLabel);
-        legendBox.getChildren().add(rainyDryBox);
-        terrainCanvasBox.getChildren().add(legendBox);
+        sideBox.getChildren().add(redoTerrainControlledLabel);
+        sideBox.getChildren().add(rainyDryBox);
+        terrainCanvasBox.getChildren().add(sideBox);
         terrainBox.getChildren().add(terrainButtonBox);
-        terrainButtonBox.getChildren().add(altitudeButton);
-        terrainButtonBox.getChildren().add(spacer);
-        terrainButtonBox.getChildren().add(saveTerrainButton);
+        terrainButtonBox.setLeft(altitudeButton);
+        terrainButtonBox.setRight(saveTerrainButton);
 
         // paint canvas    
         paintCanvas(map, terrainCanvas, squareSize, "terrain");
@@ -315,7 +349,7 @@ public class MapUi extends Application {
             paintCanvas(map, terrainCanvas, squareSize, "terrain");
         });
 
-        wetButton.setOnAction((event6) -> {
+        rainyButton.setOnAction((event6) -> {
             mapCreator.assignTerrain(true);
             String newRainfallString = mapCreator.getRainfallString();
             rainfallLabel.setText(newRainfallString);
@@ -326,7 +360,9 @@ public class MapUi extends Application {
             viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, false);
         });
 
-        Scene terrainView = new Scene(terrainBox);
+        Scene terrainView = new Scene(terrainBox, Color.WHITE);
+        
+        terrainCanvas.requestFocus();
         stage.setScene(terrainView);
     }
 
