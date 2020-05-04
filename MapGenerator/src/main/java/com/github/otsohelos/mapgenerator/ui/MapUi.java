@@ -34,6 +34,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -42,7 +43,6 @@ import javafx.scene.paint.Color;
  * @author otsohelos
  */
 public class MapUi extends Application {
-
 
     @Override
     public void start(Stage stage) {
@@ -85,6 +85,7 @@ public class MapUi extends Application {
 
         // event to move to map view
         EventHandler<ActionEvent> moveToMapView = new EventHandler<ActionEvent>() {
+            @Override
             public void handle(ActionEvent event) {
                 int width = -1;
                 int height = -1;
@@ -154,6 +155,7 @@ public class MapUi extends Application {
             paintCanvas(map, altitudeCanvas, squareSize, "altitude");
         }
         // sub-boxes
+        BorderPane buttonPane = new BorderPane();
         HBox altitudeButtonBox = new HBox();
 
         // buttons and labels
@@ -165,20 +167,35 @@ public class MapUi extends Application {
         if (rivers) {
             riversButton.setText("Hide rivers");
         }
-        Button terrainButton = new Button("Terrain");
-        Pane spacer = new Pane();
-        
+        Button redoRiversButton = new Button("Redo rivers");
+        Button terrainButton = new Button("Show terrain");
+        Pane spacer1 = new Pane();
+        Pane spacer2 = new Pane();
+
+        // set sizes and paddings
+        spacer1.setMinWidth(30);
+                spacer2.setMinWidth(30);
+
+        altitudeButtonBox.setPadding(new Insets(20, 10, 10, 10));
+        buttonPane.setPadding(new Insets(10, 10, 0, 0));
+        redoButton.setPrefWidth(60);
+        backButton.setPrefWidth(60);
 
         // set everything in the right place
         altitudeButtonBox.getChildren().add(backButton);
         altitudeButtonBox.getChildren().add(redoButton);
+        altitudeButtonBox.getChildren().add(spacer1);
         altitudeButtonBox.getChildren().add(riversButton);
+        if (rivers) {
+            altitudeButtonBox.getChildren().add(redoRiversButton);
+        }
+        altitudeButtonBox.getChildren().add(spacer2);
         altitudeButtonBox.getChildren().add(terrainButton);
-        spacer.setMinWidth(40);
-        altitudeButtonBox.getChildren().add(spacer);
-        altitudeButtonBox.getChildren().add(saveAltitudeButton);
+        buttonPane.setLeft(altitudeButtonBox);
+
+        buttonPane.setRight(saveAltitudeButton);
         altitudeBox.getChildren().add(altitudeCanvas);
-        altitudeBox.getChildren().add(altitudeButtonBox);
+        altitudeBox.getChildren().add(buttonPane);
 
         // alert of no rivers
         Alert noRiversAlert = new Alert(AlertType.INFORMATION);
@@ -202,6 +219,7 @@ public class MapUi extends Application {
         riversButton.setOnAction((event) -> {
             if (!rivers) {
                 if (!mapCreator.checkRivers()) {
+                    altitudeButtonBox.getChildren().add(redoRiversButton);
                     noRiversAlert.show();
                 } else {
                     viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, true);
@@ -209,6 +227,13 @@ public class MapUi extends Application {
             } else {
                 viewAltitudeCanvas(stage, height, width, highVariability, coastal, map, mapCreator, false);
             }
+        });
+        redoRiversButton.setOnAction((event) -> {
+            Tile[][] newMap = mapCreator.redoRivers();
+            if (!mapCreator.checkRivers()) {
+                noRiversAlert.show();
+            }
+            viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, true);
         });
 
         Scene altitudeView = new Scene(altitudeBox);
@@ -246,12 +271,14 @@ public class MapUi extends Application {
         Button dryButton = new Button("Dry");
         Button wetButton = new Button("Rainy");
         Pane spacer = new Pane();
-        
+
         // images
         Image legend = new Image("legend.jpg");
         ImageView legendView = new ImageView(legend);
 
         // set everything in the right place
+        spacer.setMinWidth(30);
+
         terrainCanvasBox.getChildren().add(terrainCanvas);
         terrainBox.getChildren().add(terrainCanvasBox);
         legendBox.getChildren().add(rainfallLabel);
@@ -265,7 +292,6 @@ public class MapUi extends Application {
         terrainCanvasBox.getChildren().add(legendBox);
         terrainBox.getChildren().add(terrainButtonBox);
         terrainButtonBox.getChildren().add(altitudeButton);
-                spacer.setMinWidth(40);
         terrainButtonBox.getChildren().add(spacer);
         terrainButtonBox.getChildren().add(saveTerrainButton);
 

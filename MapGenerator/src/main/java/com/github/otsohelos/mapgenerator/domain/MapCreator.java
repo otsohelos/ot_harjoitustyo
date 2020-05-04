@@ -15,6 +15,8 @@ public class MapCreator {
     public MapCreator(int height, int width) {
         this.height = height;
         this.width = width;
+        this.map = new Map(height, width);
+
     }
 
     /**
@@ -32,6 +34,18 @@ public class MapCreator {
     }
 
     /**
+     * Removes rivers and assigns new ones.
+     * @return new tile array
+     */
+    public Tile[][] redoRivers() {
+        this.riverMaker = new RiverMaker(map.getIntArray(), map.getTileArray());
+        riverMaker.resetRivers();
+        riverMaker.makeRivers();
+        Tile[][] newTileArray = riverMaker.getTileArray();
+        return newTileArray;
+    }
+
+    /**
      * Initializes Map, calls it to make a complete Tile array, gets and returns
      * that array.
      *
@@ -41,7 +55,6 @@ public class MapCreator {
      * @return tileArray
      */
     public Tile[][] makeMap(boolean highVariability, boolean coastal) {
-        this.map = new Map(height, width);
         map.assignTiles(highVariability, coastal);
         Tile[][] tileArray = map.getTileArray();
         int[][] intArray = map.getIntArray();

@@ -167,9 +167,9 @@ public class Tile {
         }
     }
 
-    public void setRiver() {
+    public void setRiver(boolean value) {
         if (!isWater()) {
-            isRiver = true;
+            isRiver = value;
         }
     }
 
