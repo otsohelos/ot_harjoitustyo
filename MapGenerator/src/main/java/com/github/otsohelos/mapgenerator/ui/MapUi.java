@@ -181,13 +181,13 @@ public class MapUi extends Application {
         altitudeButtonBox.setPadding(new Insets(0, 10, 10, 10));
         legendBox.setPadding(new Insets(10, 10, 10, 10));
         buttonPane.setPadding(new Insets(10, 10, 0, 0));
-        
+
         // large button sizes
         showRiversButton.setMinWidth(85);
         hideRiversButton.setMinWidth(85);
         redoRiversButton.setMinWidth(85);
         showTerrainButton.setMinWidth(85);
-        
+
         // small button sizes
         redoButton.setMinWidth(55);
         backButton.setMinWidth(55);
@@ -222,7 +222,7 @@ public class MapUi extends Application {
             viewTerrainCanvas(stage, height, width, highVariability, coastal, map, mapCreator);
         });
         saveAltitudeButton.setOnAction((event2) -> {
-            saveThisView(stage, width * squareSize, height * squareSize, altitudeCanvas);
+            saveThisViewWithLegend(stage, width * squareSize, height * squareSize, altitudeCanvas, legend, 176);
         });
         backButton.setOnAction((event) -> {
             viewSettings(stage);
@@ -254,10 +254,9 @@ public class MapUi extends Application {
                 viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, true);
             }
         });
-        
 
         Scene altitudeView = new Scene(altitudeBox, Color.WHITE);
-        
+
         // set focus on canvas so no buttons are focused
         altitudeCanvas.requestFocus();
 
@@ -298,21 +297,21 @@ public class MapUi extends Application {
         // images
         Image legend = new Image("legend.jpg");
         ImageView legendView = new ImageView(legend);
-        
+
         // set sizes and paddings
         terrainBox.setMinSize(250, 250);
         terrainButtonBox.setPadding(new Insets(0, 10, 10, 10));
         sideBox.setPadding(new Insets(0, 10, 10, 10));
         sideBox.setSpacing(10);
         rainyDryBox.setSpacing(10);
-        
+
         // small button sizes
         redoTerrainButton.setMinWidth(55);
         dryButton.setMinWidth(55);
         rainyButton.setMinWidth(55);
         altitudeButton.setMinWidth(55);
         saveTerrainButton.setMinWidth(55);
-        
+
         // set everything in the right place
         terrainCanvasBox.getChildren().add(terrainCanvas);
         terrainBox.getChildren().add(terrainCanvasBox);
@@ -334,7 +333,7 @@ public class MapUi extends Application {
 
         // button actions
         saveTerrainButton.setOnAction((event2) -> {
-            saveThisView(stage, width * squareSize, height * squareSize, terrainCanvas);
+            saveThisView(stage, width * squareSize + 190, height * squareSize, terrainCanvas);
         });
         redoTerrainButton.setOnAction((event4) -> {
             mapCreator.assignTerrain();
@@ -361,12 +360,32 @@ public class MapUi extends Application {
         });
 
         Scene terrainView = new Scene(terrainBox, Color.WHITE);
-        
+
         terrainCanvas.requestFocus();
         stage.setScene(terrainView);
     }
 
     public void saveThisView(Stage stage, int imgWidth, int imgHeight, Canvas canvas) {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Map");
+        FileChooser.ExtensionFilter filter
+                = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(filter);
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            try {
+                WritableImage writableImage = new WritableImage(imgWidth, imgHeight);
+                canvas.snapshot(null, writableImage);
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                ImageIO.write(renderedImage, "png", file);
+            } catch (IOException e) {
+                System.out.println("Error!");
+            }
+        }
+    }
+
+    public void saveThisViewWithLegend(Stage stage, int imgWidth, int imgHeight, Canvas canvas, Image legend, int legendWidth) {
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Map");

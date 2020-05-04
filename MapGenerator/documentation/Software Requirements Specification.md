@@ -57,8 +57,7 @@ Map view has elevation indicated by color darkness.
 
 After the basic version is functional, it will be complemented by the following functionalities, time permitting:
 
-- (Unlikely to happen) Contiguity of terrain types setting: how likely adjacent squares are to have the same type of terrain
-- Addition of Legend (DONE for Terrain view)
+- DONE: Addition of Legend
 - Legend inclusion in save files
 - Customisable map name
 - DONE: Rainy / dry setting
