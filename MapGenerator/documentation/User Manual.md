@@ -18,7 +18,7 @@ First you will be taken to a Settings view.
 
 ### Dimensions
 
-Height and Width are the dimensions of your map. These should be between 40 and 260. On smaller screens, a height of less than 150 is recommended.
+Height and Width are the dimensions of your map. These should be between 40 and 260. On most screens, a height of less than 150 is recommended.
 
 ### Variability of elevation
 
