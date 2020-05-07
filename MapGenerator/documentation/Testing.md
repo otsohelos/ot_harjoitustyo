@@ -23,14 +23,14 @@ Functional testing has done manually.
 ### Subjective map quality evaluation
 
 Since MapGenerator uses a lot of random generation and its main function is to provide interesting and aesthetically pleasing maps, manual testing has concentrated on the following points, evaluated subjectively:
-1. User settings produce meaningful results:
+1. User settings visibly affect the end result:
    * Coastal maps differ from inland maps.
    * High variability maps differ from low variability maps.
    * Rainy terrain maps from dry terrain maps.
-1. There is variety inside of the map:
+1. There is variety within a map:
    * Large areas of a map are not likely to be the same altitude color.
    * Large areas of a map are not likely to be the same terrain.
-1. "Disappointing" maps turn up rarely if at all
+1. "Disappointing" maps turn up rarely or not at all
    * A map is considered disappointing if it contains mostly water and very little land
    * or if it has the same elevation or terrain color on most of the map.
 1. Maps close to the upper size limit and maps close to the lower size limit both provide pleasing results.
@@ -46,7 +46,7 @@ Saving of both Terrain and Altitude maps has been tested on both Mac OSX and Cub
 
 MapGenerator offers all functionalities defined in the [Software Requirements Specification](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/Software%20Requirements%20Specification.md#functionality-in-basic-version). Usage has been tested with instructions provided in the [User Manual](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/User%20Manual.md).
 
-The only erroneous input that the user is able to give in the Settings is providing non-integer dimensions for the map, or providing integer dimensions that are outside the boundaries of acceptable map dimensions. These inputs generate a relevant error popup, after which the user can try again.
+The only erroneous input that the user is able to give in the Settings is providing non-integer dimensions for the map, or providing dimensions that are outside the boundaries of acceptable map dimensions. These inputs generate a relevant error popup, which the user can close and then try again.
 
 If the user deselects the Variability choice or Coastal/Inland choice, so that neither choice is selected, a map is generated with the previously selected setting.
 
@@ -54,8 +54,8 @@ Erroneous save file names (e.g. trying to rename the .png file with another file
 
 ## Remaining problems in MapGenerator
 
-River generation doesn't always work as desired, and rivers don't seem very natural. The RiverMaker class is, in general, unnecessarily complicated and long, and should be remade. The author of MapGenerator ran out of time to make the river algorithm better.
+River generation doesn't always work as desired, and rivers don't seem very natural. The RiverMaker class is, in general, unnecessarily long and complicated, and should be remade. The author of MapGenerator ran out of time to make the river algorithm better.
 
 The original plan was to include the map legend in save files. This was not managed.
 
-Maps are not saved and no confirmation is required when the user leaves or redoes a map or part of a map (e.g. rivers). This means that if the user changes or leaves the map by accident, the map data is lost. It is also not possible to save a map in a format that would allow the user to view or modify it in MapGenerator later.
+Maps are not saved and no confirmation is required when the user discards or redoes a map or part of a map (e.g. rivers). This means that if the user changes or leaves the map by accident, the map data is lost. It is also not possible to save a map in a format that would allow the user to view or modify it in MapGenerator later.
