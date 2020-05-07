@@ -70,8 +70,7 @@ public class MapUi extends Application {
         settings.getChildren().add(varSwitch.getBox());
 
         // coast or inland box
-        Switch coastalSwitch = new Switch("Land type", "Coastal", "Inland",
-                "\"Coastal\" is more likely to have large areas of water on the map than \"Inland\".");
+        Switch coastalSwitch = new Switch("Land type", "Coastal", "Inland", "\"Coastal\" is more likely to have large areas of water on the map than \"Inland\".");
         settings.getChildren().add(coastalSwitch.getBox());
 
         // Generate button and its box
@@ -217,14 +216,14 @@ public class MapUi extends Application {
 
         // alert of no riversVisible
         Alert noRiversAlert = new Alert(AlertType.INFORMATION);
-        noRiversAlert.setContentText("There are no rivers in this area.");
+        noRiversAlert.setContentText("There are no rivers in this area. \n\nYou can choose \"Redo rivers\" to try again.");
 
         // button actions
-        showTerrainButton.setOnAction((event3) -> {
+        showTerrainButton.setOnAction((event) -> {
             viewTerrainCanvas(stage, height, width, highVariability, coastal, map, mapCreator);
         });
-        saveAltitudeButton.setOnAction((event2) -> {
-            saveThisViewWithLegend(stage, width * squareSize, height * squareSize, altitudeCanvas, legend, 176);
+        saveAltitudeButton.setOnAction((event) -> {
+            saveThisView(stage, width * squareSize, height * squareSize, altitudeCanvas);
         });
         backButton.setOnAction((event) -> {
             viewSettings(stage);
@@ -249,6 +248,13 @@ public class MapUi extends Application {
 
         redoRiversButton.setOnAction((event) -> {
             Tile[][] newMap = mapCreator.redoRivers();
+            // try a few times if still no rivers
+            if (!mapCreator.checkRivers()) {
+                newMap = mapCreator.redoRivers();
+            }
+            if (!mapCreator.checkRivers()) {
+                newMap = mapCreator.redoRivers();
+            }
             if (!mapCreator.checkRivers()) {
                 viewAltitudeCanvas(stage, height, width, highVariability, coastal, newMap, mapCreator, true);
                 noRiversAlert.show();
@@ -336,7 +342,7 @@ public class MapUi extends Application {
 
         // button actions
         saveTerrainButton.setOnAction((event2) -> {
-            saveThisView(stage, width * squareSize + 190, height * squareSize, terrainCanvas);
+            saveThisView(stage, width * squareSize, height * squareSize, terrainCanvas);
         });
         redoTerrainButton.setOnAction((event4) -> {
             mapCreator.assignTerrain();
@@ -369,6 +375,8 @@ public class MapUi extends Application {
     }
 
     public void saveThisView(Stage stage, int imgWidth, int imgHeight, Canvas canvas) {
+        Alert saveErrorAlert = new Alert(AlertType.INFORMATION);
+        saveErrorAlert.setContentText("Something went wrong and the map could not be saved.");
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Map");
@@ -383,27 +391,7 @@ public class MapUi extends Application {
                 RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
                 ImageIO.write(renderedImage, "png", file);
             } catch (IOException e) {
-                System.out.println("Error!");
-            }
-        }
-    }
-
-    public void saveThisViewWithLegend(Stage stage, int imgWidth, int imgHeight, Canvas canvas, Image legend, int legendWidth) {
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Map");
-        FileChooser.ExtensionFilter filter
-                = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
-        fileChooser.getExtensionFilters().add(filter);
-        File file = fileChooser.showSaveDialog(stage);
-        if (file != null) {
-            try {
-                WritableImage writableImage = new WritableImage(imgWidth, imgHeight);
-                canvas.snapshot(null, writableImage);
-                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
-                ImageIO.write(renderedImage, "png", file);
-            } catch (IOException e) {
-                System.out.println("Error!");
+                saveErrorAlert.show();
             }
         }
     }

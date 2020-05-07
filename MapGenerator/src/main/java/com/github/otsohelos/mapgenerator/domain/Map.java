@@ -15,7 +15,6 @@ public class Map {
     private final int maxElevation;
     private int islandTendency;
     private int variability;
-    //private int madeSmaller;
     private int baseRainfall;
     private int otherPoints;
 
@@ -28,7 +27,6 @@ public class Map {
         this.maxElevation = 40;
         this.islandTendency = 3;
         this.variability = 3;
-        //this.madeSmaller = 0;
         this.otherPoints = rzr.randomize(3) + 1;
     }
 
@@ -72,7 +70,6 @@ public class Map {
         // randomize central-ish location for start point
         int firstI = rzr.randomizePlus((height / 3), (height / 3));
         int firstJ = rzr.randomizePlus((width / 3), (width / 3));
-        //System.out.println("seed is " + firstI + ", " + firstJ);
 
         // start building map from that point
         int firstPoint = rzr.randomizePlus(maxElevation / 2, (maxElevation / 2 - 5 + variability));
@@ -82,8 +79,7 @@ public class Map {
         intArray[firstI][firstJ] = firstPoint;
         randomizeRecursively(firstI + 1, firstJ, (27 - 4 * variability));
 
-        // on large maps make a few other startpoints
-        // also in case of stackoverflow
+        // on large maps make a few other startpoints, also in case of stackoverflow
         if (this.height > 80 || this.width > 80) {
             for (int k = 0; k < otherPoints; k++) {
                 makeAnotherPoint(firstI, firstJ);
@@ -91,7 +87,6 @@ public class Map {
         }
         fillTheRest();
         fillTheRest();
-        //System.out.println("made smaller " + madeSmaller + " times");
     }
 
     /**
@@ -109,11 +104,9 @@ public class Map {
         outerLoop:
         for (int k = (height / 4 + height / 4) + whereStartI; k < 3 * height / 4; k++) {
             for (int l = (width / 4 + width / 4) + whereStartJ; l < 3 * width / 4; l++) {
-                //System.out.println("checking " + k + ", " + l);
                 if (!isAssigned(k, l)) {
                     anotherPointI = k;
                     anotherPointJ = l;
-                    //System.out.println("other seed is " + anotherPointI + ", " + anotherPointJ);
                     break outerLoop;
                 }
             }
@@ -168,7 +161,6 @@ public class Map {
         if (islandTendency == 1) {
             baseRainfall++;
         }
-        //System.out.println("baserainfall: " + baseRainfall);
 
         // go through map in 3x3 areas
         int multiplier = 3;
@@ -202,8 +194,6 @@ public class Map {
         if (islandTendency == 1) {
             baseRainfall++;
         }
-        System.out.println("baserainfall: " + baseRainfall);
-
         // go through map in 3x3 areas
         int multiplier = 3;
         for (int i = 0; i < height; i = i + multiplier) {
@@ -233,7 +223,6 @@ public class Map {
                     tileArray[k][l].setRainfall((int) rainfall);
                     tileArray[k][l].assignTerrain();
                 }
-                //System.out.println("rainfall " + rainfall + ", terrain " + tileArray[k][l].getTerrain());
             }
         }
     }
@@ -252,7 +241,6 @@ public class Map {
         // only stop at the sea
         if (intArray[i][j] < 5) {
             stopWhen = stopWhen - (rzr.randomize(3) / 2);
-            //System.out.println("coinToss " + coinToss + ", stopWhen " + stopWhen);
         }
         growRecursively(i, j, stopWhen);
     }
@@ -275,7 +263,6 @@ public class Map {
                     } catch (StackOverflowError soe) {
                         // if stack overflows, make one more starting point
                         otherPoints++;
-                        //System.out.println("overflow, starting again");
                     }
                 }
             }
@@ -309,18 +296,29 @@ public class Map {
                 lowerer = 18;
             }
             if (rzr.isSmaller(lowerer, (islandTendency * islandTendency))) {
-                //madeSmaller++;
                 intAvg--;
             }
             newInt = intAvg + rzr.randomizePlus(variability, (variability / (-2)));
         }
-        // ensure that newInt is within bounds
+
+        intArray[i][j] = stayWithinBounds(newInt);
+    }
+
+    /**
+     * Checks that an integer is within bounds for elevation and changes it if
+     * it isn't.
+     *
+     * @param original Original value
+     * @return Value within bounds
+     */
+    public int stayWithinBounds(int original) {
+        int newInt = original;
         if (newInt < 1) {
             newInt = 1;
         } else if (newInt > (maxElevation - 1)) {
             newInt = maxElevation - 1;
         }
-        intArray[i][j] = newInt;
+        return newInt;
     }
 
     /**
@@ -331,24 +329,9 @@ public class Map {
     public double neighborsAverage(int i, int j) {
         int highestNeighbor = 0;
         int lowestNeighbor = 100;
-        int assignedNeighbors = 0;
-        int sumOfNeighbors = 0;
-        int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j - 1}};
+        int assignedNeighbors = neighborsCount(i, j);
+        int sumOfNeighbors = neighborsSum(i, j);
 
-        // check already assigned neighbors' values and calculate their sum
-        for (int k = 0; k < neighborCoordinates.length; k++) {
-            if (isAssigned(neighborCoordinates[k][0], neighborCoordinates[k][1])) {
-                assignedNeighbors++;
-                int value = intArray[neighborCoordinates[k][0]][neighborCoordinates[k][1]];
-                sumOfNeighbors = sumOfNeighbors + value;
-                if (value < lowestNeighbor) {
-                    lowestNeighbor = value;
-                }
-                if (value > highestNeighbor) {
-                    highestNeighbor = value;
-                }
-            }
-        }
         // if no neighbors:
         if (assignedNeighbors == 0) {
             return 0;
@@ -403,6 +386,26 @@ public class Map {
             }
         }
         return sumOfNeighbors;
+    }
+
+    /**
+     * Calculates how many neighbors have been assigned.
+     *
+     * @param i
+     * @param j
+     * @return
+     */
+    public int neighborsCount(int i, int j) {
+        int assignedNeighbors = 0;
+        int[][] neighborCoordinates = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j - 1}};
+
+        // check already assigned neighbors' values and calculate their sum
+        for (int k = 0; k < neighborCoordinates.length; k++) {
+            if (isAssigned(neighborCoordinates[k][0], neighborCoordinates[k][1])) {
+                assignedNeighbors++;
+            }
+        }
+        return assignedNeighbors;
     }
 
     /**
@@ -464,34 +467,8 @@ public class Map {
         return ("This area is " + wetOrDry + ".\nAverage rainfall " + (baseRainfall - 3) + " out of 6.");
     }
 
-    //Setter
+    //Setter, only for testing purposes
     public void setInt(int i, int j, int value) {
-        System.out.println("Note: the setInt method should only be used for testing purposes");
         intArray[i][j] = value;
-    }
-
-    /**
-     * Prints the int elevation array for this Map.
-     */
-    public void printIntArray() {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                System.out.print(intArray[i][j] + " ");
-            }
-        }
-        System.out.println("");
-    }
-
-    /**
-     * Prints terrain number for all squares.
-     */
-    public void printTerrainArray() {
-        for (int i = 0; i < height; i++) {
-            System.out.println("");
-            for (int j = 0; j < width; j++) {
-                System.out.print(tileArray[i][j].getTerrain() + " ");
-            }
-        }
-        System.out.println("");
     }
 }

@@ -26,21 +26,7 @@ public class Tile {
         this.isRiver = false;
     }
 
-    public int getTerrain() {
-        return terrain;
-    }
-
-    public int getElevation() {
-        return elevation;
-    }
-
-    boolean isWater() {
-        if (elevation < multiplier * 3) {
-            return true;
-        }
-        return false;
-    }
-
+    // Color getters:
     /**
      * Returns basic elevation color.
      *
@@ -71,6 +57,7 @@ public class Tile {
         }
     }
 
+    // Terrain assigner:
     /**
      * Returns color string for terrain.
      *
@@ -94,34 +81,9 @@ public class Tile {
                 // forest
                 return "rgb(80,168,0)";
             default:
-                // unassigned terrain is black
-                // this should never happen except in testing
+                // unassigned terrain is black; this should never happen
                 return "rgb(0,0,0)";
         }
-    }
-
-    public void setLeftBorder() {
-        leftBorder = !leftBorder;
-    }
-
-    public void setTopBorder() {
-        topBorder = !topBorder;
-    }
-
-    public boolean getTopBorder() {
-        return topBorder;
-    }
-
-    public boolean getLeftBorder() {
-        return leftBorder;
-    }
-
-    public void setRainfall(int rainfall) {
-        this.rainfall = rainfall;
-    }
-
-    public int getRainfall() {
-        return this.rainfall;
     }
 
     /**
@@ -134,37 +96,41 @@ public class Tile {
         } else if (elevation > multiplier * 12.5 || rainfall < 6) {
             // very high or dry squares are always desert
             terrain = 4;
+        } else if (elevation < multiplier * 7 && rainfall > 9) {
+            // lowland: wetlands
+            terrain = 2;
         } else if (elevation < multiplier * 7) {
-            // lowland
-            if (rainfall > 9) {
-                // wetlands
-                terrain = 2;
-            } else {
-                // grassland
-                terrain = 3;
-            }
+            // lowland: grassland
+            terrain = 3;
+        } else if (elevation < multiplier * 11 && rainfall < 7) {
+            // mid land: grassland
+            terrain = 3;
+        } else if (elevation < multiplier * 11 && rainfall < 11) {
+            // mid land: forest
+            terrain = 5;
         } else if (elevation < multiplier * 11) {
-            // mid land
-            if (rainfall < 7) {
-                // grassland
-                terrain = 3;
-            } else if (rainfall < 11) {
-                // forest
-                terrain = 5;
-            } else {
-                // wetlands
-                terrain = 2;
-            }
+            // mid land: wetlands
+            terrain = 2;
+        } else if (rainfall > 8) {
+            // highland: grassland
+            terrain = 3;
         } else {
-            // highland
-            if (rainfall > 8) {
-                // grassland
-                terrain = 3;
-            } else {
-                // desert
-                terrain = 4;
-            }
+            // desert
+            terrain = 4;
         }
+    }
+
+    // Setters:
+    public void setLeftBorder() {
+        leftBorder = !leftBorder;
+    }
+
+    public void setTopBorder() {
+        topBorder = !topBorder;
+    }
+
+    public void setRainfall(int rainfall) {
+        this.rainfall = rainfall;
     }
 
     public void setRiver(boolean value) {
@@ -173,8 +139,35 @@ public class Tile {
         }
     }
 
+    // Basic getters:
+    public boolean getTopBorder() {
+        return topBorder;
+    }
+
+    public boolean getLeftBorder() {
+        return leftBorder;
+    }
+
+    public int getRainfall() {
+        return this.rainfall;
+    }
+
+    public int getTerrain() {
+        return terrain;
+    }
+
+    public int getElevation() {
+        return elevation;
+    }
+
+    boolean isWater() {
+        if (elevation < multiplier * 3) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean isRiver() {
         return this.isRiver;
     }
-
 }

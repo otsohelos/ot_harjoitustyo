@@ -9,7 +9,6 @@ MapGenerator has a simple two-layered architecture consisting of the UI and Doma
 ## Domain layer
 
 
-
 ![Application architecture](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/architecture.jpg)
 
 
@@ -23,7 +22,10 @@ Example case of MapUI calling the creation of a new map, with user-chosen variab
 
 Randomized integer variables are represented as (int). Case-dependent variables are represented as their names (i, j, stopWhen, elevation etc.)
 
-Slightly simplified sequence diagram:
+Slightly simplified sequence diagram of initial tile creation:
 
-![Sequence diagram](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/sequence.png)
+![Sequence diagram](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/sequence1.png)
 
+Sequence diagram of river assignment:
+
+![Sequence diagram 2](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/sequence2.png)
