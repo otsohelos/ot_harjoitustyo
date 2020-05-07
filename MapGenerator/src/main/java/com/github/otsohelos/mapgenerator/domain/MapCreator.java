@@ -7,8 +7,8 @@ package com.github.otsohelos.mapgenerator.domain;
  */
 public class MapCreator {
 
-    private int height;
-    private int width;
+    private final int height;
+    private final int width;
     private Map map;
     private RiverMaker riverMaker;
 
@@ -104,6 +104,6 @@ public class MapCreator {
      * @return
      */
     public String getRainfallString() {
-        return map.getRainFallString();
+        return map.getRainfallString();
     }
 }

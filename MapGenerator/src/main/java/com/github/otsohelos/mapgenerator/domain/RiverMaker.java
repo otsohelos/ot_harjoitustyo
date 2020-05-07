@@ -21,7 +21,7 @@ public class RiverMaker {
     private final int[][] routesReady;
     private boolean hasRivers;
     private final int howManyStarts;
-    private ArrayList<int[][]> routes;
+    private final ArrayList<int[][]> routes;
     private final boolean[][] riversReady;
     private int minRiverLength;
 
@@ -230,7 +230,7 @@ public class RiverMaker {
      * total elevations
      * @return Array of coordinates and elevations of local highest 4x4 squares
      */
-    private int[][] findHighestFromArray(int[][] highestLarge) {
+    public int[][] findHighestFromArray(int[][] highestLarge) {
         int[][] highestSmall = new int[howManyStarts][3];
 
         // find highest 4x4 square in each 24x24 square
@@ -401,7 +401,7 @@ public class RiverMaker {
      * @return array of directions
      */
     public String[] makeDirections(int[][] route, int routeIndex) {
-        String[] directions = new String[routeIndex];
+        String[] directions = new String[routeIndex + 1];
         for (int k = 0; k < routeIndex; k++) {
             int iDir = route[k + 1][0] - route[k][0];
             int jDir = route[k + 1][1] - route[k][1];

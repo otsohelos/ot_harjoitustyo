@@ -9,9 +9,9 @@ public class Map {
 
     private final int height;
     private final int width;
-    private Tile[][] tileArray;
+    private final Tile[][] tileArray;
     private final int[][] intArray;
-    private Randomizer rzr;
+    private final Randomizer rzr;
     private final int maxElevation;
     private int islandTendency;
     private int variability;
@@ -459,7 +459,7 @@ public class Map {
         return this.maxElevation;
     }
 
-    public String getRainFallString() {
+    public String getRainfallString() {
         String wetOrDry = "dry";
         if (baseRainfall > 6) {
             wetOrDry = "wet";

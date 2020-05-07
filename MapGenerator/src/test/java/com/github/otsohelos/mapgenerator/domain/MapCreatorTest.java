@@ -5,8 +5,6 @@
  */
 package com.github.otsohelos.mapgenerator.domain;
 
-import com.github.otsohelos.mapgenerator.domain.MapCreator;
-import com.github.otsohelos.mapgenerator.domain.Tile;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

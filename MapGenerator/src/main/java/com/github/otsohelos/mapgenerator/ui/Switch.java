@@ -2,23 +2,24 @@ package com.github.otsohelos.mapgenerator.ui;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 
 /**
+ * This class makes a ToggleButton switch to choose between two alternatives and
+ * makes a Tip that helps in its usage.
  *
  * @author otsohelos
  */
 class Switch {
 
-    private HBox box;
-    private ToggleButton button1;
-    private ToggleButton button2;
-    private ToggleGroup group;
-    private Label label;
-    private Tip tip;
+    private final HBox box;
+    private final ToggleButton button1;
+    private final ToggleButton button2;
+    private final ToggleGroup group;
+    private final Label label;
+    private final Tip tip;
 
     public Switch(String labelString, String string1, String string2, String tipString) {
         this.button1 = new ToggleButton(string1);

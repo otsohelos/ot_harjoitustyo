@@ -1,16 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.otsohelos.mapgenerator.domain;
 
-import com.github.otsohelos.mapgenerator.domain.Tile;
-import com.github.otsohelos.mapgenerator.domain.Map;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.io.ByteArrayOutputStream;
 
 /**
  *
@@ -117,6 +109,14 @@ public class MapTest {
     }
 
     @Test
+    public void rainyAssignWorks() {
+        bigMap.assignTiles(false, true);
+        bigMap.assignTerrain(true);
+        String rain = bigMap.getRainfallString();
+        assertTrue(rain.matches("This area is wet.\nAverage rainfall [4-6] out of 6."));
+    }
+
+    @Test
     public void randomizeOneReturnsValuesInRange() {
         //tinyMap.setInt(0, 0, 0);
         tinyMap.randomizeOne(0, 0);
@@ -140,7 +140,7 @@ public class MapTest {
     public void assignTilesAssignsTiles() {
         map.assignTiles();
         int elev1 = map.getTileArray()[5][5].getElevation();
-        int elev2 = map.getTileArray()[8][ 10].getElevation();
+        int elev2 = map.getTileArray()[8][10].getElevation();
         int elev3 = map.getTileArray()[3][12].getElevation();
 
         // since some tiles may be left unassigned

@@ -17,12 +17,12 @@ import javafx.scene.layout.HBox;
 class FieldBox {
 
     // FieldBox is solely for the purpose of displaying the height and width fields
-    private HBox box;
-    private Label heightLabel;
-    private Label widthLabel;
-    private Tip sizeTip;
-    private TextField heightField;
-    private TextField widthField;
+    private final HBox box;
+    private final Label heightLabel;
+    private final Label widthLabel;
+    private final Tip sizeTip;
+    private final TextField heightField;
+    private final TextField widthField;
 
     public FieldBox() {
         this.box = new HBox();

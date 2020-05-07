@@ -11,6 +11,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 
 /**
+ * Makes a stylized question mark Label that displays a tip on hover.
  *
  * @author otsohelos
  */

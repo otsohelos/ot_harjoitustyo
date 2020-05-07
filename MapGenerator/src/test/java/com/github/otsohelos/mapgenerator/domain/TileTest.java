@@ -5,7 +5,6 @@
  */
 package com.github.otsohelos.mapgenerator.domain;
 
-import com.github.otsohelos.mapgenerator.domain.Tile;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -31,13 +30,21 @@ public class TileTest {
     }
 
     @Test
-    public void landTileIsYellow() {
+    public void landTileIsGreen() {
         assertEquals("rgb(155,210,75)", landTile.getColor());
     }
 
     @Test
     public void terrainReturnsZero() {
         assertEquals(0, landTile.getTerrain());
+    }
+    
+    @Test
+    public void terrainIsAssignedRight() {
+        landTile.setRainfall(8);
+        landTile.assignTerrain();
+        assertEquals(3, landTile.getTerrain());
+        assertEquals("rgb(155,210,75)", landTile.getTerrainColor());
     }
     
     @Test

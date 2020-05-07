@@ -22,10 +22,11 @@ Example case of MapUI calling the creation of a new map, with user-chosen variab
 
 Randomized integer variables are represented as (int). Case-dependent variables are represented as their names (i, j, stopWhen, elevation etc.)
 
-Slightly simplified sequence diagram of initial tile creation:
+**Sequence diagram of initial tile creation:**
 
 ![Sequence diagram](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/sequence1.png)
 
-Sequence diagram of river assignment:
+**Sequence diagram of river assignment:**
+- This happens at the point indicated in the lower left of the above diagram.
 
 ![Sequence diagram 2](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/sequence2.png)

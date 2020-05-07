@@ -16,16 +16,16 @@ class Randomizer {
     }
 
     /**
-     * Returns int under limit.
+     * Returns random non-negative integer that is under specified limit.
      * @param limit
-     * @return int
+     * @return
      */
     public int randomize(int limit) {
         return rnd.nextInt(limit);
     }
 
     /**
-     * Returns whether a random number is smaller than a given number.
+     * Returns whether a random nonnegative integer under specified limit is smaller than another specified integer.
      * @param limit Upper bound for Random
      * @param cut Random number is compared to this
      * @return Boolean
@@ -35,7 +35,7 @@ class Randomizer {
     }
     
     /**
-     * Returns a random number plus specified number
+     * Returns a random nonnegative integer under a specified limit plus another specified integer.
      * @param limit Limit for random number
      * @param addition
      * @return int
