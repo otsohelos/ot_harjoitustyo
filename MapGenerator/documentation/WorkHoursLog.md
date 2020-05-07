@@ -17,5 +17,6 @@
 | 27 Apr | 7 | Building river generator; some cleanup; coastal map edge definition |
 | 28 Apr | 6 | Building and testing river generator; JavaDoc and other documentation |
 | 4 May | 5 | Finishing UI; final fixes to rivers | 
+| 7 May | 8 | Documentation; fixes to tests; cleanup |
 
-**Total hours** 73
+**Total hours** 81

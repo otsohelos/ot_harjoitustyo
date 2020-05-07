@@ -14,7 +14,7 @@ MapGenerator is done with Java 11 and JavaFX. A working version will be finished
 
 ## Releases
 
-[Week 5](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.0)
+[Final release](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.1)
 
 
 ## Documentation
@@ -24,6 +24,8 @@ MapGenerator is done with Java 11 and JavaFX. A working version will be finished
 [Software Architecture](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/architecture.md)
 
 [User Manual](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/User%20Manual.md)
+
+[Test Report](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/Testing.md)
 
 [Log of working hours](https://github.com/otsohelos/ot_harjoitustyo/blob/master/MapGenerator/documentation/WorkHoursLog.md)
 
@@ -53,12 +55,12 @@ Generate runnable jar fine:
 mvn package
 ```
 
-Runnable jar file _MapGenerator-1.0-SNAPSHOT.jar_ can be found in _target_
+Runnable jar file _MapGenerator-1.1-SNAPSHOT.jar_ can be found in _target_
 
 Command to run jar file:
 
 ```
- java -jar MapGenerator-1.0-SNAPSHOT.jar
+ java -jar MapGenerator-1.1-SNAPSHOT.jar
 ```
 
 ### JavaDoc

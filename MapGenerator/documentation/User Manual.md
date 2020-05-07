@@ -1,13 +1,15 @@
 # Instructions
 
-Download [MapGenerator](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.0)
+Download [MapGenerator](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.1)
 
 ## Startup
+
+MapGenerator requires Java 1.8.
 
 MapGenerator can be started with 
 
 ```
- java -jar MapGenerator-1.0.jar
+java -jar MapGenerator-1.1.jar
 ```
 
 ## Settings
@@ -30,7 +32,7 @@ When you've chosen your settings, press Generate.
 
 ## Elevation view
 
-Now you have a map. The first view you see is the Elevation view.
+Now you have a map. The first view you see is the Elevation view. A legend can be seen on the right.
 
 ### Back
 
@@ -38,19 +40,23 @@ This button takes you back to the Settings. Your map is lost forever.
 
 ### Redo
 
-Makes a new map with the same settings.
+Makes a new map with the same settings. Your previous map is lost forever.
 
-### Rivers
+### Show rivers / Hide rivers
 
-Shows / hides rivers.
+Shows or hides rivers.
 
-### Terrain
+### Redo rivers
+
+(Visible only if the rivers are visible.) Re-randomizes rivers and displays them is any were made.
+
+### Show terrain
 
 Takes you to the Terrain view.
 
 ### Save...
 
-You may choose to save the current view as a png at any point by pressing Save.
+You can choose to save the current view as a png by pressing Save.
 
 
 ## Terrain view
@@ -67,4 +73,8 @@ Redo re-randomizes the rainfall and terrain.
 
 ### Rainy / Dry
 
-You can also choose to re-randomize the terrain and choose the base rainfall level.
+You can choose to re-randomize the terrain and choose whether the area is likely to be rainy or dry.
+
+### Save...
+
+You can choose to save the current view as a png by pressing Save.

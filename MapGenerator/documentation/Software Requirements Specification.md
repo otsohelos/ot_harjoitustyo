@@ -6,29 +6,29 @@ The purpose of this application is to let users generate random procedurally-gen
 
 ### Maps Generated
 
-A map will consist of squares. A given square is either land or water. Both land and water squares can have further properties.
+A map consists of Tiles. A given Tile is either land or water. Both land and water Tiles have further properties.
 
-Land squares have the property of altitude. Altitude will change gradually from one square to another. Time permitting, land squares will also have the property of a terrain type, which is one of the following: Desert, Grassland, Forest, Cultivated or City. Forest and Cultivated terrains are not possible in the highest altitudes.
+Land Tiles have the property of altitude. Altitude will change gradually from one Tile to another. Land Tiles also have the property of a terrain type, which is one of the following: Desert, Grassland, Forest, or Wetland. Terrain depends on both the altitude of a square. Additionally, a land Tile can be a River tile, forming part of a river.
 
-Water squares have the property of depth. Depth will also change gradually from one square to the next.
+Water Tiles have the property of depth. Depth will also change gradually from one Tile to the next.
 
 ## Users
 
-MapGenerator will have only one user.
+MapGenerator has only one user.
 
 ## User Interface
 
-MapGenerator will have two views: a Settings view and a Map view.
+MapGenerator has three views: a Settings view and two Map views, Elevation and Terrain.
 
 ### Settings View
 
-In the Settings View, the user can determine the width and length of the map in squares. Variability of altitude/depth, presence of cities and jaggedness of coastlines can also be controlled. In this view, the user puts in their preferred settings and clicks Generate, after which a random map is generated.
+In the Settings View, the user can determine the width and length of the map in squares. Variability of altitude/depth and whether the are on the map is Coastal or Inland is also determined. In the Settings view, the user puts in their preferred settings and clicks Generate, after which a random map is generated.
 
 ### Map Views: Elevation And Terrain
 
-After a map is generated, the user will be taken to the Elevation view of the generated map. The user can switch between the Terrain and Elevation views of the same map.
+After a map is generated, the user will be taken to the Elevation view of the generated map. The user can switch between the Terrain and Elevation views of the same map. In the Elevation view, rivers can be toggled to be visible or not visible.
 
-The user can choose to save the map to a picture document. If the user is not satisfied with the map, they can choose to generate a new random map with the same settings, or go back to the Settings view.
+The user can choose to save the map to a png file. If the user is not satisfied with the map, they can choose to generate a new random map with the same settings, or go back to the Settings view. It's also possible to keep the elevations but re-randomize the rivers or the terrain.
 
 ### UI Sketch
 
@@ -41,6 +41,7 @@ Map view has elevation indicated by color darkness.
 
 - DONE: User can set the size of the map within certain constraints.
 - DONE: User can set the amount of variability in elevation of both water and land squares.
+- DONE: User can set the map as Coastal or Inland.
 - DONE: Question mark labels will show tips on hover
 
 ### Map Views
@@ -49,20 +50,19 @@ Map view has elevation indicated by color darkness.
 - DONE: Save button: User can choose to save the map.
 - DONE: Redo button: User can generate a new map with the same settings.
 - DONE: Back button: User can go back to the Settings view to change settings.
-- DONE: Addition of Terrain: Terrain types will be generated depending on settings and the altitude or a given terrain square
-- DONE: Switch buttons: Possibility to switch between Elevation and Terrain views
+- DONE: Addition of Terrain: Terrain types will be generated depending on settings and the altitude or a given terrain square.
+- DONE: Switch buttons: Possibility to switch between Elevation and Terrain views.
+- DONE: Addition of Legend.
+- DONE: Option to re-randomize terrain.
+- DONE: Rainy / dry setting.
+- DONE: Addition of rivers.
+- DONE: Possibility to re-randomize rivers.
 
 
 ## Further Development Ideas
 
-After the basic version is functional, it will be complemented by the following functionalities, time permitting:
-
-- DONE: Addition of Legend
 - Legend inclusion in save files
 - Customisable map name
-- DONE: Rainy / dry setting
-- DONE: Option to re-randomize terrain
 - Addition of cities
 - Addition of roads
-- DONE: Addition of rivers
 - Possibility to go back a couple of maps if user clicked Redo by accident
