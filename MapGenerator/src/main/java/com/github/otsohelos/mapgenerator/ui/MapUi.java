@@ -160,6 +160,8 @@ public class MapUi extends Application {
         BorderPane buttonPane = new BorderPane();
         HBox altitudeButtonBox = new HBox();
         VBox legendBox = new VBox();
+        legendBox.setStyle("-fx-background-color: #FFFFFF;");
+        buttonPane.setStyle("-fx-background-color: #FFFFFF;");
 
         // buttons and labels
         Button redoButton = new Button("Redo");
@@ -271,6 +273,7 @@ public class MapUi extends Application {
 
         // main box        
         VBox terrainBox = new VBox();
+        terrainBox.setStyle("-fx-background-color: #FFFFFF;");
 
         // sub-boxes
         HBox terrainCanvasBox = new HBox();
