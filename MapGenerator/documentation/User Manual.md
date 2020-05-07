@@ -1,12 +1,12 @@
 # Instructions
 
-Download [MapGenerator](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.1)
+Download [MapGenerator](https://github.com/otsohelos/ot_harjoitustyo/releases/tag/v1.1).
 
 ## Startup
 
 MapGenerator requires Java 1.8.
 
-MapGenerator can be started with 
+The downloaded MapGenerator package can be started by navigating to the relevant folder and entering the command 
 
 ```
 java -jar MapGenerator-1.1.jar
@@ -18,7 +18,7 @@ First you will be taken to a Settings view.
 
 ### Dimensions
 
-Height and Width are the dimensions of your map. These should be between 40 and 260.
+Height and Width are the dimensions of your map. These should be between 40 and 260. On smaller screens, a height of less than 150 is recommended.
 
 ### Variability of elevation
 
@@ -26,7 +26,7 @@ High variability means the elevation is likely to change more from square to squ
 
 ### Land type
 
-The Coastal setting gives you an archipelago with larger amounts of water. A Coastal map is likely to be surrounded by water on all edges. The Inland setting gives you more land and less water.
+The Coastal setting gives you an archipelago region, with large amounts of water. A Coastal map is likely to be surrounded by water on all edges. The Inland setting gives you more land and less water.
 
 When you've chosen your settings, press Generate.
 
@@ -48,7 +48,7 @@ Shows or hides rivers.
 
 ### Redo rivers
 
-(Visible only if the rivers are visible.) Re-randomizes rivers and displays them is any were made.
+(This button is visible only if the rivers are visible.) Re-randomizes rivers.
 
 ### Show terrain
 
@@ -65,15 +65,15 @@ This is the view of what kind or terrain your map has. The legend can be seen on
 
 ### Altitude
 
-This button takes you back to the Altitude view. The Terrain is not lost and you can switch back and forth.
+This button takes you back to the Altitude view. The Terrain is not lost, and you can switch back and forth.
 
 ### Redo
 
-Redo re-randomizes the rainfall and terrain.
+Re-randomizes the rainfall and terrain.
 
 ### Rainy / Dry
 
-You can choose to re-randomize the terrain and choose whether the area is likely to be rainy or dry.
+You can choose to re-randomize the terrain with a choice of whether the area is likely to be rainy or dry.
 
 ### Save...
 
